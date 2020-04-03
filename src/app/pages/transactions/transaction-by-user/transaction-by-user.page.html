@@ -1,0 +1,47 @@
+<ion-header no-border class="head">
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>SERVICIOS CLIENTE</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+  <ion-grid fixed>
+      <ion-row>
+        <ion-col size="12" size-lg="3" size-md="4" size-sm="6" size-xs="12" *ngFor="let service of services">
+            <!-->div class="service">
+              <ion-item lines="none">
+                <ion-label>
+                  <h1> Value: {{ service.total_value}}</h1>
+                  <h5>{{ service.total_value }}</h5>
+                </ion-label>
+              </ion-item>
+            </div-->
+            <div class="service" (click)="click(service)">
+                <table class="tg" style="table-layout: fixed; width: 100%">
+                    <colgroup>
+                      <col style="width: 20%">
+                      <col style="width: 40%">
+                      <col style="width: 37%">
+                    </colgroup>
+                    <tr>
+                      <td class="tg-wkff">ID: {{ service.service_id }}</td>
+                      <td class="tg-lm6i">Fecha: {{ service.created_at }}</td>
+                      <td class="tg-j506">TOTAL: {{ service.total_value }}</td>
+                    </tr>
+                    <tr>
+                      <td class="tg-qr91"></td>
+                      <td class="tg-9o8p"><span style="font-weight:700">Saldo:</span></td>
+                      <td class="tg-55yk">{{service.debt}}</td>
+                    </tr>
+                  </table>
+            </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+</ion-content>

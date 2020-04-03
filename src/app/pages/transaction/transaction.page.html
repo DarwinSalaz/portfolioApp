@@ -1,0 +1,158 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>NUEVO SERVICIO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
+    <ion-list>
+      <ion-item>
+        <ionic-selectable style="align-content: center"
+          name="customer"
+          [(ngModel)]="customer"
+          [items]="customers"
+          itemValueField="customer_id"
+          itemTextField="fullname"
+          [canSearch]="true"
+          (onChange)="customerChange($event)">
+
+        </ionic-selectable>
+      </ion-item>
+      <ion-item>
+        <ionic-selectable style="align-content: center"
+          name="product"
+          [(ngModel)]="product"
+          [items]="products"
+          itemValueField="product_id"
+          itemTextField="name"
+          [canSearch]="true"
+          [isMultiple]="true"
+          (onChange)="productChange($event)">
+
+        </ionic-selectable>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Valor</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="value"
+          type="number" 
+          readonly=true
+          placeholder="Valor" 
+          [(ngModel)]="registerService.service_value"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Descuento</ion-label>
+        <br>
+        <ion-input
+          style="text-align: right"
+          name="name"
+          type="text"
+          placeholder="Descuento" 
+          [(ngModel)]="registerService.discount"
+          (ngModelChange)="recalculate($event)"
+          min = "0"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Cuota Inicial</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="initial"
+          type="number" 
+          placeholder="Cuota Inicial" 
+          [(ngModel)]="registerService.down_payment"
+          (ngModelChange)="recalculate($event)"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Días por cuota</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="days_per_fee"
+          type="number" 
+          placeholder="Días por cuota" 
+          [(ngModel)]="registerService.days_per_fee"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Cant. Cuotas</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="quantity_of_fees"
+          type="number" 
+          placeholder="Cant. Cuotas" 
+          [(ngModel)]="registerService.quantity_of_fees"
+          (ngModelChange)="recalculate($event)"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Valor Cuotas</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="fee_value"
+          type="number" 
+          placeholder="Valor Cuotas" 
+          [(ngModel)]="registerService.fee_value"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Total</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="total"
+          type="number" 
+          readonly=true
+          placeholder="Valor total" 
+          [(ngModel)]="registerService.total_value"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Resta</ion-label>
+        <ion-input style="text-align: right"
+          name="debt"
+          type="number" 
+          readonly=true
+          placeholder="Resta" 
+          [(ngModel)]="registerService.debt"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Próx Pago</ion-label>
+        <ion-datetime style="text-align: right"
+          name="next_payment_date"
+          display-timezone="utc"
+          [(ngModel)]="registerService.next_payment_date"
+          required>
+        </ion-datetime>
+      </ion-item>
+      <ion-item style="width: 100%">
+        <ion-icon name="document" item-start></ion-icon>
+        <ion-label stacked></ion-label>
+        <ion-input 
+          name="observations"
+          type="text" 
+          placeholder="Observaciones" 
+          [(ngModel)]="registerService.observations">
+        </ion-input>
+      </ion-item>
+    </ion-list>
+    <div padding>
+        <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+      </div>
+  </form>
+  </ion-content>

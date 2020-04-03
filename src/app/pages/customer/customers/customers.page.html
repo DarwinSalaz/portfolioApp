@@ -1,0 +1,32 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>{{ title }}</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content color="light">
+
+  <!-- Refresher -->
+  <ion-refresher slot="fixed" (ionRefresh)="refresh( $event )">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  
+  <!-- Posts -->
+  <app-customers [customers] = "customers" [redirectTo] = "redirectTo"></app-customers>
+
+  <!-- Infinite Scroll -->
+  <ion-infinite-scroll [disabled]="!enableInfiniteScroll"
+                        threshold="150px" 
+                        (ionInfinite)="siguientes($event)">
+    <ion-infinite-scroll-content
+      loadingSpinner="bubbles"
+      loadingText="Loading more data...">
+    </ion-infinite-scroll-content>
+  </ion-infinite-scroll>
+
+
+</ion-content>

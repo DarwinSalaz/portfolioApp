@@ -1,0 +1,11 @@
+<div class="customer">
+  <ion-item lines="none" (click)="click()">
+    <ion-avatar slot="start">
+      <img src="/assets/avatars/{{ customer.icon }}" alt="avatar">
+    </ion-avatar>
+    <ion-label>
+      <h3>{{ customer.name }} {{ customer.last_name}}</h3>
+      <h5>{{ customer.email }}</h5>
+    </ion-label>
+  </ion-item>
+</div>

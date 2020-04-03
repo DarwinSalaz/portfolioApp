@@ -1,0 +1,120 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button style="color: azure" defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>INFO CLIENTE</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding >
+  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm" style="width: 100%">
+    <ion-list style="width: 100%">
+      <ion-item>
+        <ion-icon name="person" item-start></ion-icon>
+        <ion-label stacked></ion-label>
+        <br>
+        <ion-input 
+          name="name"
+          type="text" 
+          placeholder="Nombres" 
+          [(ngModel)]="registerCustomer.name"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-icon name="person" item-start></ion-icon>
+          <ion-label stacked></ion-label>
+          <ion-input 
+            name="last_name"
+            type="text" 
+            placeholder="Apellidos" 
+            [(ngModel)]="registerCustomer.last_name"
+            required>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="pin" item-start></ion-icon>
+          <ion-label stacked></ion-label>
+          <ion-input 
+            name="address"
+            type="text" 
+            placeholder="Dirección" 
+            [(ngModel)]="registerCustomer.address"
+            required>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="call" item-start></ion-icon>
+          <ion-label stacked></ion-label>
+          <ion-input 
+            name="cellphone"
+            type="text" 
+            placeholder="Teléfono" 
+            [(ngModel)]="registerCustomer.cellphone"
+            required>
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="at" item-start></ion-icon>
+          <ion-label stacked></ion-label>
+          <ion-input 
+            name="email"
+            type="text" 
+            placeholder="Email" 
+            [(ngModel)]="registerCustomer.email">
+          </ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon name="contact" item-start></ion-icon>
+          <ion-label stacked></ion-label>
+          <ion-input 
+            name="identification_number"
+            type="text" 
+            placeholder="Identificación" 
+            [(ngModel)]="registerCustomer.identification_number"
+            required>
+          </ion-input>
+        </ion-item>
+        <ion-item style="width: 100%">
+          <ion-icon name="woman" item-start></ion-icon>
+          <ion-icon name="man" item-start></ion-icon>
+          <ion-select [(ngModel)]="registerCustomer.gender" name="gender" placeholder="Género" style="width: 100%" required>
+            <ion-select-option value="f" style="width: 100%">Femenino</ion-select-option>
+            <ion-select-option value="m" style="width: 100%">Masculino</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <ion-item style="width: 100%">
+          <ion-icon name="document" item-start></ion-icon>
+          <ion-label stacked></ion-label>
+          <ion-input 
+            name="observation"
+            type="text" 
+            placeholder="Observaciones" 
+            [(ngModel)]="registerCustomer.observation">
+          </ion-input>
+        </ion-item>
+        <ion-item style="width: 100%">
+          <ion-icon name="document" item-start></ion-icon>
+          <ionic-selectable style="align-content: center"
+            name="wallet"
+            [(ngModel)]="selectedWallet"
+            [items]="wallets"
+            itemValueField="wallet_id"
+            placeholder="Cartera"
+            itemTextField="name"
+            [canSearch]="true"
+            (onChange)="walletChange($event)"
+            required>
+  
+          </ionic-selectable>
+        </ion-item>
+
+    </ion-list>
+    <div padding>
+        <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+        <ion-button color="medium" *ngIf="isUpdate" (click)="verCuentas()" size="large" expand="block">Ver cuentas</ion-button>
+    </div>
+  </form>
+  </ion-content>

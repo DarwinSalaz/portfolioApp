@@ -1,0 +1,61 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button style="color: azure" defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>INFO GASTO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding >
+  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
+    <ion-list style="width: 100%">
+      <ion-item style="width: 100%">
+        <ion-label stacked>Tipo Gasto</ion-label>
+        <br>
+        <ion-select placeholder="Tipo de Gasto" name="expense_type" [(ngModel)]="expense.expense_type" style="width: 100%; align-content: center" required>
+          <ion-select-option value="almuerzo">Almuerzo</ion-select-option>
+          <ion-select-option value="gasolina">Gasolina</ion-select-option>
+          <ion-select-option value="alquiler">Alquiler</ion-select-option>
+          <ion-select-option value="repuestos moto">Repuestos moto</ion-select-option>
+          <ion-select-option value="reparacion moto">Reparacion moto</ion-select-option>
+          <ion-select-option value="otros">Otros</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Valor</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="value"
+          type="number"
+          [(ngModel)]="expense.value"
+          placeholder="Valor" 
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Fec Gasto</ion-label>
+        <ion-datetime style="text-align: right"
+          name="expense_date"
+          display-timezone="utc"
+          [(ngModel)]="expense.expense_date" 
+          required>
+        </ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Justificación</ion-label>
+        <br>
+        <ion-textarea style="text-align: right"
+          name="justification"
+          type="text" 
+          placeholder="Justificación" 
+          [(ngModel)]="expense.justification">
+        </ion-textarea>
+      </ion-item>
+      <div padding>
+        <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+      </div>
+    </ion-list>
+  </form>
+</ion-content>

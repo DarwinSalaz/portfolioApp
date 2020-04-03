@@ -1,0 +1,77 @@
+<ion-header no-border >
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>CUADRE CAJA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content id="page1" style="background-color:#FFFFFF;">
+  <ion-card class="ion-padding" id="cuadreCaja-card21">
+    <ion-list>
+      <ion-item-sliding >
+        <ion-item text-capitalize color="none" id="cuadreCaja-list-item3">
+          <ion-icon name="man" item-left></ion-icon>
+          <ion-label><strong style="color: rgb(30, 37, 68); font-size: 120%">{{cashControl.full_name}}</strong></ion-label>
+        </ion-item>
+      </ion-item-sliding>
+      <br>
+      <br>
+      <ion-item id="cuadreCaja-list-item-container4">
+        <div id="cuadreCaja-markdown4" class="show-list-numbers-and-dots" style="width: 100%">
+          <ion-label>
+            <strong style="color: brown">Servicios:</strong>
+            <strong style="width: 100%; position: absolute; right: 10%; text-align: right">
+                {{cashControl.services_count}}
+            </strong>
+          </ion-label>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container2">
+        <div id="cuadreCaja-markdown2" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown">Ingresos:</strong>
+            <strong  style="width: 100%; position: absolute; right: 10%; text-align: right">
+              {{cashControl.revenues}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container3">
+        <div id="cuadreCaja-markdown3" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown">Gastos:</strong>
+            <strong  style="width: 100%; position: absolute; right: 10%; text-align: right">
+                {{cashControl.expenses}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container11">
+        <div id="cuadreCaja-markdown16" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown">Saldo:</strong>
+            <strong style="position: absolute; right: 10%; text-align: right">
+              {{cashControl.cash}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container12">
+        <div id="cuadreCaja-markdown17" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:17px;">
+            <strong style="color: brown">Periodo:</strong>
+            <strong  style="position: absolute; right: 10%; text-align: right">
+              {{cashControl.period}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+  <div padding>
+    <ion-button color="medium" type="submit" size="large" expand="block">Liquidar</ion-button>
+  </div>
+</ion-content>
