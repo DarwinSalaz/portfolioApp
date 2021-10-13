@@ -19,6 +19,8 @@ export class CustomersPage implements OnInit {
 
   enableInfiniteScroll = true;
 
+  loading: boolean = true;
+
   constructor( private customersService: CustomersService, public activatedRoute: ActivatedRoute, private storage: Storage) {
     this.activatedRoute.params.subscribe((res) => {
       console.log(res);
@@ -46,6 +48,7 @@ export class CustomersPage implements OnInit {
       .subscribe( resp => {
         //console.log( resp );
         this.customers.push( ...resp.customers );
+        this.loading = false;
 
         if ( event ) {
           event.target.complete();
@@ -57,6 +60,7 @@ export class CustomersPage implements OnInit {
           }
         }
       });
+      
   }
 
 }

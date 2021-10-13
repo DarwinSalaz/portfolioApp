@@ -8,25 +8,37 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-content *ngIf="loading" color="light">
+    <ion-slide>
+      <ion-row>
+        <ion-col>
+          <img src="/assets/carga2-127.gif">
+        </ion-col>
+      </ion-row>
+    </ion-slide>
+</ion-content>
+
 <ion-content color="light">
 
-  <!-- Refresher -->
-  <ion-refresher slot="fixed" (ionRefresh)="refresh( $event )">
-    <ion-refresher-content></ion-refresher-content>
-  </ion-refresher>
   
-  <!-- Posts -->
-  <app-customers [customers] = "customers" [redirectTo] = "redirectTo"></app-customers>
+  <ion-row *ngIf="!loading">
+    <!-- Refresher -->
+    <ion-refresher slot="fixed" (ionRefresh)="refresh( $event )">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+    
+    <!-- Posts -->
+    <app-customers [customers] = "customers" [redirectTo] = "redirectTo"></app-customers>
 
-  <!-- Infinite Scroll -->
-  <ion-infinite-scroll [disabled]="!enableInfiniteScroll"
-                        threshold="150px" 
-                        (ionInfinite)="siguientes($event)">
-    <ion-infinite-scroll-content
-      loadingSpinner="bubbles"
-      loadingText="Loading more data...">
-    </ion-infinite-scroll-content>
-  </ion-infinite-scroll>
-
+    <!-- Infinite Scroll -->
+    <ion-infinite-scroll [disabled]="!enableInfiniteScroll"
+                          threshold="150px" 
+                          (ionInfinite)="siguientes($event)">
+      <ion-infinite-scroll-content
+        loadingSpinner="bubbles"
+        loadingText="Loading more data...">
+      </ion-infinite-scroll-content>
+    </ion-infinite-scroll>
+  </ion-row>
 
 </ion-content>

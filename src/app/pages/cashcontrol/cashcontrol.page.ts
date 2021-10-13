@@ -9,6 +9,8 @@ import { CashcontrolService } from '../../services/cashcontrol.service';
 })
 export class CashcontrolPage implements OnInit {
 
+  loading: boolean = true;
+
   cashControl: CashControl = {
     full_name: '',
     cash: '',
@@ -27,6 +29,7 @@ export class CashcontrolPage implements OnInit {
       resp => {
         console.log( resp );
         this.cashControl = resp;
+        this.loading = false;
       }
     );
   }

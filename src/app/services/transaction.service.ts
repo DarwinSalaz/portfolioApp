@@ -46,7 +46,7 @@ export class TransactionService {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
-        customer_id: customerId
+        customerid: customerId
       })
     };
 

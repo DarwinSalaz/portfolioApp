@@ -29,7 +29,6 @@ export class CustomersComponent implements OnInit {
                 (customer.identification_number.indexOf(serVal.toLowerCase()) > -1);
       });
 
-
       console.log(this.customers);
     } else {
       this.customers = this.allCustomers;

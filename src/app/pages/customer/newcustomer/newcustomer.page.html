@@ -8,8 +8,18 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding >
-  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm" style="width: 100%">
+<ion-content *ngIf="loading">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content padding>
+  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm" style="width: 100%" *ngIf="!loading">
     <ion-list style="width: 100%">
       <ion-item>
         <ion-icon name="person" item-start></ion-icon>

@@ -24,6 +24,8 @@ export class NewcustomerPage implements OnInit {
 
   isUpdate: boolean = false;
 
+  loading: boolean = true;
+
   registerCustomer: Customer = {
     company_id: 1,
     name: '',
@@ -56,8 +58,8 @@ export class NewcustomerPage implements OnInit {
           this.getCustomer()
         } else {
           this.isUpdate = false;
+          this.loading =false;
         }
-
       });
 
       this.init();
@@ -114,6 +116,7 @@ export class NewcustomerPage implements OnInit {
     this.customersService.getCustomer(this.customerId)
       .subscribe(resp => {
         this.registerCustomer = resp
+        this.loading = false;
       })
   }
 

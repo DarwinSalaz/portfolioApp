@@ -16,6 +16,8 @@ export class TransactionByUserPage implements OnInit {
 
   customerId: number;
 
+  loading: boolean = true;
+
   constructor(private transactionService: TransactionService,
               public activatedRoute: ActivatedRoute,
               public router: Router,
@@ -35,6 +37,7 @@ export class TransactionByUserPage implements OnInit {
       .subscribe(resp => {
         console.log( resp );
         this.services.push( ...resp);
+        this.loading = false;
       });
   }
 

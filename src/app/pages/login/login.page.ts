@@ -18,6 +18,8 @@ export class LoginPage implements OnInit {
 
   token: string = null;
 
+  public loading: boolean = false;
+
   avatars = [
     {
       img: 'av-1.png',
@@ -89,6 +91,8 @@ export class LoginPage implements OnInit {
       return;
     }
 
+    this.loading = true;
+
     this.userService.login(this.loginUser.username, this.loginUser.password )
       .subscribe( resp => {
         console.log(resp);
@@ -103,6 +107,7 @@ export class LoginPage implements OnInit {
         } else {
           this.token = null;
           this.storage.clear();
+          this.loading = false;
           this.uiService.InfoAlert('Usuario o contraseña no son correctos.')
         }
 

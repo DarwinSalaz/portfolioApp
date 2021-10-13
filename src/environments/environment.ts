@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   //url: 'http://localhost:8080'
-  url: 'https://portfolio-creative-code.herokuapp.com'
+  //url: 'https://portfolio-creative-code.herokuapp.com'
+  url: 'http://inventory-dev.us-east-2.elasticbeanstalk.com'
 };
 
 /*

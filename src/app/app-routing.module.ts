@@ -22,7 +22,8 @@ const routes: Routes = [
   },
   { path: 'register-payment', loadChildren: './pages/transactions/register-payment/register-payment.module#RegisterPaymentPageModule' },
   { path: 'new-expense', loadChildren: './pages/expense/new-expense/new-expense.module#NewExpensePageModule' },
-  { path: 'new-user', loadChildren: './pages/user/new-user/new-user.module#NewUserPageModule' }
+  { path: 'new-user', loadChildren: './pages/user/new-user/new-user.module#NewUserPageModule' },  { path: 'users', loadChildren: './pages/user/users/users.module#UsersPageModule' }
+
 ];
 
 @NgModule({

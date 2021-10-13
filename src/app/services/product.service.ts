@@ -10,24 +10,11 @@ const URL = environment.url;
 })
 export class ProductService {
 
-  pageProducts = -1;
-
   constructor( private http: HttpClient ) { }
 
   getProducts(pull: boolean = false, size: number = -1) {
-    let sizeStr = '';
 
-    if ( pull ) {
-      this.pageProducts = -1;
-    }
-
-    if ( size > 0 ) {
-      sizeStr = `&size=${size}`;
-    }
-
-    this.pageProducts ++;
-
-    return this.http.get<ResponseProducts>(`${ URL }/api/portfolio/products?page=${this.pageProducts}${sizeStr}&sort=name,asc`);
+    return this.http.get<ResponseProducts>(`${ URL }/api/portfolio/products?sort=name,asc`);
 
   }
 }

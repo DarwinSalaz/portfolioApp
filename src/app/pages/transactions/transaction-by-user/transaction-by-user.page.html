@@ -8,7 +8,17 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="loading" color="light">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content  *ngIf="!loading">
 
   <ion-grid fixed>
       <ion-row>
@@ -24,9 +34,9 @@
             <div class="service" (click)="click(service)">
                 <table class="tg" style="table-layout: fixed; width: 100%">
                     <colgroup>
-                      <col style="width: 20%">
-                      <col style="width: 40%">
-                      <col style="width: 37%">
+                      <col style="width: 18%">
+                      <col style="width: 38%">
+                      <col style="width: 41%">
                     </colgroup>
                     <tr>
                       <td class="tg-wkff">ID: {{ service.service_id }}</td>
