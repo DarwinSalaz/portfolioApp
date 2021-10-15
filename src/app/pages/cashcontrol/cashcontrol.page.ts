@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CashControl } from '../../interfaces/interfaces';
 import { CashcontrolService } from '../../services/cashcontrol.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-cashcontrol',
@@ -10,6 +11,8 @@ import { CashcontrolService } from '../../services/cashcontrol.service';
 export class CashcontrolPage implements OnInit {
 
   loading: boolean = true;
+  username: string;
+  isControl: boolean = false;
 
   cashControl: CashControl = {
     full_name: '',
@@ -21,10 +24,33 @@ export class CashcontrolPage implements OnInit {
     services_count: 0
   };
 
-  constructor(private cashcontrolService: CashcontrolService) { }
+  constructor(
+    private cashcontrolService: CashcontrolService,
+    public activatedRoute: ActivatedRoute
+  ) {
+    this.activatedRoute.queryParams.subscribe((res) => {
+      console.log(res);
+      
+      if (res.username) {
+        console.log('aqui paaa');
+        this.username = res.username;
+        this.isControl = true;
+      } else {
+        this.isControl = false;
+      }
+
+      this.init();
+    });
+
+    
+  }
 
   async ngOnInit() {
-    const response = await this.cashcontrolService.getActiveCashControl();
+  }
+
+  async init() {
+    console.log('usernameeee:' + this.username);
+    const response = await this.cashcontrolService.getActiveCashControl(this.username);
     response.subscribe(
       resp => {
         console.log( resp );

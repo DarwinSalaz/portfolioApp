@@ -77,4 +77,14 @@ export class UserService {
 
   }
 
+  getApplicationUsers() {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+
+    return this.http.get<User[]>(`${ URL }/api/portfolio/application_user`, httpOptions);
+  }
+
 }

@@ -13,9 +13,15 @@ export class CashcontrolService {
 
   constructor( private http: HttpClient, private storage: Storage ) { }
 
-  async getActiveCashControl() {
+  async getActiveCashControl(username: string = null) {
 
     const token = await this.storage.get('token');
+
+    let params = '';
+    if (username !== null) {
+      params = `?username=${username}`;
+      console.log('paramss:' + params)
+    }
 
     const httpOptions = {
       headers: new HttpHeaders({
@@ -24,6 +30,6 @@ export class CashcontrolService {
       })
     };
 
-    return this.http.get<CashControl>(`${ URL }/api/portfolio/cash_control/active`, httpOptions);
+    return this.http.get<CashControl>(`${ URL }/api/portfolio/cash_control/active${params}`, httpOptions);
   }
 }

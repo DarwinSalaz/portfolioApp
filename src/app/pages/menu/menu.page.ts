@@ -55,6 +55,12 @@ export class MenuPage implements OnInit {
       allowProfile: [1, 2, 3]
     },
     {
+      icon: 'cash',
+      name: 'Usuarios',
+      redirectTo: '/users',
+      allowProfile: [1]
+    },
+    {
       icon: 'person-add',
       name: 'Crear Usuario',
       redirectTo: '/new-user',

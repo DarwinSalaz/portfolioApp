@@ -34,15 +34,15 @@ export interface Company {
 }
 
 export interface User {
-    company_id: number;
-    username: string;
-    name: string;
+    company_id?: number;
+    username?: string;
+    name?: string;
     last_name?: string;
     cellphone?: string;
     email?: string;
     password?: string;
-    user_profile_id: number;
-    wallet_ids: number[];
+    user_profile_id?: number;
+    wallet_ids?: number[];
 }
 
 export interface Service {
