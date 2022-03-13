@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from '../../interfaces/interfaces';
+import { ItemUserCustom } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-users',
@@ -8,29 +8,29 @@ import { User } from '../../interfaces/interfaces';
 })
 export class UsersComponent implements OnInit {
 
-  @Input() users: User[] = [];
+  @Input() items: ItemUserCustom[] = [];
   @Input() redirectTo = '';
-  allUsers: User[] = [];
+  allItems: ItemUserCustom[] = [];
 
   constructor() { }
 
   ngOnInit() {
-    this.allUsers = this.users;
-    console.log(this.users);
+    this.allItems = this.items;
+    console.log(this.items);
   }
 
-  getUsers(event?) {
+  getItems(event?) {
     const serVal = event.target.value;
+    console.log(`este es el texto: ${serVal}`);
     if ( serVal && serVal.trim() !== '' ) {
 
-      this.users = this.allUsers.filter((user) => {
-        return (user.name.toLowerCase().indexOf(serVal.toLowerCase()) > -1) ||
-                (user.last_name.toLowerCase().indexOf(serVal.toLowerCase()) > -1);
+      this.items = this.allItems.filter((item) => {
+        return (item.main_text.toLowerCase().indexOf(serVal.toLowerCase()) > -1);
       });
 
-      console.log(this.users);
+      console.log(this.items);
     } else {
-      this.users = this.allUsers;
+      this.items = this.allItems;
     }
   }
 

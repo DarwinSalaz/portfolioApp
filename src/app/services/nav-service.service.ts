@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ServicesByCustomerResponse } from '../interfaces/interfaces';
+import { CashControl, ServicesByCustomerResponse } from '../interfaces/interfaces';
 
 @Injectable({
   providedIn: 'root'
@@ -7,6 +7,8 @@ import { ServicesByCustomerResponse } from '../interfaces/interfaces';
 export class NavServiceService {
 
   myParam: ServicesByCustomerResponse;
+
+  cashControlToClose: CashControl;
 
   constructor() { }
 }

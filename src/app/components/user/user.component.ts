@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from '../../interfaces/interfaces';
+import { ItemUserCustom } from '../../interfaces/interfaces';
 import { NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
@@ -10,21 +10,21 @@ import { Router } from '@angular/router';
 })
 export class UserComponent implements OnInit {
 
-  @Input() user: User = {};
+  @Input() item: ItemUserCustom = {};
   @Input() redirectTo = '';
-  icon = 'av-1.png';
 
   constructor(private navCtrl: NavController, public router: Router) { }
 
   ngOnInit() {
-    console.log(this.user.username);
+    console.log(this.item.username);
   }
 
   click() {
     //this.navCtrl.navigateForward('/menu', )
     //this.navCtrl.navigateRoot( '/menu', { animated: true } );
+    console.log('como fueee' + this.item.customer_id);
     this.router.navigate([this.redirectTo], {
-      queryParams: { username : this.user.username }
+      queryParams: { username : this.item.username, customer_id : this.item.customer_id }
     });
   }
 

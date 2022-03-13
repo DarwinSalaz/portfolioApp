@@ -1,0 +1,29 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>COBROS POR FECHA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form (ngSubmit)="sendDate( fRegistro )" #fRegistro="ngForm">
+    <ion-list>
+      <ion-item>
+        <ion-label stacked>Fecha</ion-label>
+        <ion-datetime style="text-align: right"
+          name="date"
+          display-timezone="utc"
+          [(ngModel)]="date"
+          required>
+        </ion-datetime>
+      </ion-item>
+    
+      <div padding>
+        <ion-button color="medium" type="submit" size="large" expand="block">Enviar</ion-button>
+      </div>
+    </ion-list>
+  </form>
+</ion-content>

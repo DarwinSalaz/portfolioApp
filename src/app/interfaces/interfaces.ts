@@ -3,6 +3,15 @@ export interface RespuestaCustomers {
     customers: Customer[];
 }
 
+export interface CustomerServiceSchedule {
+    customer_id?: number;
+    name?: string;
+    last_name?: string;
+    icon?: string;
+    fee_value?: string;
+    next_payment_date?: string;
+}
+
 export interface Customer {
     customer_id?: number;
     company_id?: number;
@@ -23,7 +32,8 @@ export interface Customer {
 }
 
 export interface WalletRequest {
-    wallet_ids: number[]
+    wallet_ids: number[];
+    date?: string;
 }
 
 export interface Company {
@@ -43,6 +53,15 @@ export interface User {
     password?: string;
     user_profile_id?: number;
     wallet_ids?: number[];
+    icon?: string;
+}
+
+export interface ItemUserCustom {
+    main_text?: string;
+    second_text?: string;
+    icon?: string;
+    username?: string;
+    customer_id?: number;
 }
 
 export interface Service {
@@ -85,6 +104,7 @@ export interface Product {
 }
 
 export interface CashControl {
+    cash_control_id?: number;
     full_name?: string;
     cash?: string;
     revenues?: string;
@@ -92,6 +112,20 @@ export interface CashControl {
     active?: boolean;
     period?: string;
     services_count?: number;
+    cash_number?: number;
+    commission?: string;
+    commission_number?: number;
+    down_payments?: string;
+    down_payments_number?: number;
+}
+
+export interface AccountClosureInfo {
+    cash_control_id?: number;
+    commission_str?: string;
+    commission?: number;
+    closure_value_received?: number;
+    closure_notes?: string;
+    expected_value?: string;
 }
 
 export interface Payment {
@@ -124,6 +158,7 @@ export interface Expense {
     value: number;
     expense_date: string;
     justification?: string;
+    wallet_id?: number;
 }
 
 export interface Wallet {

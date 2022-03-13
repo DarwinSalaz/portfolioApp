@@ -35,7 +35,7 @@ export class TransactionPage implements OnInit {
     total_value: 0,
     debt: 0,
     days_per_fee: 7,
-    quantity_of_fees: 10,
+    quantity_of_fees: 9,
     fee_value: 0,
     wallet_id: 1,
     has_products: false,
@@ -50,7 +50,7 @@ export class TransactionPage implements OnInit {
     discount: 0,
     down_payment: 0,
     days_per_fee: 7,
-    quantity_of_fees: 0,
+    quantity_of_fees: 9,
     fee_value: 0
   }
 
@@ -81,7 +81,7 @@ export class TransactionPage implements OnInit {
           this.customers.push( ...customers );
         });
 
-    this.productService.getProducts()
+    this.productService.getProducts(walletIds)
       .subscribe( resp => {
         console.log( resp );
         this.products.push( ...resp.products );

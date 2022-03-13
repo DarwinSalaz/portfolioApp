@@ -13,27 +13,33 @@ export class MenuPage implements OnInit {
 
   allComponentes: Componente[] = [
     {
-      icon: 'person-add',
-      name: 'Crear cliente',
-      redirectTo: '/newcustomer',
+      icon: 'cash',
+      name: 'Liquidación Usuarios',
+      redirectTo: '/users',
+      allowProfile: [1]
+    },
+    {
+      icon: 'wallet',
+      name: 'Control de caja diario',
+      redirectTo: '/cashcontrol-daily',
       allowProfile: [1, 2, 3]
     },
     {
-      icon: 'people',
-      name: 'Clientes',
-      redirectTo: '/customers/detail',
+      icon: 'wallet',
+      name: 'Control de caja',
+      redirectTo: '/cashcontrol',
+      allowProfile: [1, 2, 3]
+    },
+    {
+      icon: 'clock',
+      name: 'Cobros por Fecha',
+      redirectTo: '/transaction-by-date-form',
       allowProfile: [1, 2, 3]
     },
     {
       icon: 'card',
       name: 'Nueva venta',
       redirectTo: '/transaction',
-      allowProfile: [1, 2, 3]
-    },
-    {
-      icon: 'cash',
-      name: 'Control de caja',
-      redirectTo: '/cashcontrol',
       allowProfile: [1, 2, 3]
     },
     {
@@ -49,22 +55,28 @@ export class MenuPage implements OnInit {
       allowProfile: [1, 2, 3]
     },
     {
-      icon: 'clock',
-      name: 'Cobros por Fecha',
-      redirectTo: '/notfound',
+      icon: 'people',
+      name: 'Clientes',
+      redirectTo: '/customers/detail',
       allowProfile: [1, 2, 3]
     },
     {
-      icon: 'cash',
-      name: 'Usuarios',
-      redirectTo: '/users',
-      allowProfile: [1]
+      icon: 'person-add',
+      name: 'Crear cliente',
+      redirectTo: '/newcustomer',
+      allowProfile: [1, 2, 3]
     },
     {
       icon: 'person-add',
       name: 'Crear Usuario',
       redirectTo: '/new-user',
       allowProfile: [1]
+    },
+    {
+      icon: 'log-out',
+      name: 'Cerrar sesión',
+      redirectTo: '/log-out',
+      allowProfile: [1, 2, 3]
     }
   ];
 

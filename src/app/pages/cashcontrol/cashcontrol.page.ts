@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CashControl } from '../../interfaces/interfaces';
 import { CashcontrolService } from '../../services/cashcontrol.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { NavServiceService } from 'src/app/services/nav-service.service';
 
 @Component({
   selector: 'app-cashcontrol',
@@ -21,12 +22,17 @@ export class CashcontrolPage implements OnInit {
     expenses: '',
     active: false,
     period: '',
-    services_count: 0
+    services_count: 0,
+    commission: '',
+    down_payments: '',
+    down_payments_number: 0
   };
 
   constructor(
     private cashcontrolService: CashcontrolService,
-    public activatedRoute: ActivatedRoute
+    public activatedRoute: ActivatedRoute,
+    public router: Router,
+    public navService: NavServiceService
   ) {
     this.activatedRoute.queryParams.subscribe((res) => {
       console.log(res);
@@ -40,9 +46,7 @@ export class CashcontrolPage implements OnInit {
       }
 
       this.init();
-    });
-
-    
+    });    
   }
 
   async ngOnInit() {
@@ -58,6 +62,13 @@ export class CashcontrolPage implements OnInit {
         this.loading = false;
       }
     );
+  }
+
+  async click() {
+    this.navService.cashControlToClose = this.cashControl;
+    this.router.navigate(['/account-closure'], {
+      queryParams: { cash_control_id: this.cashControl.cash_control_id }
+    });
   }
 
 }

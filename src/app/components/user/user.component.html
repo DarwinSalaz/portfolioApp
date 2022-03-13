@@ -1,11 +1,11 @@
 <div class="user">
   <ion-item lines="none" (click)="click()">
     <ion-avatar slot="start">
-      <img src="/assets/avatars/{{ icon }}" alt="avatar">
+      <img src="/assets/avatars/{{ item.icon }}" alt="avatar">
     </ion-avatar>
     <ion-label>
-      <h3>{{ user.name }} {{ user.last_name}}</h3>
-      <h5>{{ user.email }}</h5>
+      <h3>{{ item.main_text }}</h3>
+      <h5>{{ item.second_text }}</h5>
     </ion-label>
   </ion-item>
 </div>

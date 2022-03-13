@@ -23,6 +23,21 @@
           <ion-select-option value="otros">Otros</ion-select-option>
         </ion-select>
       </ion-item>
+      <ion-item style="width: 100%">
+        <ion-label stacked>Cartera</ion-label>
+        <ionic-selectable style="width: 100%; align-content: center"
+          name="wallet"
+          [(ngModel)]="selectedWallet"
+          [items]="wallets"
+          itemValueField="wallet_id"
+          placeholder="Cartera"
+          itemTextField="name"
+          [canSearch]="true"
+          (onChange)="walletChange($event)"
+          required>
+
+        </ionic-selectable>
+      </ion-item>
       <ion-item>
         <ion-label stacked>Valor</ion-label>
         <br>

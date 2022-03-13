@@ -104,6 +104,9 @@ export class LoginPage implements OnInit {
           this.router.navigate(['/menu'], {
             queryParams: { user_profile_id: resp['user_profile_id'] }
           });
+          this.loading = false;
+          this.loginUser.username = '';
+          this.loginUser.password = '';
         } else {
           this.token = null;
           this.storage.clear();

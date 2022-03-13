@@ -3,16 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Routes, RouterModule } from '@angular/router';
 
-import { IonicSelectableModule } from 'ionic-selectable';
-
 import { IonicModule } from '@ionic/angular';
 
-import { NewExpensePage } from './new-expense.page';
+import { LogOutPage } from './log-out.page';
 
 const routes: Routes = [
   {
     path: '',
-    component: NewExpensePage
+    component: LogOutPage
   }
 ];
 
@@ -21,9 +19,8 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     IonicModule,
-    RouterModule.forChild(routes),
-    IonicSelectableModule
+    RouterModule.forChild(routes)
   ],
-  declarations: [NewExpensePage]
+  declarations: [LogOutPage]
 })
-export class NewExpensePageModule {}
+export class LogOutPageModule {}

@@ -61,6 +61,11 @@ export class RegisterPaymentPage implements OnInit {
       return;
     }
 
+    if ( this.registerPayment.value <= 0) {
+      this.uiService.InfoAlert('Valor de cuota no puede ser menor o igual a 0');
+      return;
+    }
+
     this.registerPayment.next_payment_date = this.registerPayment.next_payment_date.split('.')[0]
     const valido = await this.paymentService.registerPayment(this.registerPayment);
 

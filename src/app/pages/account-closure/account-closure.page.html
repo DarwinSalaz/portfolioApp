@@ -1,0 +1,63 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title text-capitalize>LIQUIDAR CUENTA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
+    <ion-list>
+      <ion-item>
+        <ion-label stacked>Ingresos</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="expected_value"
+          type="text" 
+          readonly=true
+          placeholder="Valor" 
+          [(ngModel)]="account.expected_value"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Comisiones</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="commission"
+          type="text" 
+          readonly=true
+          placeholder="Comisión" 
+          [(ngModel)]="account.commission_str"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+          <ion-label stacked>Valor Recibido</ion-label>
+          <ion-input style="text-align: right"
+            name="received_value"
+            type="number"
+            placeholder="Valor" 
+            [(ngModel)]="account.closure_value_received"
+            required>
+          </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Notas</ion-label>
+        <br>
+        <ion-textarea style="text-align: right"
+          name="notes"
+          type="text" 
+          placeholder="Notas" 
+          [(ngModel)]="account.closure_notes">
+        </ion-textarea>
+      </ion-item>
+    </ion-list>
+    <div padding>
+      <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+    </div>
+  </form>
+  </ion-content>

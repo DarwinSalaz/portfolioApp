@@ -22,7 +22,12 @@ const routes: Routes = [
   },
   { path: 'register-payment', loadChildren: './pages/transactions/register-payment/register-payment.module#RegisterPaymentPageModule' },
   { path: 'new-expense', loadChildren: './pages/expense/new-expense/new-expense.module#NewExpensePageModule' },
-  { path: 'new-user', loadChildren: './pages/user/new-user/new-user.module#NewUserPageModule' },  { path: 'users', loadChildren: './pages/user/users/users.module#UsersPageModule' }
+  { path: 'new-user', loadChildren: './pages/user/new-user/new-user.module#NewUserPageModule' },  { path: 'users', loadChildren: './pages/user/users/users.module#UsersPageModule' },
+  { path: 'account-closure', loadChildren: './pages/account-closure/account-closure.module#AccountClosurePageModule' },
+  { path: 'log-out', loadChildren: './pages/user/log-out/log-out.module#LogOutPageModule' },
+  { path: 'cashcontrol-daily', loadChildren: './pages/cashcontrol-daily/cashcontrol-daily.module#CashcontrolDailyPageModule' },
+  { path: 'transaction-by-date-form', loadChildren: './pages/transactions/transaction-by-date-form/transaction-by-date-form.module#TransactionByDateFormPageModule' },
+  { path: 'transaction-by-date', loadChildren: './pages/transactions/transaction-by-date/transaction-by-date.module#TransactionByDatePageModule' }
 
 ];
 

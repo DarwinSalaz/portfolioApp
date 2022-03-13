@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { CashControl } from '../interfaces/interfaces';
+import { AccountClosureInfo, CashControl } from '../interfaces/interfaces';
 import { environment } from '../../environments/environment';
 import { Storage } from '@ionic/storage';
 
@@ -31,5 +31,52 @@ export class CashcontrolService {
     };
 
     return this.http.get<CashControl>(`${ URL }/api/portfolio/cash_control/active${params}`, httpOptions);
+  }
+
+  async getDailyCashControl(username: string = null) {
+
+    const token = await this.storage.get('token');
+
+    let params = '';
+    if (username !== null) {
+      params = `?username=${username}`;
+      console.log('paramss:' + params)
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        Authorization: token
+      })
+    };
+
+    return this.http.get<CashControl>(`${ URL }/api/portfolio/cash_control/daily${params}`, httpOptions);
+  }
+
+  async accountClosure(account: AccountClosureInfo) {
+    const token = await this.storage.get('token');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        Authorization: token
+      })
+    };
+
+    console.log( account );
+
+    return new Promise( resolve => {
+      this.http.put(`${ URL }/api/portfolio/cash_control/closure`, account, httpOptions )
+      .subscribe( resp => {
+        console.log(resp);
+
+        if ( resp['ok'] === "true" ) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+
+      });
+    });
   }
 }

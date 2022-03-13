@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Service, ServicesByCustomerResponse } from '../interfaces/interfaces';
+import { Service, ServicesByCustomerResponse, WalletRequest, CustomerServiceSchedule } from '../interfaces/interfaces';
 import { Storage } from '@ionic/storage';
 
 const URL = environment.url;
@@ -50,6 +50,22 @@ export class TransactionService {
       })
     };
 
-    return this.http.get<ServicesByCustomerResponse[]>(`${ URL }/api/portfolio/services_by_customer`, httpOptions);
+    return this.http.get<ServicesByCustomerResponse[]>(`${ URL }/api/portfolio/service/services_by_customer`, httpOptions);
+  }
+
+  getServicesByDate(date: string, walletIds: number[] = []) {
+
+    const request: WalletRequest = {
+      wallet_ids: walletIds,
+      date: date
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+
+    return this.http.post<CustomerServiceSchedule[]>(`${ URL }/api/portfolio/service/services_schedule`, request, httpOptions);
   }
 }
