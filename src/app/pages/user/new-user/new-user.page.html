@@ -4,11 +4,21 @@
         <ion-back-button style="color: azure" defaultHref="/"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>CREAR USUARIO</ion-title>
+    <ion-title class="ion-text-capitalize">CREAR USUARIO</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content *ngIf="loading">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading">
   <ion-grid fixed>
     <ion-row>
       <ion-col>

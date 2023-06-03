@@ -4,7 +4,7 @@
         <ion-back-button defaultHref="/"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>COBROS POR FECHA</ion-title>
+    <ion-title class="ion-text-capitalize">COBROS POR FECHA</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -16,13 +16,17 @@
         <ion-datetime style="text-align: right"
           name="date"
           display-timezone="utc"
+          min="2021-01-01"
+          locale="es-AR"
           [(ngModel)]="date"
           required>
         </ion-datetime>
       </ion-item>
     
       <div padding>
-        <ion-button color="medium" type="submit" size="large" expand="block">Enviar</ion-button>
+        <ion-button color="medium" type="submit" size="medium" expand="block">Cobros Por Fecha</ion-button>
+        <ion-button color="medium" (click)="showExpiredServices()" size="medium" expand="block">Cuotas Vencidas</ion-button>
+        <ion-button color="medium" (click)="showAll()" size="medium" expand="block">Ver Todo</ion-button>
       </div>
     </ion-list>
   </form>

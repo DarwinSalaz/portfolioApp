@@ -12,6 +12,15 @@ export interface CustomerServiceSchedule {
     next_payment_date?: string;
 }
 
+export interface WalletReport {
+    wallet_name?: string;
+    services_count?: number;
+    cash?: string;
+    down_payments?: string;
+    commissions?: string;
+    expenses?: string;
+}
+
 export interface Customer {
     customer_id?: number;
     company_id?: number;
@@ -34,6 +43,7 @@ export interface Customer {
 export interface WalletRequest {
     wallet_ids: number[];
     date?: string;
+    expired_services?: boolean;
 }
 
 export interface Company {
@@ -44,6 +54,7 @@ export interface Company {
 }
 
 export interface User {
+    application_user_id?: number;
     company_id?: number;
     username?: string;
     name?: string;
@@ -54,6 +65,7 @@ export interface User {
     user_profile_id?: number;
     wallet_ids?: number[];
     icon?: string;
+    active?: boolean;
 }
 
 export interface ItemUserCustom {
@@ -62,6 +74,12 @@ export interface ItemUserCustom {
     icon?: string;
     username?: string;
     customer_id?: number;
+}
+
+export interface CancelServiceReq {
+    service_id?: number;
+    product_ids?: number[];
+    discount?: number;
 }
 
 export interface Service {
@@ -82,12 +100,15 @@ export interface Service {
     service_products: Product[];
     observations: string;
     next_payment_date: string;
+    initial_payment?: number;
+    direct_purchase?: boolean;
 }
 
 export interface ServiceProduct {
     product_id?: number;
     value?: number;
     quantity?: number;
+    name?: string;
 }
 
 export interface ResponseProducts {
@@ -101,6 +122,11 @@ export interface Product {
     name?: string;
     description?: string;
     value?: number;
+    cost?: number;
+    left_quantity?: number;
+    value_str?: string;
+    wallet_id?: number;
+    quantity?: number;
 }
 
 export interface CashControl {
@@ -117,6 +143,19 @@ export interface CashControl {
     commission_number?: number;
     down_payments?: string;
     down_payments_number?: number;
+    movements?: CashMovement[];
+}
+
+export interface CashMovement {
+    cash_movement_typ?: string;
+    movement_type?: string;
+    payment_id?: number;
+    value?: string;
+    commission?: string;
+    down_payments?: string;
+    created_at?: string;
+    service_id?: number;
+    description?: string;
 }
 
 export interface AccountClosureInfo {
@@ -149,7 +188,18 @@ export interface ServicesByCustomerResponse {
     wallet_id: number;
     customer_id: number;
     state: string;
+    observations?: string;
     created_at: string;
+    service_products: ServiceProduct[];
+    payments?: PaymentResumeDto[];
+    pending_value?: string;
+}
+
+export interface PaymentResumeDto {
+    payment_id: number;
+    value: string;
+    username?: string;
+    created_at?: string;
 }
 
 export interface Expense {
@@ -159,6 +209,13 @@ export interface Expense {
     expense_date: string;
     justification?: string;
     wallet_id?: number;
+}
+
+export interface ExpenseResume {
+    expense_type: string;
+    value: string;
+    expense_date: string;
+    justification?: string;
 }
 
 export interface Wallet {

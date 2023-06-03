@@ -46,10 +46,12 @@ export class UsersPage implements OnInit {
   }
 
   async siguientes( event? ) {
+    console.log( '[Users-page] init siguientes' );
 
     this.userService.getApplicationUsers()
       .subscribe( resp => {
-        //console.log( resp );
+        console.log( '[Users-page] response:' + resp );
+        
         this.users.push( ...resp );
         this.loading = false;
         this.users.forEach(u => u.icon = this.get_random_avatar());

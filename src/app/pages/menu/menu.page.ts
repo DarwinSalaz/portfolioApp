@@ -20,37 +20,43 @@ export class MenuPage implements OnInit {
     },
     {
       icon: 'wallet',
-      name: 'Control de caja diario',
+      name: 'Control Diario',
       redirectTo: '/cashcontrol-daily',
       allowProfile: [1, 2, 3]
     },
     {
       icon: 'wallet',
-      name: 'Control de caja',
+      name: 'Control De Caja',
       redirectTo: '/cashcontrol',
       allowProfile: [1, 2, 3]
     },
     {
       icon: 'clock',
-      name: 'Cobros por Fecha',
+      name: 'Cobros Por Fecha',
       redirectTo: '/transaction-by-date-form',
-      allowProfile: [1, 2, 3]
+      allowProfile: [1, 3]
     },
+    /*{
+      icon: 'card',
+      name: 'Nueva Venta',
+      redirectTo: '/transaction',
+      allowProfile: [1, 2, 3]
+    },*/
     {
       icon: 'card',
-      name: 'Nueva venta',
-      redirectTo: '/transaction',
+      name: 'Registrar Venta',
+      redirectTo: '/customers/new-service',
       allowProfile: [1, 2, 3]
     },
     {
       icon: 'cash',
-      name: 'Registrar abono',
+      name: 'Registrar Abono',
       redirectTo: '/customers/payments',
-      allowProfile: [1, 2, 3]
+      allowProfile: [1, 3]
     },
     {
       icon: 'grid',
-      name: 'Registrar gasto',
+      name: 'Registrar Gasto',
       redirectTo: '/new-expense',
       allowProfile: [1, 2, 3]
     },
@@ -62,7 +68,7 @@ export class MenuPage implements OnInit {
     },
     {
       icon: 'person-add',
-      name: 'Crear cliente',
+      name: 'Crear Cliente',
       redirectTo: '/newcustomer',
       allowProfile: [1, 2, 3]
     },
@@ -73,21 +79,36 @@ export class MenuPage implements OnInit {
       allowProfile: [1]
     },
     {
+      icon: 'list-box',
+      name: 'Inventario',
+      redirectTo: '/list-wallets',
+      allowProfile: [1]
+    },
+    {
+      icon: 'list-box',
+      name: 'Informe De Carteras',
+      redirectTo: '/portfolio-report',
+      allowProfile: [1]
+    },
+    {
       icon: 'log-out',
-      name: 'Cerrar sesión',
+      name: 'Cerrar Sesión',
       redirectTo: '/log-out',
       allowProfile: [1, 2, 3]
     }
   ];
 
   userProfileId: number = null;
+  username: string = null;
+  userProfile: string = null;
 
   constructor(public activatedRoute: ActivatedRoute, private storage: Storage ) {
+
+
     this.activatedRoute.queryParams.subscribe((res) => {
       this.start(parseInt(res.user_profile_id));
       console.log(res);
     });
-    
   }
 
   ngOnInit() {
@@ -98,8 +119,24 @@ export class MenuPage implements OnInit {
     if(userProfileId) { 
       this.userProfileId = userProfileId;
     } else {
-      this.userProfileId = await this.storage.get('user_profile_id');
+      this.storage.get('user_profile_id').then((val) => {
+        this.userProfileId = val;
+      })
     }
+    this.storage.get('username').then((val) => {
+      this.username = val.toUpperCase();
+    })
+    console.log("aquiiiii pai " + this.username)
+
+    switch(this.userProfileId) {
+      case 1: this.userProfile = "ADMINISTRADOR"; break;
+      case 2: this.userProfile = "VENDEDOR"; break;
+      case 3: this.userProfile = "COBRADOR"; break;
+      default: this.userProfile = "UNDEFINED";
+    }
+    console.log("aquiiiii pai " + this.userProfileId)
+    console.log("aquiiiii pai " + this.userProfile)
+
     this.componentes = this.allComponentes.filter((component) => {
       
       var result = component.allowProfile.includes(this.userProfileId);

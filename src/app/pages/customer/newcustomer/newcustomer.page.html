@@ -4,7 +4,7 @@
         <ion-back-button style="color: azure" defaultHref="/"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>INFO CLIENTE</ion-title>
+    <ion-title class="ion-text-capitalize">INFO CLIENTE</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -18,7 +18,7 @@
   </ion-slide>
 </ion-content>
 
-<ion-content padding>
+<ion-content *ngIf="!loading" padding>
   <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm" style="width: 100%" *ngIf="!loading">
     <ion-list style="width: 100%">
       <ion-item>
@@ -124,6 +124,7 @@
     </ion-list>
     <div padding>
         <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+        <ion-button color="medium" *ngIf="isUpdate" (click)="createService()" size="large" expand="block">Nuevo Servicio</ion-button>
         <ion-button color="medium" *ngIf="isUpdate" (click)="verCuentas()" size="large" expand="block">Ver cuentas</ion-button>
     </div>
   </form>

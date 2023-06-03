@@ -1,0 +1,59 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">CANCELAR SERVICIO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loading">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading">
+  <form (ngSubmit)="cancelService( fRegistro )" #fRegistro="ngForm">
+    <ion-item>
+      <ionic-selectable style="align-content: center"
+        name="product"
+        [(ngModel)]="productsSelected"
+        [items]="products"
+        itemValueField="product_id"
+        itemTextField="name"
+        [canSearch]="true"
+        [isMultiple]="true">
+
+      </ionic-selectable>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Saldo Actual</ion-label>
+      <ion-input style="text-align: right"
+        name="debt"
+        type="text" 
+        readonly=true
+        placeholder="Resta" 
+        [(ngModel)]="debt"
+        required>
+      </ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label stacked>Descuento</ion-label>
+      <ion-input style="text-align: right"
+        name="discount"
+        type="number" 
+        placeholder="Descuento" 
+        [(ngModel)]="discount">
+      </ion-input>
+    </ion-item>
+    <div>
+      <ion-button color="danger" type="submit" size="large" expand="block">Cancelar</ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -3,11 +3,14 @@ import { TransactionService } from '../../services/transaction.service';
 import { NavController, ToastController } from '@ionic/angular';
 import { UiServiceService } from '../../services/ui-service.service';
 import { NgForm, FormGroup, FormControl } from '@angular/forms';
-import { Service, Customer, Product } from '../../interfaces/interfaces';
+import { Service, Customer, Product, Wallet } from '../../interfaces/interfaces';
 import { CustomersService } from '../../services/customers.service';
 import { IonicSelectableComponent } from 'ionic-selectable';
 import { ProductService } from '../../services/product.service';
 import { Storage } from '@ionic/storage';
+import { WalletService } from 'src/app/services/wallet.service';
+import { NavServiceService } from 'src/app/services/nav-service.service';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-transaction',
@@ -16,15 +19,21 @@ import { Storage } from '@ionic/storage';
 })
 export class TransactionPage implements OnInit {
 
+  public minDate = moment().format();
+  public maxDate = moment().add(40, 'd').format();
+
   myGroup = new FormGroup({
     firstName: new FormControl()
   });
   customer: Customer = null;
-  product: Product = null;
+  productsSelected: Product[] = [];
+  wallet: Wallet = null;
 
   customers: Customer[] = [];
+  wallets: Wallet[] = [];
 
   products: Product[] = [];
+  allProducts: Product[] = [];
 
   loading: boolean = true;
 
@@ -40,10 +49,12 @@ export class TransactionPage implements OnInit {
     wallet_id: 1,
     has_products: false,
     customer_id: 1,
-    state: 'init',
+    state: 'created',
     service_products: [],
     observations: null,
-    next_payment_date: null
+    next_payment_date: null,
+    initial_payment: 0,
+    direct_purchase: false,
   };
 
   datosInput = {
@@ -51,7 +62,8 @@ export class TransactionPage implements OnInit {
     down_payment: 0,
     days_per_fee: 7,
     quantity_of_fees: 9,
-    fee_value: 0
+    fee_value: 0,
+    initial_payment: 0
   }
 
   constructor(private transactionService: TransactionService,
@@ -59,8 +71,10 @@ export class TransactionPage implements OnInit {
               private productService: ProductService,
               private navCtrl: NavController,
               private uiService: UiServiceService,
-              private toastCtrl: ToastController,
-              private storage: Storage) { 
+              private walletService: WalletService,
+              private storage: Storage,
+              private navService: NavServiceService
+              ) { 
                 
               }
 
@@ -70,8 +84,14 @@ export class TransactionPage implements OnInit {
 
   async init() {
 
+    console.log('esta es la fecha máxima' + this.maxDate)
+    
+    this.registerService = this.navService.newService;
+    this.productsSelected = this.navService.newService.service_products;
     const walletIds = await this.storage.get('wallet_ids');
-    console.log("aqui prroo " + walletIds)
+
+    console.log('estas son las carteras pro' + walletIds)
+
 
     this.customersService.getCustomers(true, -1, walletIds)
         .subscribe( resp => {
@@ -79,14 +99,32 @@ export class TransactionPage implements OnInit {
           const customers = resp.customers;
           customers.forEach((el) => { el.fullname = el.name + ' ' + el.last_name + ' - ' + el.identification_number; });
           this.customers.push( ...customers );
+          this.customer = this.customers.find(element => element.customer_id === this.registerService.customer_id)
         });
+
+    this.walletService.getWallets(walletIds)
+      .subscribe( resp => {
+        //console.log( resp );
+        this.wallets = resp;
+        console.log( this.wallets );
+        this.wallet = this.wallets.find(element => element.wallet_id === this.registerService.wallet_id)
+      });
 
     this.productService.getProducts(walletIds)
       .subscribe( resp => {
         console.log( resp );
-        this.products.push( ...resp.products );
+        //this.products.push( ...resp.products );
+        this.allProducts.push( ...resp.products );
         this.loading = false;
       });
+
+
+    if (this.productsSelected && this.productsSelected.length > 0) {
+      this.productChange(null)
+    }
+      
+      
+      console.log( 'este es el customer: ' +  this.customer);
   }
 
   async register(fRegistro: NgForm) {
@@ -97,8 +135,10 @@ export class TransactionPage implements OnInit {
     }
 
     this.registerService.next_payment_date = this.registerService.next_payment_date.split('.')[0]
+    this.loading = true;
     const valido = await this.transactionService.registerService(this.registerService);
 
+    this.loading = false;
     if ( valido ) {
       this.uiService.InfoAlert('Servicio finalizado');
       this.navCtrl.navigateRoot( '/menu', { animated: true } );
@@ -116,26 +156,53 @@ export class TransactionPage implements OnInit {
     this.registerService.customer_id = event.value.customer_id;
   }
 
+  walletChange(event: {
+    component: IonicSelectableComponent,
+    value: any
+  }) {
+    console.log('wallet:', event.value);
+    this.registerService.wallet_id = event.value.wallet_id;
+    this.productsSelected = []
+    this.products = this.allProducts.filter(product => product.wallet_id == this.registerService.wallet_id && product.left_quantity > 0)
+    this.registerService.service_value = 0
+    this.registerService.down_payment = 0
+    this.datosInput.down_payment = 0
+    this.registerService.initial_payment = 0
+    this.datosInput.initial_payment = 0
+    this.registerService.discount = 0
+    this.datosInput.discount = 0
+    this.recalculate( null );
+    this.registerService.service_products = []
+  }
+
   productChange(event: {
     component: IonicSelectableComponent,
     value: any
   }) {
-    console.log('product:', event.value);
-    const productsSelected: Product[] = event.value;
-    const totalValue = productsSelected.map(item => item.value).reduce((prev, next) => prev + next);
+    if (event !== null) {
+      console.log('product:', event.value);
+      this.productsSelected = event.value;
+    }  
+    const totalValue = this.productsSelected.map(item => item.value*item.quantity).reduce((prev, next) => prev + next);
     this.registerService.service_value = totalValue;
     this.registerService.down_payment = totalValue*0.1
     this.datosInput.down_payment = this.registerService.down_payment
+    this.registerService.initial_payment = 0
+    this.datosInput.initial_payment = 0
+    this.registerService.discount = 0
+    this.datosInput.discount = 0
     this.recalculate( null );
-    this.registerService.service_products = productsSelected;
+    this.registerService.service_products = this.productsSelected;
   }
 
   recalculate( event ) {
     this.registerService.total_value = this.registerService.service_value - this.registerService.discount;
-    //this.registerService.down_payment = this.registerService.total_value*0.1
-    //this.datosInput.down_payment = this.registerService.down_payment
-    this.registerService.debt = this.registerService.total_value - this.registerService.down_payment;
-    this.registerService.fee_value = this.registerService.debt / this.registerService.quantity_of_fees;
+    if (this.registerService.direct_purchase === false) {
+      this.registerService.down_payment = this.registerService.total_value*0.1
+      this.datosInput.down_payment = this.registerService.down_payment
+    }
+    this.registerService.debt = this.registerService.total_value - this.registerService.down_payment - this.registerService.initial_payment;
+    this.registerService.fee_value = Number((this.registerService.debt / this.registerService.quantity_of_fees).toFixed(0));
     this.datosInput.fee_value = this.registerService.fee_value
     console.log( this.registerService.discount );
   }
@@ -147,7 +214,7 @@ export class TransactionPage implements OnInit {
       case 'discount':
         this.datosInput.discount = null; break;
       case 'initial':
-        this.datosInput.down_payment = null; break;
+        this.datosInput.initial_payment = null; break;
       case 'days_per_fee':
         this.datosInput.days_per_fee = null; break;
       case 'quantity_of_fees':
@@ -158,11 +225,24 @@ export class TransactionPage implements OnInit {
     }
   }
 
+  changeDirectPurchase(event) {
+
+    if (this.registerService.direct_purchase === true) {
+      this.registerService.down_payment = 0;
+      this.datosInput.down_payment = 0;
+    } else {
+      this.registerService.down_payment = this.registerService.service_value*0.1
+      this.datosInput.down_payment = this.registerService.service_value*0.1
+    }
+
+    this.recalculate(null);
+  }
+
   focusOut(event) {
 
     switch(event.target.name) {
       case 'discount':
-        if(this.datosInput.discount == null || this.datosInput.discount === 0) {
+        if(this.datosInput.discount == null) {
           this.datosInput.discount = this.registerService.discount
         } else {
           this.registerService.discount = this.datosInput.discount
@@ -170,10 +250,10 @@ export class TransactionPage implements OnInit {
         }
         break;
       case 'initial':
-        if(this.datosInput.down_payment == null || this.datosInput.down_payment === 0) {
-          this.datosInput.down_payment = this.registerService.down_payment
+        if(this.datosInput.initial_payment == null) {
+          this.datosInput.initial_payment = this.registerService.initial_payment
         } else {
-          this.registerService.down_payment = this.datosInput.down_payment
+          this.registerService.initial_payment = this.datosInput.initial_payment
           this.recalculate(null)
         }
         break;

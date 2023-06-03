@@ -18,6 +18,8 @@ export class UserService {
 
   login( username: string, password: string ) {
 
+    console.log( '[login-service] login in ');
+
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json',
@@ -26,7 +28,20 @@ export class UserService {
       })
     };
 
+    const headers = {
+      'Content-Type':  'application/json',
+      username,
+      password
+    }
+
+    /*return HTTP.get(`${ URL }/api/portfolio/application_user/login`, {
+      id: '12',
+      message: 'test'
+    }, headers);*/
+
+
     return this.http.get(`${ URL }/api/portfolio/application_user/login`, httpOptions );
+    //return this.http2.get(`${ URL }/api/portfolio/application_user/login`, {},  headers);
   }
 
   register(user: User) {
@@ -70,6 +85,24 @@ export class UserService {
     });
   }
 
+  updateApplicationUser(user: User) {
+    console.log( user );
+
+    return new Promise( resolve => {
+      this.http.put(`${ URL }/api/portfolio/application_user/${user.application_user_id}`, user )
+        .subscribe( resp => {
+          console.log(resp);
+
+          if ( resp['application_user_id'] ) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+
+        });
+      });
+  }
+
   async saveToken( token: string ) {
 
     this.token = token;
@@ -78,6 +111,9 @@ export class UserService {
   }
 
   getApplicationUsers() {
+
+    console.log( '[Users-service] init getApplicationUsers' );
+
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type':  'application/json'
@@ -85,6 +121,37 @@ export class UserService {
     };
 
     return this.http.get<User[]>(`${ URL }/api/portfolio/application_user`, httpOptions);
+  }
+
+  async inactivate(username: string) {
+
+    const token = await this.storage.get('token');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        Authorization: token
+      })
+    };
+
+    return new Promise( resolve => {
+      this.http.put(`${ URL }/api/portfolio/application_user/inactivate?username=${username}`, {}, httpOptions)
+        .subscribe( 
+          resp => {
+            console.log(resp);
+
+            if ( resp['ok'] == true) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+        },
+        error => {
+          console.log("error consultando la inactivacion del usuario");
+          resolve(false);
+        }
+        )
+      });
   }
 
 }

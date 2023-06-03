@@ -1,10 +1,14 @@
 <ion-header no-border>
-  <ion-toolbar color="medium">
-      <ion-buttons slot="start">
+  <ion-toolbar color="medium" >
+      <ion-buttons slot="start" >
         <ion-icon slot="icon-only" name="flame"></ion-icon>
       </ion-buttons>
     
-      <ion-title>MENÚ</ion-title>
+      <ion-title style="width: 100%; ">
+        <b style="text-align: left;">MENÚ</b>
+        <!--b style="text-align: right;font-size: 60%;"> ( DARWIN - ADMINISTRADOR ) </b-->
+      </ion-title>
+      <ion-title style="position: absolute;width: 90%; font-size: 70%; text-align: right;"><b style="text-align: right;">{{ username }} - {{ userProfile }}</b></ion-title>
     </ion-toolbar>
 </ion-header>
 

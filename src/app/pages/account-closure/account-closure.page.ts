@@ -23,6 +23,8 @@ export class AccountClosurePage implements OnInit {
     services_count: 0
   };
 
+  loading: boolean = true;
+
   account: AccountClosureInfo = {
     cash_control_id: 0,
     commission: 0,
@@ -43,7 +45,8 @@ export class AccountClosurePage implements OnInit {
     this.account.expected_value = cashControl.cash;
     this.account.commission_str = cashControl.commission;
     this.account.commission = cashControl.commission_number;
-    this.account.closure_value_received = cashControl.cash_number - cashControl.commission_number - cashControl.down_payments_number;
+    this.account.closure_value_received = cashControl.cash_number;
+    this.loading =false;
   }
 
   async register(fRegistro: NgForm) {
@@ -52,8 +55,10 @@ export class AccountClosurePage implements OnInit {
       return;
     }
 
+    this.loading = true;
     const valido = await this.cashControlService.accountClosure(this.account);
 
+    this.loading =false;
     if ( valido ) {
       this.uiService.InfoAlert('Cierre de cuenta finalizado');
       this.navCtrl.navigateRoot( '/menu', { animated: true } );

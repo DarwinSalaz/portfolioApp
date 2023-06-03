@@ -4,7 +4,7 @@
         <ion-back-button defaultHref="/"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>CUADRE CAJA DIARIO</ion-title>
+    <ion-title class="ion-text-capitalize">CUADRE CAJA DIARIO</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -94,11 +94,14 @@
           <p style="color:#000000;font-size:17px;">
             <strong style="color: brown">Periodo:</strong>
             <strong  style="position: absolute; right: 10%; text-align: right">
-              {{cashControl.period}}
+              Hoy
             </strong>
           </p>
         </div>
       </ion-item>
     </ion-list>
   </ion-card>
+  <div padding>
+    <ion-button color="medium" (click)="showMovements()" size="medium" expand="block">TRANSACCIONES</ion-button>
+  </div>
 </ion-content>

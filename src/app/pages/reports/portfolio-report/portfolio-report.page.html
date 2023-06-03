@@ -1,0 +1,52 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">COBROS POR FECHA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <form (ngSubmit)="send( fRegistro )" #fRegistro="ngForm">
+    <ion-list>
+      <ion-item>
+        <ionic-selectable style="align-content: center"
+          name="wallet"
+          [(ngModel)]="wallet"
+          [items]="wallets"
+          itemValueField="wallet_id"
+          itemTextField="name"
+          required>
+        </ionic-selectable>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Fecha Inicial</ion-label>
+        <ion-datetime style="text-align: right"
+          name="date"
+          display-timezone="utc"
+          min="2021-01-01"
+          locale="es-AR"
+          [(ngModel)]="init_date"
+          required>
+        </ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Fecha Final</ion-label>
+        <ion-datetime style="text-align: right"
+          name="date"
+          display-timezone="utc"
+          min="2021-01-01"
+          locale="es-AR"
+          [(ngModel)]="end_date"
+          required>
+        </ion-datetime>
+      </ion-item>
+    
+      <div padding>
+        <ion-button color="medium" type="submit" size="medium" expand="block">CONSULTAR</ion-button>
+      </div>
+    </ion-list>
+  </form>
+</ion-content>

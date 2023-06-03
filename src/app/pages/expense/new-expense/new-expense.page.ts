@@ -6,6 +6,7 @@ import { ExpenseService } from 'src/app/services/expense.service';
 import { NavController } from '@ionic/angular';
 import { WalletService } from 'src/app/services/wallet.service';
 import { Storage } from '@ionic/storage';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-new-expense',
@@ -15,6 +16,7 @@ import { Storage } from '@ionic/storage';
 export class NewExpensePage implements OnInit {
 
   selectedWallet: Wallet = null;
+  showAllTypes = true
 
   wallets: Wallet[] = [];
 
@@ -26,12 +28,17 @@ export class NewExpensePage implements OnInit {
     wallet_id: 0
   }
 
+  loading: boolean = true;
+
+  expenseValue: number = 0
+
   constructor(
     private uiService: UiServiceService,
     private expenseService: ExpenseService,
     private navCtrl: NavController,
     private walletService: WalletService,
-    private storage: Storage
+    private storage: Storage,
+    public activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit() {
@@ -39,6 +46,12 @@ export class NewExpensePage implements OnInit {
   }
 
   async init() {
+
+    let userProfileId = await this.storage.get('user_profile_id');
+    if (userProfileId == 2) {
+      this.showAllTypes = false
+    }
+
     const walletIds = await this.storage.get('wallet_ids');
 
     this.walletService.getWallets(walletIds)
@@ -48,6 +61,7 @@ export class NewExpensePage implements OnInit {
           console.log( this.wallets );
           this.selectedWallet = this.wallets.filter(wallet => wallet.wallet_id == this.expense.wallet_id)[0];
           console.log( this.selectedWallet );
+          this.loading =false;
         });
   }
 
@@ -59,8 +73,11 @@ export class NewExpensePage implements OnInit {
     }
 
     this.expense.expense_date = this.expense.expense_date.split('.')[0]
+    this.expense.value = this.expenseValue
+    this.loading = true;
     const valido = await this.expenseService.registerExpense(this.expense);
 
+    this.loading =false;
     if ( valido ) {
       this.uiService.InfoAlert('Gasto registrado');
       this.navCtrl.navigateRoot( '/menu', { animated: true } );
@@ -73,6 +90,19 @@ export class NewExpensePage implements OnInit {
   walletChange(event) {
     console.log('eventtvalue:', event.value);
     this.expense.wallet_id = event.value.wallet_id;
+  }
+
+  focus(event) {
+    this.expense.value = this.expenseValue;
+    this.expenseValue = null;
+  }
+
+  focusOut(event) {
+    if (this.expenseValue == null || this.expenseValue === 0 ) {
+      this.expenseValue = this.expense.value;
+    } else {
+      this.expense.value = this.expenseValue;
+    }
   }
 
 }

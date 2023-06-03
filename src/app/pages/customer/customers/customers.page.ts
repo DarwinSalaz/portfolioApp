@@ -25,8 +25,22 @@ export class CustomersPage implements OnInit {
     this.activatedRoute.params.subscribe((res) => {
       console.log(res);
       const origin = res.origin;
-      this.title = origin === 'payments' ? 'SELECCIONAR CLIENTE' : 'CLIENTES';
-      this.redirectTo = origin === 'payments' ? '/transaction-by-user' : '/newcustomer';
+      switch(origin) {
+        case 'payments':
+          this.title = 'SELECCIONAR CLIENTE';
+          this.redirectTo = '/transaction-by-user';
+          break;
+        case 'detail':
+          this.title = 'CLIENTES';
+          this.redirectTo = '/newcustomer';
+          break;
+        case 'new-service':
+          this.title = 'SELECCIONAR CLIENTE';
+          this.redirectTo = '/select-products';
+          break;
+        default:
+          console.log('Invalid query param')
+      }
     });
   }
 
@@ -40,26 +54,30 @@ export class CustomersPage implements OnInit {
     this.customers = [];
   }
 
-  async siguientes( event?, pull: boolean = false ) {
+  siguientes( event?, pull: boolean = false ) {
+    console.log( '[Customers-page] init siguientes' );
 
-    const walletIds = await this.storage.get('wallet_ids');
+    this.storage.get('wallet_ids').then(walletIds => {
 
-    this.customersService.getCustomers( pull, 1000, walletIds )
-      .subscribe( resp => {
-        //console.log( resp );
-        this.customers.push( ...resp.customers );
-        this.loading = false;
+      console.log( '[Customers-page] init siguientes ' + JSON.stringify(walletIds) );
 
-        if ( event ) {
-          event.target.complete();
+      this.customersService.getCustomers( pull, 1000, walletIds )
+        .subscribe( resp => {
+          console.log( '[Customers-page] response:' + resp );
+          this.customers.push( ...resp.customers );
+          this.loading = false;
 
-          if (resp.customers.length === 0) {
-            //event.target.disabled = true;
-            //console.log( "vamos aqui" + this.enableInfiniteScroll );
-            this.enableInfiniteScroll = false;
+          if ( event ) {
+            event.target.complete();
+
+            if (resp.customers.length === 0) {
+              //event.target.disabled = true;
+              //console.log( "vamos aqui" + this.enableInfiniteScroll );
+              this.enableInfiniteScroll = false;
+            }
           }
-        }
-      });
+        });
+    })
       
   }
 

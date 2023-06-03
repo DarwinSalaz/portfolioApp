@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AccountClosureInfo, CashControl } from '../interfaces/interfaces';
+import { AccountClosureInfo, CashControl, CashMovement } from '../interfaces/interfaces';
 import { environment } from '../../environments/environment';
 import { Storage } from '@ionic/storage';
 
@@ -51,6 +51,22 @@ export class CashcontrolService {
     };
 
     return this.http.get<CashControl>(`${ URL }/api/portfolio/cash_control/daily${params}`, httpOptions);
+  }
+
+  getCashMovements(cashControlId: number) {
+
+    return this.http.get<CashMovement[]>(`${ URL }/api/portfolio/cash_control/movements/${cashControlId}`)
+  }
+
+  getCashControlsHistory(username: string) {
+
+    let params = '';
+    if (username !== null) {
+      params = `?username=${username}`;
+      console.log('paramss:' + params)
+    }
+
+    return this.http.get<CashControl[]>(`${ URL }/api/portfolio/cash_control/history${params}`)
   }
 
   async accountClosure(account: AccountClosureInfo) {

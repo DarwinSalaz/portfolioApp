@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CustomersService } from '../../../services/customers.service';
-import { Service, ServicesByCustomerResponse } from '../../../interfaces/interfaces';
+import { ServicesByCustomerResponse } from '../../../interfaces/interfaces';
 import { TransactionService } from '../../../services/transaction.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { NavServiceService } from '../../../services/nav-service.service';
@@ -29,12 +28,16 @@ export class TransactionByUserPage implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ionViewWillEnter() {
     this.getServicesByCustomer();
   }
 
   getServicesByCustomer() {
     this.transactionService.getServicesByCustomer(this.customerId.toString())
       .subscribe(resp => {
+        this.services = []
         console.log( resp );
         this.services.push( ...resp);
         this.loading = false;

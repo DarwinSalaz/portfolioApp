@@ -1,10 +1,12 @@
 <ion-header no-border>
   <ion-toolbar color="medium">
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/"></ion-back-button>
-      </ion-buttons>
-  
-    <ion-title text-capitalize>{{ title }}</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" >
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+
+    <ion-title class="ion-text-capitalize">{{ title }}</ion-title>
   </ion-toolbar>
 </ion-header>
 

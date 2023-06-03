@@ -1,0 +1,84 @@
+<ion-header no-border >
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">INFORME DE CARTERA</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loading" color="light">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading" id="page1" style="background-color:#FFFFFF;">
+  <ion-card class="ion-padding" id="cuadreCaja-card21">
+    <ion-list>
+      <ion-item-sliding >
+        <ion-item text-capitalize color="none" id="cuadreCaja-list-item3">
+          <ion-icon name="aperture" item-left></ion-icon>
+          <ion-label><strong style="color: rgb(30, 37, 68); font-size: 120%">&nbsp;&nbsp;{{wallet.wallet_name}}</strong></ion-label>
+        </ion-item>
+      </ion-item-sliding>
+      <br>
+      <br>
+      <ion-item id="cuadreCaja-list-item-container4">
+        <div id="cuadreCaja-markdown4" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown"># Servicios:</strong>
+            <strong style="width: 100%; position: absolute; right: 10%; text-align: right">
+                {{wallet.services_count}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container2">
+        <div id="cuadreCaja-markdown2" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown">Saldo:</strong>
+            <strong  style="width: 100%; position: absolute; right: 10%; text-align: right">
+              {{wallet.cash}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container3">
+        <div id="cuadreCaja-markdown3" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown">Señas:</strong>
+            <strong  style="width: 100%; position: absolute; right: 10%; text-align: right">
+                {{wallet.down_payments}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container3">
+        <div id="cuadreCaja-markdown3" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown">Comisiones:</strong>
+            <strong style="width: 100%; position: absolute; right: 10%; text-align: right">
+                {{wallet.commissions}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+      <ion-item id="cuadreCaja-list-item-container3">
+        <div id="cuadreCaja-markdown3" class="show-list-numbers-and-dots">
+          <p style="color:#000000;font-size:18px;">
+            <strong style="color: brown">Gastos:</strong>
+            <strong style="width: 100%; position: absolute; right: 10%; text-align: right">
+                {{wallet.expenses}}
+            </strong>
+          </p>
+        </div>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

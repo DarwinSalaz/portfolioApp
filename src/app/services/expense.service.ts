@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Expense } from '../interfaces/interfaces';
+import { Expense, ExpenseResume } from '../interfaces/interfaces';
 import { Storage } from '@ionic/storage';
 
 const URL = environment.url;
@@ -41,5 +41,10 @@ export class ExpenseService {
 
       });
     });
+  }
+
+  getExpensesByUser(cashControlId: number) {
+    
+    return this.http.get<ExpenseResume[]>(`${ URL }/api/portfolio/expenses-by-control/${cashControlId}`);
   }
 }

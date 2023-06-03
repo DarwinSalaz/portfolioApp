@@ -1,0 +1,52 @@
+page-cart {
+
+    ion-header.header.header-md ion-navbar.toolbar.toolbar-md div {
+        background: purple !important;
+        color: white !important;    
+    } 
+    page-cart .item-md-light, page-cart .item-divider-md-light {
+        color: #000;
+        background-color: #fff !important;
+        border-top: 2px solid #f53d3d;
+        border-radius: 1px;
+        border-bottom: 1px solid #333 !important;
+        padding: 8px 15px !important;
+    }
+    .item-md-light, .item-divider-md-light {
+        background-color: #ffffff !important;
+        border-top: 3px solid gold;
+        border-radius: 1px;
+        border-bottom: 1px solid #333 !important;
+        padding: 8px 15px !important;    
+    }    
+    .label-md {
+        margin: 0px 8px 0px 0 !important;
+    } 
+    button.disable-hover.button.button-md.button-outline.button-outline-md.button-small.button-small-md.button-outline-md-danger {
+        margin-top: 8px;
+    }    
+    .input-wrapper {
+        text-align: right;
+    }    
+    ion-item.compact.item.item-block.item-md ion-col.col {
+        padding: 0 !important;
+    }    
+     ion-card.card-discreption {
+        border-top: 1px dashed black;
+        border-bottom: 1px dashed black;
+        border-radius: 8px;
+        border-left: none;
+        border-right: none;
+    }   
+    .button-outline-md-danger {
+        border-color: gold !important;
+        color: gold !important;
+    }    
+    .button-clear-md-danger {
+        color: gold !important;
+    }    
+    .button-md-danger {
+        color: #fff;
+        background-color: purple !important;
+    }
+    }

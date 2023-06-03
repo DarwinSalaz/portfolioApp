@@ -1,18 +1,28 @@
 <ion-header no-border>
   <ion-toolbar color="medium">
       <ion-buttons slot="start">
-        <ion-back-button defaultHref="/"></ion-back-button>
+        <ion-back-button defaultHref="/menu"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>REGISTRAR PAGO</ion-title>
+    <ion-title class="ion-text-capitalize">REGISTRAR PAGO</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
+<ion-content *ngIf="loading" color="light">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading" padding>
   <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
     <ion-list>
       <ion-item>
-        <ion-label stacked>Valor</ion-label>
+        <ion-label stacked>Valor Total</ion-label>
         <br>
         <ion-input style="text-align: right"
           name="value"
@@ -84,27 +94,34 @@
         </ion-input>
       </ion-item>
       <ion-item>
-          <ion-label stacked>Pago cuota</ion-label>
+          <b><ion-label stacked>Pago cuota</ion-label></b>
           <ion-input style="text-align: right"
             name="payment_value"
             type="number"
             placeholder="Abono" 
-            [(ngModel)]="registerPayment.value"
+            [(ngModel)]="registerPaymentInput.value"
+            (ionFocus)="focus($event)"
+            (ionBlur)="focusOut($event)"
             required>
           </ion-input>
         </ion-item>
         <ion-item>
-          <ion-label stacked>Próx Pago</ion-label>
+          <b><ion-label stacked>Próx Pago</ion-label></b>
           <ion-datetime style="text-align: right"
             name="next_payment_date"
             display-timezone="utc"
+            [min]="minDate" 
+            [max]="maxDate"
             [(ngModel)]="registerPayment.next_payment_date"
             required>
           </ion-datetime>
         </ion-item>
     </ion-list>
-    <div padding>
-      <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+    <div>
+      <ion-button color="medium" *ngIf="showAbonarButton" type="submit" size="large" expand="block">Abonar</ion-button>
+      <ion-button color="medium" (click)="showDetail()" size="large" expand="block">Ver Detalle</ion-button>
+      <ion-button color="medium" (click)="showPayments()" size="large" expand="block">Historial Abonos</ion-button>
+      <ion-button color="danger" *ngIf="showCancelButton" (click)="cancelService()" size="large" expand="block">Cancelar Cuenta</ion-button>
     </div>
   </form>
   </ion-content>

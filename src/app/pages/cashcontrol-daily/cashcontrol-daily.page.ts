@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CashControl } from '../../interfaces/interfaces';
 import { CashcontrolService } from '../../services/cashcontrol.service';
-import { ActivatedRoute } from '@angular/router';
-
+import { ActivatedRoute, Router } from '@angular/router';
+import { NavServiceService } from '../../services/nav-service.service';
 
 @Component({
   selector: 'app-cashcontrol-daily',
@@ -22,12 +22,15 @@ export class CashcontrolDailyPage implements OnInit {
     active: false,
     period: '',
     services_count: 0,
-    commission: ''
+    commission: '',
+    movements: []
   };
 
   constructor(
     private cashcontrolService: CashcontrolService,
-    public activatedRoute: ActivatedRoute
+    public activatedRoute: ActivatedRoute,
+    public router: Router,
+    public navService: NavServiceService
   ) { 
     this.activatedRoute.queryParams.subscribe((res) => {
       console.log(res);
@@ -49,11 +52,17 @@ export class CashcontrolDailyPage implements OnInit {
     const response = await this.cashcontrolService.getDailyCashControl(this.username);
     response.subscribe(
       resp => {
-        console.log( resp );
+        console.log( 'esta es la respuesta del daily: ' + resp.movements );
         this.cashControl = resp;
         this.loading = false;
       }
     );
+  }
+
+  async showMovements() {
+    this.navService.listTransactionsCC = this.cashControl.movements;
+    console.log('Aqui guardamos la lista de transacciones' + this.cashControl.movements);
+    this.router.navigate(['/cash-movements']);
   }
 
 }

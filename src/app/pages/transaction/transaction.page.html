@@ -4,7 +4,7 @@
         <ion-back-button defaultHref="/"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>NUEVO SERVICIO</ion-title>
+    <ion-title class="ion-text-capitalize">NUEVO SERVICIO</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -29,22 +29,48 @@
           itemValueField="customer_id"
           itemTextField="fullname"
           [canSearch]="true"
-          (onChange)="customerChange($event)">
+          (onChange)="customerChange($event)"
+          disabled>
+
+        </ionic-selectable>
+      </ion-item>
+      <ion-item>
+        <ionic-selectable style="align-content: center"
+          name="wallet"
+          [(ngModel)]="wallet"
+          [items]="wallets"
+          itemValueField="wallet_id"
+          itemTextField="name"
+          (onChange)="walletChange($event)"
+          disabled>
 
         </ionic-selectable>
       </ion-item>
       <ion-item>
         <ionic-selectable style="align-content: center"
           name="product"
-          [(ngModel)]="product"
+          [(ngModel)]="productsSelected"
           [items]="products"
           itemValueField="product_id"
           itemTextField="name"
           [canSearch]="true"
           [isMultiple]="true"
-          (onChange)="productChange($event)">
+          (onChange)="productChange($event)"
+          disabled>
 
         </ionic-selectable>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Compra Contado</ion-label>
+        <br>
+        <ion-toggle 
+          [checked]="false"
+          name="direct_purchase"
+          [(ngModel)]="registerService.direct_purchase"
+          (ionChange)="changeDirectPurchase($event)"
+          >
+          Checked Toggle
+        </ion-toggle>
       </ion-item>
       <ion-item>
         <ion-label stacked>Valor</ion-label>
@@ -59,7 +85,22 @@
         </ion-input>
       </ion-item>
       <ion-item>
-        <ion-label stacked>Descuento</ion-label>
+        <ion-label stacked>Seña</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="senia"
+          type="number"
+          placeholder="Seña" 
+          [(ngModel)]="datosInput.down_payment"
+          (ngModelChange)="recalculate($event)"
+          (ionFocus)="focus($event)"
+          (ionBlur)="focusOut($event)"
+          readonly=true
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked style="color: rgb(131, 33, 33);font-weight: bold;">Descuento*</ion-label>
         <br>
         <ion-input
           style="text-align: right"
@@ -76,13 +117,13 @@
         </ion-input>
       </ion-item>
       <ion-item>
-        <ion-label stacked>Cuota Inicial</ion-label>
+        <ion-label stacked style="color: rgb(131, 33, 33);font-weight: bold;">Abono*</ion-label>
         <br>
         <ion-input style="text-align: right"
           name="initial"
           type="number"
           placeholder="Cuota Inicial" 
-          [(ngModel)]="datosInput.down_payment"
+          [(ngModel)]="datosInput.initial_payment"
           (ngModelChange)="recalculate($event)"
           (ionFocus)="focus($event)"
           (ionBlur)="focusOut($event)"
@@ -90,7 +131,7 @@
         </ion-input>
       </ion-item>
       <ion-item>
-        <ion-label stacked>Días por cuota</ion-label>
+        <ion-label stacked style="color: rgb(131, 33, 33);font-weight: bold;">Días por cuota*</ion-label>
         <br>
         <ion-input style="text-align: right"
           name="days_per_fee"
@@ -103,7 +144,7 @@
         </ion-input>
       </ion-item>
       <ion-item>
-        <ion-label stacked>Cant. Cuotas</ion-label>
+        <ion-label stacked style="color: rgb(131, 33, 33);font-weight: bold;">Cant. Cuotas*</ion-label>
         <br>
         <ion-input style="text-align: right"
           name="quantity_of_fees"
@@ -117,7 +158,7 @@
         </ion-input>
       </ion-item>
       <ion-item>
-        <ion-label stacked>Valor Cuotas</ion-label>
+        <ion-label stacked style="color: rgb(131, 33, 33);font-weight: bold;">Valor Cuotas*</ion-label>
         <br>
         <ion-input style="text-align: right"
           name="fee_value"
@@ -153,10 +194,12 @@
         </ion-input>
       </ion-item>
       <ion-item>
-        <ion-label stacked>Próx Pago</ion-label>
-        <ion-datetime style="text-align: right"
+        <ion-label stacked style="color: rgb(131, 33, 33);font-weight: bold;">Próx Pago*</ion-label>
+        <ion-datetime stByle="text-align: right"
           name="next_payment_date"
           display-timezone="utc"
+          [min]="minDate" 
+          [max]="maxDate"
           [(ngModel)]="registerService.next_payment_date"
           required>
         </ion-datetime>

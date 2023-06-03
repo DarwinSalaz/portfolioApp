@@ -32,7 +32,7 @@ export class PaymentService {
       .subscribe( resp => {
         console.log(resp);
 
-        if ( resp['payment_id'] ) {
+        if ( resp['payment_id'] >= 0) {
           resolve(true);
         } else {
           resolve(false);
@@ -40,6 +40,39 @@ export class PaymentService {
 
       });
     });
+  }
+
+
+
+  async cancelPayment(payment_id: number) {
+
+    const token = await this.storage.get('token');
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        Authorization: token
+      })
+    };
+
+    return new Promise( (resolve, reject) => {
+      this.http.put(`${ URL }/api/portfolio/payment/cancel?payment_id=${payment_id}`, {}, httpOptions)
+        .subscribe( 
+          resp => {
+            console.log(resp);
+
+            if ( resp['ok'] == true) {
+              resolve(true);
+            } else {
+              reject(false);
+            }
+        },
+        error => {
+          console.log("error cancelando el pago");
+          reject(false);
+        }
+        )
+      });
   }
 
 }

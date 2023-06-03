@@ -1,0 +1,22 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/menu"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">HISTORIAL ABONOS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item-sliding *ngFor="let p of payments">
+      <ion-item (click)="click(p)">
+        <ion-label>
+          <h2><b>{{ p.value }}</b></h2>
+          <h3 style="text-align: right;">Fecha: {{ p.created_at }} &nbsp;-&nbsp; Usuario: {{ p.username }} </h3>
+        </ion-label>
+      </ion-item>
+    </ion-item-sliding>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,93 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button style="color: azure" defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">INFO PRODUCTO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loading" color="light">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading" padding>
+  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm" style="width: 100%">
+    <ion-list style="width: 100%">
+      <ion-item>
+        <ion-label stacked><b>Producto</b></ion-label>
+        <ion-label stacked></ion-label>
+        <br>
+        <ion-input 
+          style="text-align: right"
+          name="name"
+          type="text" 
+          placeholder="Nombre" 
+          [(ngModel)]="product.name"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked><b>Descripción</b></ion-label>
+        <ion-label stacked></ion-label>
+        <br>
+        <ion-input
+          style="text-align: right"
+          name="description"
+          type="text" 
+          placeholder="Descripción" 
+          [(ngModel)]="product.description">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked><b>Valor</b></ion-label>
+        <ion-label stacked></ion-label>
+        <br>
+        <ion-input 
+          style="text-align: right"
+          name="value"
+          type="number" 
+          placeholder="value" 
+          [(ngModel)]="product.value"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked><b>Costo</b></ion-label>
+        <ion-label stacked></ion-label>
+        <br>
+        <ion-input
+          style="text-align: right"
+          name="cost"
+          type="number" 
+          placeholder="Costo" 
+          [(ngModel)]="product.cost">
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked><b>Cantidad</b></ion-label>
+        <ion-label stacked></ion-label>
+        <br>
+        <ion-input 
+          style="text-align: right"
+          name="left_quantity"
+          type="number" 
+          placeholder="Cant Restante" 
+          [(ngModel)]="product.left_quantity"
+          required>
+        </ion-input>
+      </ion-item>
+    </ion-list>
+
+    <div padding>
+      <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+    </div>
+  </form>
+</ion-content>

@@ -1,10 +1,10 @@
 <ion-header no-border class="head">
   <ion-toolbar color="medium">
       <ion-buttons slot="start">
-        <ion-back-button defaultHref="/"></ion-back-button>
+        <ion-back-button defaultHref="/menu"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>SERVICIOS CLIENTE</ion-title>
+    <ion-title class="ion-text-capitalize">SERVICIOS CLIENTE</ion-title>
   </ion-toolbar>
 </ion-header>
 
@@ -39,8 +39,8 @@
                       <col style="width: 41%">
                     </colgroup>
                     <tr>
-                      <td class="tg-wkff">ID: {{ service.service_id }}</td>
-                      <td class="tg-lm6i">Fecha: {{ service.created_at }}</td>
+                      <td class="tg-wkff">{{ service.service_id }}</td>
+                      <td class="tg-lm6i">FECHA: {{ service.created_at }}</td>
                       <td class="tg-j506">TOTAL: {{ service.total_value }}</td>
                     </tr>
                     <tr>

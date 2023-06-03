@@ -16,6 +16,7 @@ export class CustomersService {
 
   getCustomers(pull: boolean = false, size: number = -1, walletIds: number[] = []) {
     console.log("aqui prroo 22 " + walletIds)
+    console.log( '[Customers-service] init getApplicationUsers' );
 
     const request: WalletRequest = {
       wallet_ids: walletIds

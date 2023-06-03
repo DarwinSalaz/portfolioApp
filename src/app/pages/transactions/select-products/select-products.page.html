@@ -1,0 +1,61 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">PRODUCTOS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loading" color="light">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading" id="page1" style="background-color:#FFFFFF;">
+    <ion-list>
+      <ion-item *ngFor="let p of allProducts">
+          <div >
+            <p style="color:#000000;font-size:103%;width: 100%;">
+              <strong style="color: rgb(84, 102, 139); width: 10%;">{{ p.name }}</strong><strong style="font-size: 70%; color: brown;">&nbsp;[{{ p.value_str }}]</strong>
+              <strong style="width: 100%; position: absolute; right: 1%; text-align: right">
+                  <!--button ion-button icon-only clear color="dark" (click)="changeQty(item, i, -1)"-->
+                  <ion-button fill="clear" (click)="changeQty(p, -1)">
+                    <ion-icon name="remove-circle" color="danger" slot="icon-only"></ion-icon>
+                  </ion-button>
+                  <!--/button-->
+                  <span>{{ p.quantity }}</span>
+                  <!--button class="add-btn" clear (click)="incrementQty()"><ion-icon name="add" ></ion-icon></button-->
+                  <ion-button fill="clear" (click)="changeQty(p, 1)">
+                    <ion-icon name="add-circle" color="success" slot="icon-only"></ion-icon>
+                  </ion-button>
+              </strong>
+            </p>
+          </div>
+
+        <!--ion-item>
+          <div>
+            <ion-label>{{ p.name }} </ion-label><h3 style="font-size: 70%; color: brown;">&nbsp;[{{ p.value_str }}]</h3>
+          </div>
+          <div>
+            <ion-icon name="remove-circle" color="danger" (click)="changeQty(item, i, -1)" item-start></ion-icon>
+            &nbsp;
+            <span>1</span>
+            &nbsp;
+            <ion-icon name="add-circle" color="success" (click)="changeQty(item, i, -1)"></ion-icon>
+          </div>
+        </ion-item-->
+      </ion-item>
+    </ion-list>
+    <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+      <ion-fab-button color="medium" (click)="next()">
+        <ion-icon name="arrow-round-forward"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+</ion-content>

@@ -27,7 +27,19 @@ const routes: Routes = [
   { path: 'log-out', loadChildren: './pages/user/log-out/log-out.module#LogOutPageModule' },
   { path: 'cashcontrol-daily', loadChildren: './pages/cashcontrol-daily/cashcontrol-daily.module#CashcontrolDailyPageModule' },
   { path: 'transaction-by-date-form', loadChildren: './pages/transactions/transaction-by-date-form/transaction-by-date-form.module#TransactionByDateFormPageModule' },
-  { path: 'transaction-by-date', loadChildren: './pages/transactions/transaction-by-date/transaction-by-date.module#TransactionByDatePageModule' }
+  { path: 'transaction-by-date', loadChildren: './pages/transactions/transaction-by-date/transaction-by-date.module#TransactionByDatePageModule' },
+  { path: 'list-wallets', loadChildren: './pages/products/list-wallets/list-wallets.module#ListWalletsPageModule' },
+  { path: 'list-products', loadChildren: './pages/products/list-products/list-products.module#ListProductsPageModule' },
+  { path: 'product-detail', loadChildren: './pages/products/product-detail/product-detail.module#ProductDetailPageModule' },
+  { path: 'payments-service', loadChildren: './pages/transactions/payments-service/payments-service.module#PaymentsServicePageModule' },
+  { path: 'show-expenses', loadChildren: './pages/cashcontrols/show-expenses/show-expenses.module#ShowExpensesPageModule' },
+  { path: 'cancel-service', loadChildren: './pages/transactions/cancel-service/cancel-service.module#CancelServicePageModule' },
+  { path: 'cash-movements', loadChildren: './pages/cashcontrols/cash-movements/cash-movements.module#CashMovementsPageModule' },
+  { path: 'cash-control-history', loadChildren: './pages/cashcontrols/cash-control-history/cash-control-history.module#CashControlHistoryPageModule' },
+  { path: 'portfolio-report', loadChildren: './pages/reports/portfolio-report/portfolio-report.module#PortfolioReportPageModule' },
+  { path: 'portfolio-report-wallet', loadChildren: './pages/reports/portfolio-report-wallet/portfolio-report-wallet.module#PortfolioReportWalletPageModule' },
+  { path: 'select-products', loadChildren: './pages/transactions/select-products/select-products.module#SelectProductsPageModule' },
+  { path: 'payment-details', loadChildren: './pages/transactions/payment-details/payment-details.module#PaymentDetailsPageModule' }
 
 ];
 

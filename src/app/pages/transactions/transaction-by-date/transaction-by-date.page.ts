@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TransactionService } from '../../../services/transaction.service';
 import { Storage } from '@ionic/storage';
 import { ItemUserCustom, CustomerServiceSchedule } from '../../../interfaces/interfaces';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-transaction-by-date',
@@ -13,34 +14,50 @@ export class TransactionByDatePage implements OnInit {
 
   title = 'SELECCIONAR CLIENTE';
   date: string;
+  expiredServices: boolean = false;
   items: ItemUserCustom[] = [];
   customerServices: CustomerServiceSchedule[] = [];
   loading: boolean = true;
   enableInfiniteScroll = true;
   redirectTo = '/newcustomer';
+  userProfileId: number;
 
   constructor(
     public activatedRoute: ActivatedRoute,
     private transactionService: TransactionService,
-    private storage: Storage
+    private storage: Storage,
+    private navCtrl: NavController
   ) {
     
   }
 
   ngOnInit() {
+    
+  }
+
+  ionViewWillEnter() {
+    this.customerServices = []
     this.siguientes(null);
   }
 
   async siguientes( event? ) {
+
+    this.date = await this.storage.get('date_to_find');
+    const walletIds = await this.storage.get('wallet_ids');
+    this.userProfileId = await this.storage.get('user_profile_id');
     
     this.activatedRoute.queryParams.subscribe((res) => {
-      console.log(res);
-      this.date = res.date;
+      if (!this.date) {
+        this.date = res.date;
+        this.storage.set('date_to_find', this.date);
+      }
+
+      if (res.expired_services) {
+        this.expiredServices = res.expired_services
+      }
     });
 
-    const walletIds = await this.storage.get('wallet_ids');
-
-    this.transactionService.getServicesByDate(this.date, walletIds)
+    this.transactionService.getServicesByDate(this.date, walletIds, this.expiredServices)
       .subscribe(resp => {
         console.log( resp );
         this.customerServices.push( ...resp);
@@ -76,6 +93,11 @@ export class TransactionByDatePage implements OnInit {
     this.enableInfiniteScroll = true;
     this.customerServices = [];
     this.items = [];
+  }
+
+  async goBack() {
+    await this.storage.set('date_to_find', null);
+    this.navCtrl.navigateBack("/transaction-by-date-form");
   }
 
 }

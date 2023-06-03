@@ -4,23 +4,33 @@
         <ion-back-button style="color: azure" defaultHref="/"></ion-back-button>
       </ion-buttons>
   
-    <ion-title text-capitalize>INFO GASTO</ion-title>
+    <ion-title class="ion-text-capitalize">INFO GASTO</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content padding >
+<ion-content *ngIf="loading">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading" padding >
   <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
     <ion-list style="width: 100%">
       <ion-item style="width: 100%">
         <ion-label stacked>Tipo Gasto</ion-label>
         <br>
         <ion-select placeholder="Tipo de Gasto" name="expense_type" [(ngModel)]="expense.expense_type" style="width: 100%; align-content: center" required>
-          <ion-select-option value="almuerzo">Almuerzo</ion-select-option>
-          <ion-select-option value="gasolina">Gasolina</ion-select-option>
-          <ion-select-option value="alquiler">Alquiler</ion-select-option>
-          <ion-select-option value="repuestos moto">Repuestos moto</ion-select-option>
-          <ion-select-option value="reparacion moto">Reparacion moto</ion-select-option>
-          <ion-select-option value="otros">Otros</ion-select-option>
+          <ion-select-option *ngIf="showAllTypes" value="Almuerzo">Almuerzo</ion-select-option>
+          <ion-select-option *ngIf="showAllTypes" value="Gasolina">Gasolina</ion-select-option>
+          <ion-select-option value="Alquiler">Alquiler</ion-select-option>
+          <ion-select-option value="Repuestos moto">Repuestos moto</ion-select-option>
+          <ion-select-option value="Reparacion moto">Reparacion moto</ion-select-option>
+          <ion-select-option value="Otros">Otros</ion-select-option>
         </ion-select>
       </ion-item>
       <ion-item style="width: 100%">
@@ -44,8 +54,10 @@
         <ion-input style="text-align: right"
           name="value"
           type="number"
-          [(ngModel)]="expense.value"
+          [(ngModel)]="expenseValue"
           placeholder="Valor" 
+          (ionFocus)="focus($event)"
+          (ionBlur)="focusOut($event)"
           required>
         </ion-input>
       </ion-item>

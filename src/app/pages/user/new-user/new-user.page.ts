@@ -6,6 +6,7 @@ import { UiServiceService } from 'src/app/services/ui-service.service';
 import { NgForm } from '@angular/forms';
 import { WalletService } from 'src/app/services/wallet.service';
 import { IonicSelectableComponent } from 'ionic-selectable';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-new-user',
@@ -17,6 +18,12 @@ export class NewUserPage implements OnInit {
   wallets: Wallet[] = [];
 
   selectedWallet: Wallet = null;
+
+  loading: boolean = true;
+
+  isUpdate: boolean = false;
+
+  applicationUserId: number;
 
   avatars = [
     {
@@ -72,12 +79,29 @@ export class NewUserPage implements OnInit {
   constructor(private userService: UserService,
               private navCtrl: NavController,
               private uiService: UiServiceService,
-              private walletService: WalletService) {
+              private walletService: WalletService,
+              public activatedRoute: ActivatedRoute) {
+
                 this.walletService.getWallets()
                   .subscribe( resp => {
                     console.log( resp );
                     this.wallets.push( ...resp );
+                    this.loading = false;
                   });
+
+                  this.activatedRoute.queryParams.subscribe((res) => {
+                    console.log(res);
+                    
+                    if (res.application_user_id) {
+                      this.applicationUserId = res.application_user_id;
+                      this.isUpdate = true;
+                      this.getCustomer()
+                    } else {
+                      this.isUpdate = false;
+                      this.loading =false;
+                    }
+                  });
+
               }
 
   ngOnInit() {
@@ -95,15 +119,24 @@ export class NewUserPage implements OnInit {
       return;
     }
 
-    const valido = await this.userService.registerUser(this.registerUser);
+    this.loading = true;
+    var valido;
 
+    if(!this.isUpdate) {
+      valido = await this.userService.registerUser(this.registerUser);
+    } else {
+      valido = await this.userService.updateApplicationUser(this.registerUser);
+    }
+
+
+    this.loading = false;
     if ( valido ) {
       // navegar al tabs
       this.uiService.InfoAlert('Registro completo!');
       this.navCtrl.navigateRoot( '/menu', { animated: true } );
     } else {
       // mostrar alerta de usuario y contraseña no correctas
-      this.uiService.InfoAlert('Usuario o correo ya existe');
+      this.uiService.InfoAlert('Error al registrar el usuario');
     }
   }
 

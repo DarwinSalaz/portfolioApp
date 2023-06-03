@@ -72,6 +72,7 @@ export class LoginPage implements OnInit {
     password: '',
     user_profile_id: 2,
     wallet_ids: null,
+    active: false
   };
 
   constructor(private userService: UserService,
@@ -101,6 +102,7 @@ export class LoginPage implements OnInit {
           this.saveToken( resp['token'] );
           this.saveUserProfileId( resp['user_profile_id'] );
           this.saveWalletIds( resp['wallet_ids'] )
+          this.saveUsername( this.loginUser.username )
           this.router.navigate(['/menu'], {
             queryParams: { user_profile_id: resp['user_profile_id'] }
           });
@@ -114,6 +116,9 @@ export class LoginPage implements OnInit {
           this.uiService.InfoAlert('Usuario o contraseña no son correctos.')
         }
 
+      }, error => {
+        
+        this.uiService.InfoAlert('Error: ' + JSON.stringify(error))
       });
 
     /*if ( valido ) {
@@ -177,6 +182,11 @@ export class LoginPage implements OnInit {
   }
 
   async saveWalletIds( walletIds: number[] ) {
+    console.log( 'guardamos estas carteras: ' + walletIds );
     await this.storage.set('wallet_ids', walletIds);
+  }
+
+  async saveUsername( username: string ) {
+    await this.storage.set('username', username);
   }
 }
