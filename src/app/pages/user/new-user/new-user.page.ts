@@ -23,7 +23,7 @@ export class NewUserPage implements OnInit {
 
   isUpdate: boolean = false;
 
-  applicationUserId: number;
+  username: string;
 
   avatars = [
     {
@@ -71,7 +71,8 @@ export class NewUserPage implements OnInit {
     email: '',
     password: '',
     user_profile_id: null,
-    wallet_ids: null
+    wallet_ids: null,
+    application_user_id: null,
   };
 
   password_confirm: string = "";
@@ -89,20 +90,33 @@ export class NewUserPage implements OnInit {
                     this.loading = false;
                   });
 
-                  this.activatedRoute.queryParams.subscribe((res) => {
-                    console.log(res);
+                this.activatedRoute.queryParams.subscribe((res) => {
+                  console.log(res);
+                  
+                  if (res.username) {
+                    this.username = res.username;
+                    this.isUpdate = true;
                     
-                    if (res.application_user_id) {
-                      this.applicationUserId = res.application_user_id;
-                      this.isUpdate = true;
-                      this.getCustomer()
-                    } else {
-                      this.isUpdate = false;
-                      this.loading =false;
-                    }
-                  });
+                    this.getApplicationUser()
+                  } else {
+                    this.isUpdate = false;
+                    this.loading =false;
+                  }
+                });
 
               }
+
+  async getApplicationUser() {
+
+    this.userService.getApplicationUserByUsername(this.username)
+      .subscribe(resp => {
+        this.registerUser = resp
+        this.registerUser.password = 'no_change'
+        this.password_confirm = 'no_change'
+        this.loading = false;
+        console.log('Esta es la info del usuario: ' + JSON.stringify(resp))
+      })
+  }
 
   ngOnInit() {
   }

@@ -103,6 +103,12 @@ export class UserService {
       });
   }
 
+  getApplicationUserByUsername(username: string) {
+
+    return this.http.get<User>(`${ URL }/api/portfolio/application_user/${username}`);
+
+  }
+
   async saveToken( token: string ) {
 
     this.token = token;

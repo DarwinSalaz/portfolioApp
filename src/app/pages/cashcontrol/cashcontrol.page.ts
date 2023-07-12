@@ -105,6 +105,12 @@ export class CashcontrolPage implements OnInit {
     });
   }
 
+  async update() {
+    this.router.navigate(['/new-user'], {
+      queryParams: { username : this.username }
+    });
+  }
+
   async inactivate() {
     this.presentAlertConfirm()    
   }

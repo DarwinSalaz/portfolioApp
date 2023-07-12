@@ -21,6 +21,42 @@ export interface WalletReport {
     expenses?: string;
 }
 
+export interface ServicesReportResp {
+    total_product_values?: string,
+    total_discount?: string,
+    total_service_value?: string,
+    total_debt?: string,
+    services_data?: ServiceReport[]
+}
+
+export interface ServiceReport {
+    id?: number;
+    username?: string;
+    products?: string;
+    discount?: string;
+    wallet?: string;
+    debt?: string;
+    product_values?: string;
+    client?: string;
+    created_at?: string;
+    service_value?: string;
+}
+
+export interface PaymentsReportResp {
+    total_value?: string,
+    payments_data?: PaymentsReport[]
+}
+
+export interface PaymentsReport {
+    id?: number;
+    client?: string;
+    service_id?: number;
+    value?: string;
+    wallet?: string;
+    username?: string;
+    created_at?: string;
+}
+
 export interface Customer {
     customer_id?: number;
     company_id?: number;
@@ -114,6 +150,14 @@ export interface ServiceProduct {
 export interface ResponseProducts {
     status: string;
     products: Product[];
+}
+
+export interface InventoryDetail {
+    product_id?: number;
+    product_name?: string;
+    quantity_sold?: number;
+    left_quantity?: number;
+    wallet_name?: string;
 }
 
 export interface Product {

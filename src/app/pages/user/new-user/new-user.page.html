@@ -44,47 +44,52 @@
             <ion-col>
               <ion-list>
                 <ion-item>
-                  <ion-label>Email</ion-label>
+                  <ion-label><b>Email</b></ion-label>
                   <ion-input name="email" 
                             type="email"
+                            class="ion-text-right"
                             [(ngModel)]="registerUser.email"
                             required></ion-input>
                 </ion-item>
 
                 <ion-item>
-                  <ion-label>Username</ion-label>
+                  <ion-label><b>Username</b></ion-label>
                   <ion-input name="username"
                             type="text"
+                            class="ion-text-right"
                             [(ngModel)]="registerUser.username"
                             required></ion-input>
                 </ion-item>
                     
                 <ion-item>
-                  <ion-label>Nombre</ion-label>
+                  <ion-label><b> Nombre</b></ion-label>
                   <ion-input name="nombre"
                             type="text"
+                            class="ion-text-right"
                             [(ngModel)]="registerUser.name"
                             required></ion-input>
                 </ion-item>
 
                 <ion-item>
-                  <ion-label>Apellido</ion-label>
+                  <ion-label><b>Apellido</b></ion-label>
                   <ion-input name="lastname"
                             type="text"
+                            class="ion-text-right"
                             [(ngModel)]="registerUser.last_name"
                             required></ion-input>
                 </ion-item>
 
                 <ion-item>
-                  <ion-label>Celular</ion-label>
+                  <ion-label><b>Celular</b></ion-label>
                   <ion-input name="cellphone"
                             type="text"
+                            class="ion-text-right"
                             [(ngModel)]="registerUser.cellphone"
                             required></ion-input>
                 </ion-item>
 
-                <ion-item>
-                  <ion-label>Perfil</ion-label>
+                <ion-item *ngIf="!isUpdate">
+                  <ion-label><b>Perfil</b></ion-label>
                   <ion-select placeholder="Perfil         " name="profile" [(ngModel)]="registerUser.user_profile_id" style="width: 100%; align-content: center" required>
                     <ion-select-option value="1">Administrador</ion-select-option>
                     <ion-select-option value="2">Vendedor</ion-select-option>
@@ -92,8 +97,8 @@
                   </ion-select>
                 </ion-item>
 
-                <ion-item>
-                  <ion-label>Carteras</ion-label>
+                <ion-item *ngIf="!isUpdate" >
+                  <ion-label><b>Carteras</b></ion-label>
                   <ionic-selectable style="align-content: center"
                     name="wallet"
                     [(ngModel)]="selectedWallet"
@@ -108,17 +113,19 @@
                 </ion-item>
 
                 <ion-item>
-                  <ion-label>Password</ion-label>
+                  <ion-label><b>Password</b></ion-label>
                   <ion-input name="password"
                             type="password"
+                            class="ion-text-right"
                             [(ngModel)]="registerUser.password"
                             required></ion-input>
                 </ion-item>
 
                 <ion-item>
-                  <ion-label>Confirmar Password</ion-label>
+                  <ion-label><b>Confirmar Password</b></ion-label>
                   <ion-input name="password_confirm"
                             type="password"
+                            class="ion-text-right"
                             [(ngModel)]="password_confirm"
                             required></ion-input>
                 </ion-item>
@@ -128,7 +135,7 @@
         </ion-row>
         
         <div padding>
-          <ion-button color="medium" type="submit" size="large" expand="block">Crear usuario</ion-button>
+          <ion-button color="medium" type="submit" size="large" expand="block">Registrar</ion-button>
         </div>
     </form>
   </ion-grid>

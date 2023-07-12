@@ -8,6 +8,9 @@ import { IonicModule } from '@ionic/angular';
 
 import { PortfolioReportPage } from './portfolio-report.page';
 
+import { File } from '@ionic-native/file';
+import { FileOpener } from '@ionic-native/file-opener';
+
 const routes: Routes = [
   {
     path: '',

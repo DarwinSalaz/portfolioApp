@@ -32,7 +32,7 @@
       </ion-item-options>
     </ion-item-sliding>
   </ion-list>
-  <ion-fab horizontal="end" vertical="bottom" slot="fixed">
+  <ion-fab *ngIf="isAdmin" horizontal="end" vertical="bottom" slot="fixed">
     <ion-fab-button color="medium" (click)="addProduct()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>

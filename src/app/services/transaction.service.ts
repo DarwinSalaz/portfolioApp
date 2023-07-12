@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Service, ServicesByCustomerResponse, WalletRequest, CustomerServiceSchedule, CancelServiceReq, WalletReport } from '../interfaces/interfaces';
+import { Service, ServicesByCustomerResponse, WalletRequest, CustomerServiceSchedule, CancelServiceReq, WalletReport, ServicesReportResp, PaymentsReportResp } from '../interfaces/interfaces';
 import { Storage } from '@ionic/storage';
 
 const URL = environment.url;
@@ -133,5 +133,39 @@ export class TransactionService {
     };
 
     return this.http.post<WalletReport>(`${ URL }/api/portfolio/cash_movement/wallet_resume`, request, httpOptions);
+  }
+
+  getReportPdf(init_date: string, end_date: string, walletId: number) {
+
+    const request = {
+      "starts_at": init_date,
+      "ends_at": end_date,
+      "wallet_id": walletId
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+
+    return this.http.post<ServicesReportResp>(`${ URL }/api/portfolio/service/report`, request, httpOptions);
+  }
+
+  getPaymentsReport(init_date: string, end_date: string, walletId: number) {
+
+    const request = {
+      "starts_at": init_date,
+      "ends_at": end_date,
+      "wallet_id": walletId
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+
+    return this.http.post<PaymentsReportResp>(`${ URL }/api/portfolio/payment/report`, request, httpOptions);
   }
 }

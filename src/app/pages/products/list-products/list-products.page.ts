@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Product } from 'src/app/interfaces/interfaces';
 import { ProductService } from '../../../services/product.service';
 import { NavServiceService } from '../../../services/nav-service.service';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'app-list-products',
@@ -15,13 +16,22 @@ export class ListProductsPage implements OnInit {
   walletId: number
   products: Product[] = [];
   loading: boolean = true;
+  userProfileId: number = null;
+  isAdmin: boolean = false;
 
   constructor(
     public activatedRoute: ActivatedRoute,
     private productService: ProductService,
     public navService: NavServiceService,
-    public router: Router
-  ) { }
+    public router: Router,
+    private storage: Storage
+  ) { 
+    this.storage.get('user_profile_id').then((val) => {
+      this.userProfileId = val;
+      this.isAdmin = val === 1
+    })
+
+  }
 
   ngOnInit() {
 
@@ -53,6 +63,10 @@ export class ListProductsPage implements OnInit {
   }
 
   async productDetail(product: Product) {
+    if (this.userProfileId !== 1) {
+      return
+    }
+
     this.navService.productToEdit = product;
     this.router.navigate(['/product-detail']);
   }

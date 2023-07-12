@@ -85,6 +85,8 @@ export class TransactionPage implements OnInit {
   async init() {
 
     console.log('esta es la fecha máxima' + this.maxDate)
+
+    
     
     this.registerService = this.navService.newService;
     this.productsSelected = this.navService.newService.service_products;
@@ -100,6 +102,12 @@ export class TransactionPage implements OnInit {
           customers.forEach((el) => { el.fullname = el.name + ' ' + el.last_name + ' - ' + el.identification_number; });
           this.customers.push( ...customers );
           this.customer = this.customers.find(element => element.customer_id === this.registerService.customer_id)
+          console.log('este es el customer: ' + JSON.stringify(this.customer));
+
+          if (this.customer.name === 'VENTA CONTADO') {
+            this.registerService.direct_purchase = true
+            this.changeDirectPurchase(null)
+          }
         });
 
     this.walletService.getWallets(walletIds)
@@ -122,9 +130,7 @@ export class TransactionPage implements OnInit {
     if (this.productsSelected && this.productsSelected.length > 0) {
       this.productChange(null)
     }
-      
-      
-      console.log( 'este es el customer: ' +  this.customer);
+    
   }
 
   async register(fRegistro: NgForm) {

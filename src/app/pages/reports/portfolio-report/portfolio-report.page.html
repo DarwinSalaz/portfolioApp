@@ -46,6 +46,9 @@
     
       <div padding>
         <ion-button color="medium" type="submit" size="medium" expand="block">CONSULTAR</ion-button>
+        <ion-button color="medium" (click)="print()" size="medium" expand="block">REPORTE VENTAS</ion-button>
+        <ion-button color="medium" (click)="printPaymentsReport()" size="medium" expand="block">REPORTE PAGOS</ion-button>
+        <ion-button color="medium" (click)="printInventoryReport()" size="medium" expand="block">REPORTE INVENTARIO</ion-button>
       </div>
     </ion-list>
   </form>

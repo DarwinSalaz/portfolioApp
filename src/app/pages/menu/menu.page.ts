@@ -14,7 +14,7 @@ export class MenuPage implements OnInit {
   allComponentes: Componente[] = [
     {
       icon: 'cash',
-      name: 'Liquidación Usuarios',
+      name: 'Usuarios',
       redirectTo: '/users',
       allowProfile: [1]
     },
@@ -82,7 +82,7 @@ export class MenuPage implements OnInit {
       icon: 'list-box',
       name: 'Inventario',
       redirectTo: '/list-wallets',
-      allowProfile: [1]
+      allowProfile: [1, 2, 3]
     },
     {
       icon: 'list-box',

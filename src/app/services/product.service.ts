@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Product, ResponseProducts, WalletRequest } from '../interfaces/interfaces';
+import { Product, ResponseProducts, WalletRequest, InventoryDetail } from '../interfaces/interfaces';
 
 const URL = environment.url;
 
@@ -54,5 +54,22 @@ export class ProductService {
 
         });
       });
+  }
+
+  getInventoryReport(init_date: string, end_date: string, walletId: number) {
+
+    const request = {
+      "starts_at": init_date,
+      "ends_at": end_date,
+      "wallet_id": walletId
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+
+    return this.http.post<InventoryDetail[]>(`${ URL }/api/portfolio/inventory/report`, request, httpOptions);
   }
 }
