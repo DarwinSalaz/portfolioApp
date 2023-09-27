@@ -183,21 +183,21 @@ export class PortfolioReportPage implements OnInit {
 
     this.pdfObj = pdfMake.createPdf(docDefinition);
 
-    this.openFile();
+    this.openFile('informe-ventas.pdf');
 
     alert('Reporte Generado!')
   }
 
   
 
-  openFile() {
+  openFile(filename) {
     if(this.platform.is('cordova' )) {
       this.pdfObj.getBuffer((buffer) => {
         var blob = new Blob([buffer], { type: 'application/pdf' });
         // Save the PDF to the data Directory of our App
-        File.writeFile(File.dataDirectory, 'hello.pdf', blob, { replace: true }).then(fileEntry => {
+        File.writeFile(File.dataDirectory, filename, blob, { replace: true }).then(fileEntry => {
 
-          FileOpener.open(File.dataDirectory + 'hello.pdf', 'application/pdf');
+          FileOpener.open(File.dataDirectory + filename, 'application/pdf');
 
         });
 
@@ -313,7 +313,7 @@ export class PortfolioReportPage implements OnInit {
 
     this.pdfObj = pdfMake.createPdf(docDefinition);
 
-    this.openFile();
+    this.openFile('informe-pagos.pdf');
 
     alert('Reporte Generado!')
   }
@@ -417,7 +417,7 @@ export class PortfolioReportPage implements OnInit {
 
     this.pdfObj = pdfMake.createPdf(docDefinition);
 
-    this.openFile();
+    this.openFile('informe-inventario.pdf');
 
     alert('Reporte Generado!')
   }

@@ -97,11 +97,11 @@
                   </ion-select>
                 </ion-item>
 
-                <ion-item *ngIf="!isUpdate" >
+                <ion-item >
                   <ion-label><b>Carteras</b></ion-label>
                   <ionic-selectable style="align-content: center"
                     name="wallet"
-                    [(ngModel)]="selectedWallet"
+                    [(ngModel)]="selectedWallets"
                     [items]="wallets"
                     itemValueField="wallet_id"
                     itemTextField="name"

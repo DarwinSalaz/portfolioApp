@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-menu',
@@ -102,7 +103,7 @@ export class MenuPage implements OnInit {
   username: string = null;
   userProfile: string = null;
 
-  constructor(public activatedRoute: ActivatedRoute, private storage: Storage ) {
+  constructor(public activatedRoute: ActivatedRoute, private storage: Storage, public router: Router ) {
 
 
     this.activatedRoute.queryParams.subscribe((res) => {
@@ -116,6 +117,13 @@ export class MenuPage implements OnInit {
 
   async start(userProfileId: number) {
     //const userProfileId = await this.storage.get('user_profile_id');
+
+    const token = await this.storage.get('token');
+
+    if (!token) {
+      this.router.navigate(['/login'], {});
+    }
+
     if(userProfileId) { 
       this.userProfileId = userProfileId;
     } else {

@@ -17,7 +17,7 @@ export class NewUserPage implements OnInit {
 
   wallets: Wallet[] = [];
 
-  selectedWallet: Wallet = null;
+  selectedWallets: Wallet[] = [];
 
   loading: boolean = true;
 
@@ -87,23 +87,23 @@ export class NewUserPage implements OnInit {
                   .subscribe( resp => {
                     console.log( resp );
                     this.wallets.push( ...resp );
-                    this.loading = false;
+
+                    this.activatedRoute.queryParams.subscribe((res) => {
+                      console.log(res);
+                      
+                      if (res.username) {
+                        this.username = res.username;
+                        this.isUpdate = true;
+                        
+                        this.getApplicationUser()
+                      } else {
+                        this.isUpdate = false;
+                        
+                      }
+
+                      this.loading =false;
+                    });
                   });
-
-                this.activatedRoute.queryParams.subscribe((res) => {
-                  console.log(res);
-                  
-                  if (res.username) {
-                    this.username = res.username;
-                    this.isUpdate = true;
-                    
-                    this.getApplicationUser()
-                  } else {
-                    this.isUpdate = false;
-                    this.loading =false;
-                  }
-                });
-
               }
 
   async getApplicationUser() {
@@ -113,8 +113,10 @@ export class NewUserPage implements OnInit {
         this.registerUser = resp
         this.registerUser.password = 'no_change'
         this.password_confirm = 'no_change'
+        this.selectedWallets = this.wallets.filter(wallet => resp.wallet_ids.includes(wallet.wallet_id));
         this.loading = false;
         console.log('Esta es la info del usuario: ' + JSON.stringify(resp))
+        console.log('Esto es el selectedWallets: ' + JSON.stringify(this.selectedWallets))
       })
   }
 

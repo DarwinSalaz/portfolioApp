@@ -79,7 +79,24 @@ export class LoginPage implements OnInit {
               private navCtrl: NavController,
               private uiService: UiServiceService,
               private storage: Storage,
-              public router: Router) { }
+              public router: Router) {
+
+                this.init();
+              }
+
+  async init() {
+    const token = await this.storage.get('token');
+
+    if (token) {
+      const userProfileId = await this.storage.get('user_profile_id');
+      this.router.navigate(['/menu'], {
+        queryParams: { user_profile_id: userProfileId }
+      });
+      this.loading = false;
+      this.loginUser.username = '';
+      this.loginUser.password = '';
+    }
+  }
 
   ngOnInit() {
     this.slides.lockSwipes( true );
@@ -115,6 +132,8 @@ export class LoginPage implements OnInit {
           this.loading = false;
           this.uiService.InfoAlert('Usuario o contraseña no son correctos.')
         }
+
+        this.clearStoragePeriodically();
 
       }, error => {
         
@@ -188,5 +207,16 @@ export class LoginPage implements OnInit {
 
   async saveUsername( username: string ) {
     await this.storage.set('username', username);
+  }
+
+  clearStoragePeriodically() {
+    setInterval(() => {
+      // Limpia el almacenamiento aquí
+      this.storage.clear().then(() => {
+        console.log('Almacenamiento borrado.');
+      }).catch((error) => {
+        console.error('Error al borrar el almacenamiento:', error);
+      });
+    }, 86400 * 1000); // 86400 segundos = 24 horas
   }
 }

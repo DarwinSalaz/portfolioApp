@@ -64,20 +64,21 @@ export class PaymentDetailsPage implements OnInit {
           text: 'Confirmar',
           handler: () => {
             this.loading = true;
-            this.paymentService.cancelPayment(this.payment.payment_id)
-              .then(() => {
-                this.loading = false;
-                this.uiService.InfoAlert('Proceso finalizado');
-                this.router.navigate(['/customers/detail']);
-              }).catch(() => {
-                this.loading = false;
-                this.uiService.InfoAlert('Error al cancelar el abono');
-              });
+            const valido = this.paymentService.cancelPayment(this.payment.payment_id)
+
+            if (valido) {
+              this.loading = false;
+              this.uiService.InfoAlert('Proceso finalizado');
+              this.router.navigate(['/customers/detail']);
+            } else {
+              this.loading = false;
+              this.uiService.InfoAlert('Error al cancelar el abono');
+            }
           }
         }
       ]
     });
 
-    await alert.present();
+    alert.present();
   }
 }

@@ -68,7 +68,7 @@ export class PaymentService {
             }
         },
         error => {
-          console.log("error cancelando el pago");
+          console.log("error cancelando el pago" + error);
           reject(false);
         }
         )
