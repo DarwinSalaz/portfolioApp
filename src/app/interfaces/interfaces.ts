@@ -118,6 +118,12 @@ export interface CancelServiceReq {
     discount?: number;
 }
 
+export interface UpdateServiceReq {
+    service_id?: number;
+    quantity_of_fees?: number;
+    fee_value?: number;
+}
+
 export interface Service {
     service_id?: number;
     application_user_id?: number;
@@ -138,6 +144,7 @@ export interface Service {
     next_payment_date: string;
     initial_payment?: number;
     direct_purchase?: boolean;
+    pending_fees?: number;
 }
 
 export interface ServiceProduct {
@@ -158,6 +165,21 @@ export interface InventoryDetail {
     quantity_sold?: number;
     left_quantity?: number;
     wallet_name?: string;
+}
+
+export interface ExpiredServiceResp {
+    total_value?: string,
+    expired_services?: ExpiredServiceDetail[]
+}
+
+export interface ExpiredServiceDetail {
+    client?: string;
+    cellphone?: string;
+    address?: string;
+    debt?: string;
+    total_value?: string;
+    pending_fees?: number;
+    next_payment_date?: string;
 }
 
 export interface Product {
@@ -188,6 +210,7 @@ export interface CashControl {
     down_payments?: string;
     down_payments_number?: number;
     movements?: CashMovement[];
+    username?: string;
 }
 
 export interface CashMovement {
@@ -229,6 +252,8 @@ export interface ServicesByCustomerResponse {
     days_per_fee: number;
     quantity_of_fees: number;
     fee_value: string;
+    total_value_number: number;
+    down_payment_number: number;
     wallet_id: number;
     customer_id: number;
     state: string;
@@ -237,6 +262,7 @@ export interface ServicesByCustomerResponse {
     service_products: ServiceProduct[];
     payments?: PaymentResumeDto[];
     pending_value?: string;
+    pending_fees?: number;
 }
 
 export interface PaymentResumeDto {
@@ -253,6 +279,17 @@ export interface Expense {
     expense_date: string;
     justification?: string;
     wallet_id?: number;
+    username?: string;
+}
+
+export interface Revenue {
+    revenue_id?: number;
+    revenue_type: string;
+    value: number;
+    revenue_date: string;
+    justification?: string;
+    wallet_id?: number;
+    username?: string;
 }
 
 export interface ExpenseResume {

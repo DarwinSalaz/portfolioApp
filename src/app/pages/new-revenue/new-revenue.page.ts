@@ -1,40 +1,39 @@
 import { Component, OnInit } from '@angular/core';
-import { Expense, Wallet } from 'src/app/interfaces/interfaces';
-import { NgForm } from '@angular/forms';
+import { Revenue, Wallet } from 'src/app/interfaces/interfaces';
 import { UiServiceService } from 'src/app/services/ui-service.service';
-import { ExpenseService } from 'src/app/services/expense.service';
+import { RevenueService } from 'src/app/services/revenue.service';
 import { NavController } from '@ionic/angular';
 import { WalletService } from 'src/app/services/wallet.service';
-import { Storage } from '@ionic/storage';
 import { ActivatedRoute } from '@angular/router';
+import { Storage } from '@ionic/storage';
+import { NgForm } from '@angular/forms';
 
 @Component({
-  selector: 'app-new-expense',
-  templateUrl: './new-expense.page.html',
-  styleUrls: ['./new-expense.page.scss'],
+  selector: 'app-new-revenue',
+  templateUrl: './new-revenue.page.html',
+  styleUrls: ['./new-revenue.page.scss'],
 })
-export class NewExpensePage implements OnInit {
+export class NewRevenuePage implements OnInit {
 
   selectedWallet: Wallet = null;
-  showAllTypes = true
 
   wallets: Wallet[] = [];
 
-  expense: Expense = {
-    expense_type: '',
+  revenue: Revenue = {
+    revenue_type: '',
     value: 0,
-    expense_date: '',
+    revenue_date: '',
     justification: null,
     wallet_id: 0
   }
 
   loading: boolean = true;
 
-  expenseValue: number = 0
+  revenueValue: number = 0
 
   constructor(
     private uiService: UiServiceService,
-    private expenseService: ExpenseService,
+    private revenueService: RevenueService,
     private navCtrl: NavController,
     private walletService: WalletService,
     private storage: Storage,
@@ -46,12 +45,6 @@ export class NewExpensePage implements OnInit {
   }
 
   async init() {
-
-    let userProfileId = await this.storage.get('user_profile_id');
-    if (userProfileId == 2) {
-      this.showAllTypes = false
-    }
-
     const walletIds = await this.storage.get('wallet_ids');
 
     this.walletService.getWallets(walletIds)
@@ -59,49 +52,47 @@ export class NewExpensePage implements OnInit {
           //console.log( resp );
           this.wallets = resp;
           console.log( this.wallets );
-          this.selectedWallet = this.wallets.filter(wallet => wallet.wallet_id == this.expense.wallet_id)[0];
+          this.selectedWallet = this.wallets.filter(wallet => wallet.wallet_id == this.revenue.wallet_id)[0];
           console.log( this.selectedWallet );
           this.loading =false;
         });
   }
 
   async register(fRegistro: NgForm) {
-
     if ( fRegistro.invalid ) {
       this.uiService.InfoAlert('Formulario incompleto');
       return;
     }
 
-    this.expense.expense_date = this.expense.expense_date.split('.')[0]
-    this.expense.value = this.expenseValue
+    this.revenue.revenue_date = this.revenue.revenue_date.split('.')[0]
+    this.revenue.value = this.revenueValue
     this.loading = true;
-    const valido = await this.expenseService.registerExpense(this.expense);
+    const valido = await this.revenueService.registerRevenue(this.revenue);
 
     this.loading =false;
     if ( valido ) {
-      this.uiService.InfoAlert('Gasto registrado');
+      this.uiService.InfoAlert('Ingreso registrado');
       this.navCtrl.navigateRoot( '/menu', { animated: true } );
     } else {
-      this.uiService.InfoAlert('Error al registrar el gasto');
+      this.uiService.InfoAlert('Error al registrar el ingreso');
     }
-
   }
 
   walletChange(event) {
     console.log('eventtvalue:', event.value);
-    this.expense.wallet_id = event.value.wallet_id;
+    this.revenue.wallet_id = event.value.wallet_id;
   }
 
   focus(event) {
-    this.expense.value = this.expenseValue;
-    this.expenseValue = null;
+    this.revenue.value = this.revenueValue;
+    this.revenueValue = null;
   }
 
   focusOut(event) {
-    if (this.expenseValue == null || this.expenseValue === 0 ) {
-      this.expenseValue = this.expense.value;
+    if (this.revenueValue == null || this.revenueValue === 0 ) {
+      this.revenueValue = this.revenue.value;
     } else {
-      this.expense.value = this.expenseValue;
+      this.revenue.value = this.revenueValue;
     }
   }
 

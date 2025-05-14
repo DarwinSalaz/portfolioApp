@@ -55,6 +55,7 @@ export class TransactionPage implements OnInit {
     next_payment_date: null,
     initial_payment: 0,
     direct_purchase: false,
+    pending_fees: 9
   };
 
   datosInput = {
@@ -140,6 +141,7 @@ export class TransactionPage implements OnInit {
       return;
     }
 
+    this.registerService.pending_fees = this.registerService.quantity_of_fees
     this.registerService.next_payment_date = this.registerService.next_payment_date.split('.')[0]
     this.loading = true;
     const valido = await this.transactionService.registerService(this.registerService);
@@ -203,7 +205,7 @@ export class TransactionPage implements OnInit {
 
   recalculate( event ) {
     this.registerService.total_value = this.registerService.service_value - this.registerService.discount;
-    if (this.registerService.direct_purchase === false) {
+    if (this.registerService.direct_purchase !== true) {
       this.registerService.down_payment = this.registerService.total_value*0.1
       this.datosInput.down_payment = this.registerService.down_payment
     }

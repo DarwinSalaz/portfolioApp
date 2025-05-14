@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { Service, ServicesByCustomerResponse, WalletRequest, CustomerServiceSchedule, CancelServiceReq, WalletReport, ServicesReportResp, PaymentsReportResp } from '../interfaces/interfaces';
+import { Service, ServicesByCustomerResponse, WalletRequest, CustomerServiceSchedule, CancelServiceReq, WalletReport, ServicesReportResp, PaymentsReportResp, UpdateServiceReq, ExpiredServiceDetail, ExpiredServiceResp } from '../interfaces/interfaces';
 import { Storage } from '@ionic/storage';
 
 const URL = environment.url;
@@ -13,6 +13,38 @@ export class TransactionService {
 
   constructor(private http: HttpClient,
               private storage: Storage) { }
+
+
+  async updateService(quantityOfFees: number, feeValue: number, serviceId: number) {
+    const token = await this.storage.get('token');
+
+    const request: UpdateServiceReq = {
+      service_id: serviceId,
+      quantity_of_fees: quantityOfFees,
+      fee_value: feeValue
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json',
+        Authorization: token
+      })
+    };
+
+    return new Promise( resolve => {
+      this.http.put(`${ URL }/api/portfolio/service/update`, request, httpOptions )
+      .subscribe( resp => {
+        console.log(resp);
+
+        if ( resp['code'] == 'ok' ) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+
+      });
+    });
+  }
 
   async cancelService(productIds: number[], serviceId: number, discount: number) {
     const token = await this.storage.get('token');
@@ -167,5 +199,22 @@ export class TransactionService {
     };
 
     return this.http.post<PaymentsReportResp>(`${ URL }/api/portfolio/payment/report`, request, httpOptions);
+  }
+
+  getExpiredServiceReport(init_date: string, end_date: string, walletId: number) {
+
+    const request = {
+      "starts_at": init_date,
+      "ends_at": end_date,
+      "wallet_id": walletId
+    }
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
+
+    return this.http.post<ExpiredServiceResp>(`${ URL }/api/portfolio/expired/report`, request, httpOptions);
   }
 }

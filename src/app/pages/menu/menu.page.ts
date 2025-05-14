@@ -62,6 +62,12 @@ export class MenuPage implements OnInit {
       allowProfile: [1, 2, 3]
     },
     {
+      icon: 'grid',
+      name: 'Registrar Ingreso',
+      redirectTo: '/new-revenue',
+      allowProfile: [1, 2, 3]
+    },
+    {
       icon: 'people',
       name: 'Clientes',
       redirectTo: '/customers/detail',

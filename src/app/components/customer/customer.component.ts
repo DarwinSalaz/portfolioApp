@@ -29,7 +29,8 @@ export class CustomerComponent implements OnInit {
     service_products: [],
     observations: null,
     next_payment_date: null,
-    initial_payment: 0
+    initial_payment: 0,
+    pending_fees: 9
   };
 
   constructor(

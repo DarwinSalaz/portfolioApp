@@ -42,4 +42,25 @@ export class UiServiceService {
     await alert.present();
   }
 
+  async ConfirmAlert(message: string): Promise<boolean> {
+    return new Promise(async (resolve) => {
+      const alert = await this.alertController.create({
+        header: 'Confirmación',
+        message,
+        buttons: [
+          {
+            text: 'No',
+            role: 'cancel',
+            handler: () => resolve(false)
+          },
+          {
+            text: 'Sí',
+            handler: () => resolve(true)
+          }
+        ]
+      });
+      await alert.present();
+    });
+  }
+
 }

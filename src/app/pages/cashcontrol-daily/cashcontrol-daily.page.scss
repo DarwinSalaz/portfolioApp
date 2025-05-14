@@ -1,0 +1,60 @@
+.cuadre-content {
+    --background: #f4f5f8;
+    padding: 10px;
+  }
+  
+  .user-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border-radius: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .user-icon {
+    font-size: 40px;
+    color: var(--ion-color-primary);
+    margin-bottom: 4px;
+  }
+  
+  .summary-grid {
+    ion-card {
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      margin: 8px 4px;
+      text-align: center;
+      background-color: #fff;
+    }
+  
+    ion-card-content {
+      padding: 12px 6px;
+    }
+  
+    p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: #6b6b6b;
+    }
+  
+    h3 {
+      margin-top: 6px;
+      font-size: 1.2rem;
+      color: #1e2544;
+    }
+  
+    .total-card {
+      background-color: #fef3c7; // light yellow
+    }
+  }
+  
+  .periodo-text {
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.95rem;
+  }
+  
+  .button-wrapper {
+    margin: 20px 16px;
+  }
+  

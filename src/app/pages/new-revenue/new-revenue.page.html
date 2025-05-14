@@ -1,0 +1,85 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button style="color: azure" defaultHref="/"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">INFO INGRESO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="loading">
+  <ion-slide>
+    <ion-row>
+      <ion-col>
+        <img src="/assets/carga2-127.gif">
+      </ion-col>
+    </ion-row>
+  </ion-slide>
+</ion-content>
+
+<ion-content *ngIf="!loading" padding >
+  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
+    <ion-list style="width: 100%">
+      <ion-item style="width: 100%">
+        <ion-label stacked>Tipo Ingreso</ion-label>
+        <br>
+        <ion-select placeholder="Tipo de Gasto" name="revenue_type" [(ngModel)]="revenue.revenue_type" style="width: 100%; align-content: center" required>
+          <ion-select-option value="Ventas">Ventas</ion-select-option>
+          <ion-select-option value="Ventas Al Por Mayor">Ventas Al Por Mayor</ion-select-option>
+          <ion-select-option value="Otros">Otros</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item style="width: 100%">
+        <ion-label stacked>Cartera</ion-label>
+        <ionic-selectable style="width: 100%; align-content: center"
+          name="wallet"
+          [(ngModel)]="selectedWallet"
+          [items]="wallets"
+          itemValueField="wallet_id"
+          placeholder="Cartera"
+          itemTextField="name"
+          [canSearch]="true"
+          (onChange)="walletChange($event)"
+          required>
+
+        </ionic-selectable>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Valor</ion-label>
+        <br>
+        <ion-input style="text-align: right"
+          name="value"
+          type="number"
+          [(ngModel)]="revenueValue"
+          placeholder="Valor" 
+          (ionFocus)="focus($event)"
+          (ionBlur)="focusOut($event)"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Fec Gasto</ion-label>
+        <ion-datetime style="text-align: right"
+          name="revenue_date"
+          display-timezone="utc"
+          [(ngModel)]="revenue.revenue_date" 
+          required>
+        </ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Justificación</ion-label>
+        <br>
+        <ion-textarea style="text-align: right"
+          name="justification"
+          type="text" 
+          placeholder="Justificación" 
+          [(ngModel)]="revenue.justification">
+        </ion-textarea>
+      </ion-item>
+      <div padding>
+        <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
+      </div>
+    </ion-list>
+  </form>
+</ion-content>

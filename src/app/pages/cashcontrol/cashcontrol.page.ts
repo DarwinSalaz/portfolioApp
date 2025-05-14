@@ -73,9 +73,10 @@ export class CashcontrolPage implements OnInit {
   }
 
   async click() {
+    this.cashControl.username = this.username
     this.navService.cashControlToClose = this.cashControl;
     this.router.navigate(['/account-closure'], {
-      queryParams: { cash_control_id: this.cashControl.cash_control_id }
+      queryParams: { cash_control_id: this.cashControl.cash_control_id, username: this.username}
     });
   }
 

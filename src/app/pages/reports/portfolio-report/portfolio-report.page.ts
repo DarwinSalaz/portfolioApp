@@ -422,4 +422,109 @@ export class PortfolioReportPage implements OnInit {
     alert('Reporte Generado!')
   }
 
+  printExpiredServices() {
+    if (!this.init_date || !this.end_date || !this.wallet) {
+      this.uiService.InfoAlert('Formulario incompleto');
+      return;
+    }
+  
+    this.init_date = this.init_date.split('.')[0].split('T')[0] + "T00:00:00"
+    this.end_date = this.end_date.split('.')[0].split('T')[0] + "T00:00:00"
+    const response = this.transactionService.getExpiredServiceReport(this.init_date, this.end_date, this.wallet.wallet_id);
+    response.subscribe(
+      resp => {
+        console.log( resp );
+        var data = []
+
+        for (var i = 0; i < resp.expired_services.length; i++) {
+          var row = resp.expired_services[i];
+          var rowArr = [row.client, row.cellphone, row.address, row.total_value, row.debt, row.pending_fees, row.next_payment_date]
+
+          data.push(rowArr);
+        }
+
+        var dataResume = ['TOTAL', '', '', resp.total_value, '', '', '']
+
+        this.printExpiredServiceReport(data, dataResume);
+      }
+    );
+  }
+
+
+  printExpiredServiceReport(data, dataResume) {
+    let docDefinition = {
+      content: [
+        {text: 'Informe De Coutas Expiradas', style: 'header'},
+        {
+          style: 'tableExample',
+          color: '#444',
+          alignment: 'center',
+          fontSize: 10,
+          table: {
+            headerRows: 1,
+            widths: [100, 'auto', 'auto', 'auto','auto', 'auto', 'auto'],
+            body: [
+              [
+                {text:'Cliente', alignment: 'center', style: 'tableHeader'}, 
+                {text:'Celular', alignment: 'center', style: 'tableHeader'}, 
+                {text:'Dirección', alignment: 'center', style: 'tableHeader'}, 
+                {text:'Total', alignment: 'center', style: 'tableHeader'},
+                {text:'Deuda', alignment: 'center', style: 'tableHeader'}, 
+                {text:'Cuotas Pend', alignment: 'center', style: 'tableHeader'}, 
+                {text:'Fec Pago', alignment: 'center', style: 'tableHeader'}, 
+              ],
+              ...data,
+              dataResume
+            ]
+          }
+        },
+      ],
+      styles: {
+        header: {
+          fontSize: 14,
+          bold: true,
+          margin: [0, 0, 0, 10]
+        },
+        subheader: {
+          fontSize: 16,
+          bold: true,
+          margin: [0, 10, 0, 5]
+        },
+        tableExample: {
+          margin: [0, 5, 0, 15]
+        },
+        tableHeader: {
+          bold: true,
+          fontSize: 11,
+          color: 'black'
+        }
+      },
+      layout: {
+				hLineWidth: function (i, node) {
+					return (i === 0 || i === node.table.body.length) ? 2 : 1;
+				},
+				vLineWidth: function (i, node) {
+					return (i === 0 || i === node.table.widths.length) ? 2 : 1;
+				},
+				hLineColor: function (i, node) {
+					return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
+				},
+				vLineColor: function (i, node) {
+					return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
+				},
+			},
+      defaultStyle: {
+        // alignment: 'justify'
+      }
+    };
+
+    this.pdfObj = pdfMake.createPdf(docDefinition);
+
+    this.openFile('informe-pagos-pendientes.pdf');
+
+    alert('Reporte Generado!')
+  }
+
 }
+
+

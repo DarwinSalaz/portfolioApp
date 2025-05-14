@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment';
+import { Revenue } from '../interfaces/interfaces';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Expense, ExpenseResume } from '../interfaces/interfaces';
 import { Storage } from '@ionic/storage';
+import { environment } from '../../environments/environment';
 
 const URL = environment.url;
 
 @Injectable({
   providedIn: 'root'
 })
-export class ExpenseService {
+export class RevenueService {
 
-  constructor( 
+  constructor(
     private http: HttpClient,
-    private storage: Storage 
+    private storage: Storage
   ) { }
 
-  async registerExpense(expense: Expense) {
-    console.log( expense );
+  async registerRevenue(revenue: Revenue) {
+    console.log( revenue );
 
     const token = await this.storage.get('token');
 
@@ -28,12 +28,12 @@ export class ExpenseService {
       })
     };
 
-    return new Promise( resolve => {
-      this.http.post(`${ URL }/api/portfolio/expense/create`, expense, httpOptions )
+    return new Promise(resolve => {
+      this.http.post(`${URL}/api/portfolio/revenue/create`, revenue, httpOptions)
         .subscribe({
           next: (resp) => {
             console.log(resp);
-            if ( resp['expense_id'] ) {
+            if (resp['revenue_id']) {
               resolve(true);
             } else {
               resolve(false);
@@ -45,10 +45,5 @@ export class ExpenseService {
           }
         });
     });
-  }
-
-  getExpensesByUser(cashControlId: number) {
-    
-    return this.http.get<ExpenseResume[]>(`${ URL }/api/portfolio/expenses-by-control/${cashControlId}`);
   }
 }

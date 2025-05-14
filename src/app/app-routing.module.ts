@@ -39,7 +39,8 @@ const routes: Routes = [
   { path: 'portfolio-report', loadChildren: './pages/reports/portfolio-report/portfolio-report.module#PortfolioReportPageModule' },
   { path: 'portfolio-report-wallet', loadChildren: './pages/reports/portfolio-report-wallet/portfolio-report-wallet.module#PortfolioReportWalletPageModule' },
   { path: 'select-products', loadChildren: './pages/transactions/select-products/select-products.module#SelectProductsPageModule' },
-  { path: 'payment-details', loadChildren: './pages/transactions/payment-details/payment-details.module#PaymentDetailsPageModule' }
+  { path: 'payment-details', loadChildren: './pages/transactions/payment-details/payment-details.module#PaymentDetailsPageModule' },
+  { path: 'new-revenue', loadChildren: './pages/new-revenue/new-revenue.module#NewRevenuePageModule' }
 
 ];
 

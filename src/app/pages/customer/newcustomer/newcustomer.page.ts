@@ -57,7 +57,8 @@ export class NewcustomerPage implements OnInit {
     service_products: [],
     observations: null,
     next_payment_date: null,
-    initial_payment: 0
+    initial_payment: 0,
+    pending_fees: 9,
   };
 
   constructor(private customersService: CustomersService,
@@ -70,18 +71,7 @@ export class NewcustomerPage implements OnInit {
               private navService: NavServiceService) { 
       
       
-      this.activatedRoute.queryParams.subscribe((res) => {
-        console.log(res);
-        
-        if (res.customer_id) {
-          this.customerId = res.customer_id;
-          this.isUpdate = true;
-          this.getCustomer()
-        } else {
-          this.isUpdate = false;
-          this.loading =false;
-        }
-      });
+      
 
       this.init();
   }
@@ -90,17 +80,30 @@ export class NewcustomerPage implements OnInit {
   }
 
   async init() {
-    const walletIds = await this.storage.get('wallet_ids');
-
-    this.walletService.getWallets(walletIds)
-        .subscribe( resp => {
-          //console.log( resp );
-          this.wallets = resp;
-          console.log( this.wallets );
-          this.selectedWallet = this.wallets.filter(wallet => wallet.wallet_id == this.registerCustomer.wallet_id)[0];
-          console.log( this.selectedWallet );
-        });
+    this.activatedRoute.queryParams.subscribe(async (res) => {
+      console.log(res);
+      
+      if (res.customer_id) {
+        this.customerId = res.customer_id;
+        this.isUpdate = true;
+        await this.getCustomer();  // Espera a que getCustomer termine
+      } else {
+        this.isUpdate = false;
+      }
+  
+      const walletIds = await this.storage.get('wallet_ids');
+  
+      this.walletService.getWallets(walletIds).subscribe(resp => {
+        this.wallets = resp;
+        console.log(this.wallets);
+        this.selectedWallet = this.wallets.find(wallet => wallet.wallet_id == this.registerCustomer.wallet_id);
+        console.log(this.selectedWallet);
+  
+        this.loading = false;
+      });
+    });
   }
+  
 
   async verCuentas() {
     this.router.navigate(['/transaction-by-user'], {
@@ -115,23 +118,46 @@ export class NewcustomerPage implements OnInit {
       return;
     }
 
-    var valido;
-
     this.loading = true;
-    if(!this.isUpdate) {
-      valido = await this.customersService.registerCustomer(this.registerCustomer);
+    
+    let customerResponse;
+    if (!this.isUpdate) {
+      customerResponse = await this.customersService.registerCustomer(this.registerCustomer);
     } else {
-      valido = await this.customersService.updateCustomer(this.registerCustomer);
+      customerResponse = await this.customersService.updateCustomer(this.registerCustomer);
     }
 
     this.loading = false;
-    if ( valido ) {
-      // navegar al tabs
-      this.uiService.InfoAlert('Registro exitoso');
-      this.navCtrl.navigateRoot( '/menu', { animated: true } );
+
+    if (customerResponse) {
+      const { customer_id, isNew } = customerResponse || {};
+
+      if ( customer_id ) {
+        let confirm;
+        if (isNew) {
+          confirm = await this.uiService.ConfirmAlert('¿Deseas crear un servicio para este cliente?');
+  
+          if (confirm) {
+            this.registerCustomer.customer_id = customer_id
+            // Reutiliza createService para redirigir a la creación del servicio
+            this.createService();
+          } else {
+            // navegar al tabs
+            this.uiService.InfoAlert('Registro exitoso');
+            this.navCtrl.navigateRoot( '/menu', { animated: true } );
+          }
+        } else {
+          this.uiService.InfoAlert('Error: Ya hay un cliente con este documento!');
+          return
+        }
+        
+      } else {
+        this.uiService.InfoAlert('Error al guardar el cliente');
+      }
     } else {
       this.uiService.InfoAlert('Error al guardar el cliente');
     }
+    
   }
 
   async getCustomer() {
@@ -139,7 +165,6 @@ export class NewcustomerPage implements OnInit {
     this.customersService.getCustomer(this.customerId)
       .subscribe(resp => {
         this.registerCustomer = resp
-        this.loading = false;
       })
   }
 

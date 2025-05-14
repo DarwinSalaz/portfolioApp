@@ -53,9 +53,9 @@ export class CustomersService {
           console.log(resp);
 
           if ( resp['customer_id'] ) {
-            resolve(true);
+            resolve(resp['customer_id']);
           } else {
-            resolve(false);
+            resolve(null);
           }
 
         });
@@ -66,15 +66,17 @@ export class CustomersService {
     console.log( customer );
 
     return new Promise( resolve => {
-      this.http.post(`${ URL }/api/portfolio/customer/create`, customer )
-        .subscribe( resp => {
-          console.log(resp);
+      this.http.post(`${ URL }/api/portfolio/customer/create`, customer, { observe: 'response' } )
+        .subscribe( response => {
+          const body: any = response.body;
+          const status = response.status;
 
-          if ( resp['customer_id'] ) {
-            resolve(true);
-          } else {
-            resolve(false);
-          }
+          console.log(response);
+
+          const customer_id = body && body.customer_id ? body.customer_id : null;
+          const isNew = status === 201;
+
+          resolve({ customer_id, isNew });
 
         });
       });

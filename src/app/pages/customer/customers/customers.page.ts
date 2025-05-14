@@ -48,37 +48,36 @@ export class CustomersPage implements OnInit {
     this.siguientes(null, true);
   }
 
-  refresh( event ) {
-    this.siguientes( event, true );
+  async refresh( event ) {
+    //this.siguientes( event, true );
     this.enableInfiniteScroll = true;
     this.customers = [];
   }
-
-  siguientes( event?, pull: boolean = false ) {
-    console.log( '[Customers-page] init siguientes' );
-
-    this.storage.get('wallet_ids').then(walletIds => {
-
-      console.log( '[Customers-page] init siguientes ' + JSON.stringify(walletIds) );
-
-      this.customersService.getCustomers( pull, 1000, walletIds )
-        .subscribe( resp => {
-          console.log( '[Customers-page] response:' + resp );
-          this.customers.push( ...resp.customers );
-          this.loading = false;
-
-          if ( event ) {
-            event.target.complete();
-
-            if (resp.customers.length === 0) {
-              //event.target.disabled = true;
-              //console.log( "vamos aqui" + this.enableInfiniteScroll );
-              this.enableInfiniteScroll = false;
-            }
+  
+  async siguientes(event?: any, pull: boolean = false) {
+    const profileType = await this.storage.get('user_profile_id');
+    let walletIds = null;
+  
+    if (profileType !== 1) {
+      walletIds = await this.storage.get('wallet_ids');
+    }
+  
+    console.log('[Customers-page] init siguientes ' + JSON.stringify(walletIds));
+  
+    this.customersService.getCustomers(pull, 1000, walletIds)
+      .subscribe(resp => {
+        console.log('[Customers-page] response:', resp);
+        this.customers.push(...resp.customers);
+        this.loading = false;
+  
+        if (event) {
+          event.target.complete();
+  
+          if (resp.customers.length === 0) {
+            this.enableInfiniteScroll = false;
           }
-        });
-    })
-      
+        }
+      });
   }
 
 }

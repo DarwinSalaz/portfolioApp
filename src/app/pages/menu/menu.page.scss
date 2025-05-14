@@ -1,0 +1,53 @@
+.menu-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+}
+
+.title-left {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.title-right {
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-align: right;
+}
+
+.menu-content {
+  --padding-top: 10px;
+  --padding-start: 12px;
+  --padding-end: 12px;
+}
+
+.menu-card {
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+  background: #ffffff;
+  margin-bottom: 10px;
+}
+
+.menu-card:hover {
+  transform: scale(1.01);
+}
+
+.card-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+}
+
+.menu-icon {
+  font-size: 1.5rem;
+  color: var(--ion-color-medium);
+}
+
+.menu-label {
+  font-size: 1rem;
+  font-weight: 500;
+}

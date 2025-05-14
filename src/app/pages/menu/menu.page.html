@@ -1,22 +1,26 @@
-<ion-header no-border>
-  <ion-toolbar color="medium" >
-      <ion-buttons slot="start" >
-        <ion-icon slot="icon-only" name="flame"></ion-icon>
-      </ion-buttons>
-    
-      <ion-title style="width: 100%; ">
-        <b style="text-align: left;">MENÚ</b>
-        <!--b style="text-align: right;font-size: 60%;"> ( DARWIN - ADMINISTRADOR ) </b-->
-      </ion-title>
-      <ion-title style="position: absolute;width: 90%; font-size: 70%; text-align: right;"><b style="text-align: right;">{{ username }} - {{ userProfile }}</b></ion-title>
-    </ion-toolbar>
+<ion-header translucent>
+  <ion-toolbar color="medium">
+    <ion-buttons slot="start">
+      <ion-icon slot="icon-only" name="flame" style="color: white;"></ion-icon>
+    </ion-buttons>
+    <ion-title class="menu-title">
+      <div class="title-left">MENÚ</div>
+      <div class="title-right">{{ username }} - {{ userProfile }}</div>
+    </ion-title>
+  </ion-toolbar>
 </ion-header>
 
-<ion-content padding>
-    <ion-list>
-      <ion-item *ngFor="let c of componentes" [routerLink]="c.redirectTo" detail>
-        <ion-icon slot="start" [name]="c.icon"></ion-icon>
-        <ion-label>{{ c.name }}</ion-label>
-      </ion-item>
-    </ion-list>
+<ion-content [fullscreen]="true" class="menu-content">
+  <ion-grid>
+    <ion-row>
+      <ion-col size="12" size-md="6" *ngFor="let c of componentes">
+        <ion-card button [routerLink]="c.redirectTo" class="menu-card">
+          <ion-card-content class="card-content">
+            <ion-icon [name]="c.icon" class="menu-icon"></ion-icon>
+            <ion-label class="menu-label">{{ c.name }}</ion-label>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

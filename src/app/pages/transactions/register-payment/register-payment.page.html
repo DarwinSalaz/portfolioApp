@@ -22,7 +22,7 @@
   <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
     <ion-list>
       <ion-item>
-        <ion-label stacked>Valor Total</ion-label>
+        <ion-label stacked>Valor Productos</ion-label>
         <br>
         <ion-input style="text-align: right"
           name="value"
@@ -94,6 +94,29 @@
         </ion-input>
       </ion-item>
       <ion-item>
+        <ion-label stacked>Cuotas Pendientes</ion-label>
+        <ion-input style="text-align: right"
+          name="pending_fees"
+          type="number"
+          readonly=true
+          placeholder="Coutas Pendientes"
+          [(ngModel)]="service.pending_fees"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
+        <b><ion-label stacked>Cuotas Total</ion-label></b>
+        <ion-input style="text-align: right"
+          name="quantity_of_fees"
+          type="number"
+          placeholder="Cant Cuotas"
+          (ionBlur)="feeChanges($event)"
+          (ionFocus)="focusFeeChanges($event)"
+          [(ngModel)]="quantity_of_fees"
+          required>
+        </ion-input>
+      </ion-item>
+      <ion-item>
           <b><ion-label stacked>Pago cuota</ion-label></b>
           <ion-input style="text-align: right"
             name="payment_value"
@@ -119,6 +142,7 @@
     </ion-list>
     <div>
       <ion-button color="medium" *ngIf="showAbonarButton" type="submit" size="large" expand="block">Abonar</ion-button>
+      <ion-button color="medium" [disabled]="isDisabled" (click)="updateService()" size="large" expand="block">Actualizar Cuotas</ion-button>
       <ion-button color="medium" (click)="showDetail()" size="large" expand="block">Ver Detalle</ion-button>
       <ion-button color="medium" (click)="showPayments()" size="large" expand="block">Historial Abonos</ion-button>
       <ion-button color="danger" *ngIf="showCancelButton" (click)="cancelService()" size="large" expand="block">Cancelar Cuenta</ion-button>
