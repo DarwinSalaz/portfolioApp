@@ -44,7 +44,7 @@ export class TransactionPage implements OnInit {
     total_value: 0,
     debt: 0,
     days_per_fee: 7,
-    quantity_of_fees: 9,
+    quantity_of_fees: 10,
     fee_value: 0,
     wallet_id: 1,
     has_products: false,
@@ -55,14 +55,14 @@ export class TransactionPage implements OnInit {
     next_payment_date: null,
     initial_payment: 0,
     direct_purchase: false,
-    pending_fees: 9
+    pending_fees: 10
   };
 
   datosInput = {
     discount: 0,
     down_payment: 0,
     days_per_fee: 7,
-    quantity_of_fees: 9,
+    quantity_of_fees: 10,
     fee_value: 0,
     initial_payment: 0
   }
@@ -141,7 +141,7 @@ export class TransactionPage implements OnInit {
       return;
     }
 
-    this.registerService.pending_fees = this.registerService.quantity_of_fees
+    this.registerService.pending_fees = this.registerService.quantity_of_fees - 1
     this.registerService.next_payment_date = this.registerService.next_payment_date.split('.')[0]
     this.loading = true;
     const valido = await this.transactionService.registerService(this.registerService);
@@ -210,7 +210,13 @@ export class TransactionPage implements OnInit {
       this.datosInput.down_payment = this.registerService.down_payment
     }
     this.registerService.debt = this.registerService.total_value - this.registerService.down_payment - this.registerService.initial_payment;
-    this.registerService.fee_value = Number((this.registerService.debt / this.registerService.quantity_of_fees).toFixed(0));
+    this.registerService.quantity_of_fees = this.datosInput.quantity_of_fees
+    const denominator = this.registerService.quantity_of_fees - 1;
+    if (denominator > 0) {
+      this.registerService.fee_value = Number(
+        (this.registerService.debt / denominator).toFixed(0)
+      );
+    } 
     this.datosInput.fee_value = this.registerService.fee_value
     console.log( this.registerService.discount );
   }

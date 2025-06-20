@@ -4,7 +4,7 @@ import { NgForm } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { PaymentService } from '../../../services/payment.service';
 import { UiServiceService } from '../../../services/ui-service.service';
-import { NavController } from '@ionic/angular';
+import { NavController, ToastController  } from '@ionic/angular';
 import { NavServiceService } from '../../../services/nav-service.service';
 import { Storage } from '@ionic/storage';
 import * as moment from 'moment';
@@ -66,7 +66,8 @@ export class RegisterPaymentPage implements OnInit {
     private navCtrl: NavController,
     private storage: Storage,
     private transactionService: TransactionService,
-    public navService: NavServiceService) {
+    public navService: NavServiceService,
+    private toastCtrl: ToastController) {
   }
 
   ngOnInit() {
@@ -184,6 +185,94 @@ export class RegisterPaymentPage implements OnInit {
     } else {
       this.uiService.InfoAlert('Error al actualizar el servicio');
     }
+  }
+
+  confirmMarkForWithdrawal() {
+    const alert = document.createElement('ion-alert');
+    alert.header = 'Confirmar';
+    alert.message = '¿Desea <strong>marcar la cuenta para retiro</strong> y bloquear al usuario?';
+    alert.buttons = [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Confirmar',
+        handler: () => {
+          this.markForWithdrawal();
+        }
+      }
+    ];
+    document.body.appendChild(alert);
+    alert.present();
+  }
+
+  markForWithdrawal() {
+    const payload = {
+      serviceId: this.service.service_id,
+      customerId: this.service.customer_id
+    };
+  
+    this.transactionService.markAccountForWithdrawal(payload).subscribe({
+      next: () => {
+        this.toastCtrl.create({
+          message: 'Cuenta marcada para retiro y cliente bloqueado',
+          duration: 3000,
+          color: 'success'
+        }).then(toast => toast.present());
+      },
+      error: () => {
+        this.toastCtrl.create({
+          message: 'Error al procesar la solicitud',
+          duration: 3000,
+          color: 'warning'
+        }).then(toast => toast.present());
+      }
+    });
+  }
+
+  confirmMarkAsLost() {
+    const alert = document.createElement('ion-alert');
+    alert.header = 'Confirmar';
+    alert.message = '¿Desea <strong>marcar la cuenta como perdida</strong> y bloquear al usuario?';
+    alert.buttons = [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Confirmar',
+        handler: () => {
+          this.markAsLost();
+        }
+      }
+    ];
+    document.body.appendChild(alert);
+    alert.present();
+  }
+
+   markAsLost() {
+    const payload = {
+      serviceId: this.service.service_id,
+      customerId: this.service.customer_id
+    };
+  
+    this.transactionService.markAsLost(payload).subscribe({
+      next: () => {
+        this.toastCtrl.create({
+          message: 'Cuenta marcada como perdida y cliente bloqueado',
+          duration: 3000,
+          color: 'success'
+        }).then(toast => toast.present());
+      },
+      error: () => {
+        this.toastCtrl.create({
+          message: 'Error al procesar la solicitud',
+          duration: 3000,
+          color: 'warning'
+        }).then(toast => toast.present());
+      }
+    });
   }
 
   focus(event) {

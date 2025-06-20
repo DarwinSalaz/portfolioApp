@@ -1,57 +1,71 @@
 <ion-header no-border class="head">
   <ion-toolbar color="medium">
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/menu"></ion-back-button>
-      </ion-buttons>
-  
-    <ion-title class="ion-text-capitalize">SERVICIOS CLIENTE</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-capitalize">Servicios Cliente</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content *ngIf="loading" color="light">
-  <ion-slide>
-    <ion-row>
-      <ion-col>
-        <img src="/assets/carga2-127.gif">
-      </ion-col>
-    </ion-row>
-  </ion-slide>
+  <ion-row class="ion-justify-content-center ion-padding">
+    <ion-col size="auto">
+      <img src="/assets/carga2-127.gif" alt="Cargando...">
+    </ion-col>
+  </ion-row>
 </ion-content>
 
-<ion-content  *ngIf="!loading">
+<ion-content *ngIf="!loading">
+  <ion-grid>
+    <ion-row class="ion-justify-content-center">
+      <ion-col
+        size="12"
+        size-md="6"
+        size-lg="4"
+        *ngFor="let service of services"
+      >
+        <ion-card class="card-service" (click)="click(service)" style="position: relative;">
+          
+          <!-- Badge de marcado para retiro -->
+          <ion-badge
+            *ngIf="service.marked_for_withdrawal"
+            color="danger"
+            style="position: absolute; top: 10px; right: 10px; z-index: 10; font-size: 0.7rem;"
+          >
+            🚫 Para retiro
+          </ion-badge>
 
-  <ion-grid fixed>
-      <ion-row>
-        <ion-col size="12" size-lg="3" size-md="4" size-sm="6" size-xs="12" *ngFor="let service of services">
-            <!-->div class="service">
-              <ion-item lines="none">
-                <ion-label>
-                  <h1> Value: {{ service.total_value}}</h1>
-                  <h5>{{ service.total_value }}</h5>
-                </ion-label>
-              </ion-item>
-            </div-->
-            <div class="service" (click)="click(service)">
-                <table class="tg" style="table-layout: fixed; width: 100%">
-                    <colgroup>
-                      <col style="width: 18%">
-                      <col style="width: 38%">
-                      <col style="width: 41%">
-                    </colgroup>
-                    <tr>
-                      <td class="tg-wkff">{{ service.service_id }}</td>
-                      <td class="tg-lm6i">FECHA: {{ service.created_at }}</td>
-                      <td class="tg-j506">TOTAL: {{ service.total_value }}</td>
-                    </tr>
-                    <tr>
-                      <td class="tg-qr91"></td>
-                      <td class="tg-9o8p"><span style="font-weight:700">Saldo:</span></td>
-                      <td class="tg-55yk">{{service.debt}}</td>
-                    </tr>
-                  </table>
+          <ion-badge
+            *ngIf="service.marked_as_lost"
+            color="danger"
+            style="position: absolute; top: 10px; right: 10px; z-index: 10; font-size: 0.7rem;"
+          >
+            🚫 Perdida
+          </ion-badge>
+
+          <div class="card-header-colored">
+            <h2>Servicio #{{ service.service_id }}</h2>
+            <p>Creado: {{ service.created_at }}</p>
+            <p>Siguiente Pago: {{ service.next_payment_date }}</p>
+          </div>
+
+          <ion-card-content>
+            <div class="info-grid">
+              <div class="info-block">
+                <ion-icon name="card"></ion-icon>
+                <label>Total</label>
+                <span class="value total">{{ service.total_value }}</span>
+              </div>
+
+              <div class="info-block">
+                <ion-icon name="cash"></ion-icon>
+                <label>Saldo</label>
+                <span class="value debt">{{ service.debt }}</span>
+              </div>
             </div>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
-
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

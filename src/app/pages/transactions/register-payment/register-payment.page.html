@@ -141,11 +141,17 @@
         </ion-item>
     </ion-list>
     <div>
-      <ion-button color="medium" *ngIf="showAbonarButton" type="submit" size="large" expand="block">Abonar</ion-button>
-      <ion-button color="medium" [disabled]="isDisabled" (click)="updateService()" size="large" expand="block">Actualizar Cuotas</ion-button>
-      <ion-button color="medium" (click)="showDetail()" size="large" expand="block">Ver Detalle</ion-button>
-      <ion-button color="medium" (click)="showPayments()" size="large" expand="block">Historial Abonos</ion-button>
-      <ion-button color="danger" *ngIf="showCancelButton" (click)="cancelService()" size="large" expand="block">Cancelar Cuenta</ion-button>
+      <ion-button color="medium" *ngIf="showAbonarButton" type="submit" size="medium" expand="block">Abonar</ion-button>
+      <ion-button color="medium" [disabled]="isDisabled" (click)="updateService()" size="medium" expand="block">Actualizar Cuotas</ion-button>
+      <ion-button color="medium" (click)="showDetail()" size="medium" expand="block">Ver Detalle</ion-button>
+      <ion-button color="medium" (click)="showPayments()" size="medium" expand="block">Historial Abonos</ion-button>
+      <ion-button color="danger" *ngIf="showCancelButton" (click)="cancelService()" size="medium" expand="block">Cancelar Cuenta</ion-button>
+      <ion-button size="medium" color="danger" (click)="confirmMarkForWithdrawal()" expand="block">
+        Cuenta Para Retiro
+      </ion-button>
+      <ion-button size="medium" color="danger" (click)="confirmMarkAsLost()" expand="block">
+        Marcar Cuenta Perdida
+      </ion-button>
     </div>
   </form>
   </ion-content>

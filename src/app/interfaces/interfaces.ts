@@ -26,7 +26,13 @@ export interface ServicesReportResp {
     total_discount?: string,
     total_service_value?: string,
     total_debt?: string,
-    services_data?: ServiceReport[]
+    services_data?: ServiceReport[],
+    products_sold: ProductSoldReport[]
+}
+
+export interface ProductSoldReport {
+  product_name: string;
+  total_quantity: number;
 }
 
 export interface ServiceReport {
@@ -74,6 +80,15 @@ export interface Customer {
     icon?: string;
     observation?: string;
     wallet_id?: number;
+    blocked?: boolean;
+}
+
+export interface CustomerResponse {
+  customer_id?: number | null;
+  isNew?: boolean;
+  status?: number;
+  body?: any;
+  error?: boolean;
 }
 
 export interface WalletRequest {
@@ -180,6 +195,9 @@ export interface ExpiredServiceDetail {
     total_value?: string;
     pending_fees?: number;
     next_payment_date?: string;
+    created_at?: string;
+    last_payment_date?: string;
+    expired_fees?: number;
 }
 
 export interface Product {
@@ -263,6 +281,9 @@ export interface ServicesByCustomerResponse {
     payments?: PaymentResumeDto[];
     pending_value?: string;
     pending_fees?: number;
+    next_payment_date?: string;
+    marked_for_withdrawal?: boolean;
+    marked_as_lost?: boolean;
 }
 
 export interface PaymentResumeDto {
@@ -303,4 +324,15 @@ export interface Wallet {
     wallet_id: number;
     name: string;
     active: boolean;
+}
+
+export interface WalletReportResponse {
+  walletName: string;
+  income: any[];
+  expense: any[];
+  summary: {
+    totalIncome: number;
+    totalExpense: number;
+    finalBalance: number;
+  };
 }

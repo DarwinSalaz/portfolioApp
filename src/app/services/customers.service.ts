@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { RespuestaCustomers, Customer, WalletRequest } from '../interfaces/interfaces';
+import { RespuestaCustomers, Customer, WalletRequest, CustomerResponse } from '../interfaces/interfaces';
 
 const URL = environment.url;
 
@@ -62,12 +62,10 @@ export class CustomersService {
       });
   }
   
-  registerCustomer(customer: Customer) {
-    console.log( customer );
-
-    return new Promise( resolve => {
-      this.http.post(`${ URL }/api/portfolio/customer/create`, customer, { observe: 'response' } )
-        .subscribe( response => {
+  registerCustomer(customer: Customer, headers: any = {}): Promise<CustomerResponse> {
+    return new Promise(resolve => {
+      this.http.post(`${URL}/api/portfolio/customer/create`, customer, { observe: 'response', headers })
+        .subscribe(response => {
           const body: any = response.body;
           const status = response.status;
 
@@ -76,9 +74,11 @@ export class CustomersService {
           const customer_id = body && body.customer_id ? body.customer_id : null;
           const isNew = status === 201;
 
-          resolve({ customer_id, isNew });
-
+          resolve({ customer_id, isNew, status, body });
+        }, error => {
+          resolve({ error: true, status: error.status, body: error.error });
         });
-      });
+    });
   }
+
 }

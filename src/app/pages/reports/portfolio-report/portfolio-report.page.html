@@ -43,13 +43,24 @@
           required>
         </ion-datetime>
       </ion-item>
+      <ion-item>
+        <ion-label>Tipo de Reporte</ion-label>
+        <ion-select [(ngModel)]="selectedReport" name="type" placeholder="Seleccione un reporte" interface="alert">
+          <ion-select-option value="sales">Ventas</ion-select-option>
+          <ion-select-option value="payments">Pagos</ion-select-option>
+          <ion-select-option value="inventory">Inventario</ion-select-option>
+          <ion-select-option value="expired">Cuotas Expiradas</ion-select-option>
+          <ion-select-option value="withdrawal">Cuentas para Retiro</ion-select-option>
+          <ion-select-option value="canceled">Cuentas Canceladas</ion-select-option>
+          <ion-select-option value="wallet">Ingresos/Gastos</ion-select-option>
+        </ion-select>
+      </ion-item>
     
       <div padding>
         <ion-button color="medium" type="submit" size="medium" expand="block">CONSULTAR</ion-button>
-        <ion-button color="medium" (click)="print()" size="medium" expand="block">REPORTE VENTAS</ion-button>
-        <ion-button color="medium" (click)="printPaymentsReport()" size="medium" expand="block">REPORTE PAGOS</ion-button>
-        <ion-button color="medium" (click)="printInventoryReport()" size="medium" expand="block">REPORTE INVENTARIO</ion-button>
-        <ion-button color="medium" (click)="printExpiredServices()" size="medium" expand="block">COUTAS EXPIRADAS</ion-button>
+        <ion-button color="medium" (click)="generateSelectedReport()" size="medium" expand="block">
+          GENERAR REPORTE
+        </ion-button>
       </div>
     </ion-list>
   </form>

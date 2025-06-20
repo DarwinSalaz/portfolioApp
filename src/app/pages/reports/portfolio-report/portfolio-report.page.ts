@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Wallet } from 'src/app/interfaces/interfaces';
+import { Wallet, WalletReportResponse } from 'src/app/interfaces/interfaces';
 import { WalletService } from 'src/app/services/wallet.service';
 import { Storage } from '@ionic/storage';
 import { NgForm } from '@angular/forms';
@@ -11,7 +11,7 @@ import pdfFonts from 'pdfmake/build/vfs_fonts'
 
 import { File } from '@ionic-native/file';
 import { FileOpener } from '@ionic-native/file-opener';
-import { Platform } from '@ionic/angular';
+import { Platform, LoadingController, ToastController } from '@ionic/angular';
 import { ProductService } from 'src/app/services/product.service';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -29,6 +29,7 @@ export class PortfolioReportPage implements OnInit {
   init_date: string;
   end_date: string;
   pdfObj: any;
+  selectedReport: string = '';
 
   constructor(
     private walletService: WalletService,
@@ -37,15 +38,13 @@ export class PortfolioReportPage implements OnInit {
     public router: Router,
     private transactionService: TransactionService,
     public platform: Platform,
-    private productService: ProductService
+    private productService: ProductService,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController
   ) { }
 
   ngOnInit() {
-
     this.init()
-
-    
-
   }
 
   async init() {
@@ -79,114 +78,172 @@ export class PortfolioReportPage implements OnInit {
       return;
     }
 
-    this.init_date = this.init_date.split('.')[0].split('T')[0] + "T00:00:00"
-    this.end_date = this.end_date.split('.')[0].split('T')[0] + "T00:00:00"
+    this.init_date = this.init_date.split('.')[0].split('T')[0] + "T00:00:00";
+    this.end_date = this.end_date.split('.')[0].split('T')[0] + "T00:00:00";
+
     const response = this.transactionService.getReportPdf(this.init_date, this.end_date, this.wallet.wallet_id);
     response.subscribe(
       resp => {
-        console.log( resp );
-        var data = []
+        console.log(resp);
+        var data = [];
 
         for (var i = 0; i < resp.services_data.length; i++) {
           var row = resp.services_data[i];
-          console.log("Nombre: " + row.id + ", Valor: " + row.product_values);
-          var rowArr = [row.id, row.client, row.products, row.product_values, row.discount, row.service_value, row.debt, row.created_at, row.username]
-
+          var rowArr = [
+            row.id,
+            row.client,
+            row.products,
+            row.product_values,
+            row.discount,
+            row.service_value,
+            row.debt,
+            row.created_at,
+            row.username
+          ];
           data.push(rowArr);
         }
 
-        var dataResume = ['TOTAL', '', '', resp.total_product_values, resp.total_discount, resp.total_service_value, resp.total_debt, '', '']
+        var dataResume = ['TOTAL', '', '', resp.total_product_values, resp.total_discount, resp.total_service_value, resp.total_debt, '', ''];
 
-        this.printF(data, dataResume, resp.services_data[0].wallet);
+        // 👇 Preparamos la tabla de productos vendidos
+        var productsTable = [
+          [
+            { text: 'Producto', style: 'tableHeaderModern' },
+            { text: 'Cantidad Vendida', style: 'tableHeaderModern' }
+          ]
+        ];
+
+        for (let prod of resp.products_sold) {
+          productsTable.push([
+            { text: prod.product_name, style: 'summaryCellModern' },
+            { text: prod.total_quantity.toString(), style: 'summaryCellModern' }
+          ]);
+        }
+
+        this.printF(data, dataResume, resp.services_data[0].wallet, this.init_date.split('T')[0], this.end_date.split('T')[0], productsTable);
       }
     );
   }
 
 
 
-  printF(data, dataResume, wallet) {
-    let docDefinition = {
-      content: [
-        {text: 'Informe De Ventas - Cartera: ' + wallet, style: 'header'},
-        {
-          style: 'tableExample',
-          color: '#444',
-          alignment: 'center',
-          fontSize: 10,
-          table: {
-            headerRows: 1,
-            widths: [30, 'auto','auto', 'auto','auto', 'auto','auto', 'auto','auto'],
-            //widths: ['*', '*','*', '*','*', '*','*', '*','*'],
-            body: [
-              [
-                {text:'ID', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Cliente', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Productos', alignment: 'center', style: 'tableHeader'},
-                {text:'Valor Productos', alignment: 'center', style: 'tableHeader'},
-                {text:'Descuento', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Valor Total', alignment: 'center', style: 'tableHeader'},
-                {text:'Saldo', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Fecha', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Usuario', alignment: 'center', style: 'tableHeader'}, 
-              ],
-              ...data,
-              dataResume
+
+  printF(data, dataResume, wallet, init_date, end_date, productsTable) {
+  const today = new Date().toLocaleDateString();
+
+  const docDefinition = {
+    pageOrientation: 'landscape',
+    content: [
+      { text: 'Informe de Ventas', style: 'header' },
+      { text: `Cartera: ${wallet}`, style: 'subheader' },
+      { text: `Fecha del reporte: ${init_date} / ${end_date}`, margin: [0, 0, 0, 10] },
+
+      {
+        style: 'tableModern',
+        table: {
+          headerRows: 1,
+          widths: [25, '*', '*', 55, 45, 60, 45, 50, '*'],
+          body: [
+            [
+              { text: 'ID', style: 'tableHeaderModern' },
+              { text: 'Cliente', style: 'tableHeaderModern' },
+              { text: 'Productos', style: 'tableHeaderModern' },
+              { text: 'Valor Productos', style: 'tableHeaderModern' },
+              { text: 'Descuento', style: 'tableHeaderModern' },
+              { text: 'Valor Total', style: 'tableHeaderModern' },
+              { text: 'Saldo', style: 'tableHeaderModern' },
+              { text: 'Fecha', style: 'tableHeaderModern' },
+              { text: 'Usuario', style: 'tableHeaderModern' }
+            ],
+            ...data,
+            [
+              { text: 'RESUMEN', colSpan: 3, style: 'summaryCellModern' }, {}, {},
+              { text: dataResume[3], style: 'summaryCellModern' },
+              { text: dataResume[4], style: 'summaryCellModern' },
+              { text: dataResume[5], style: 'summaryCellModern' },
+              { text: dataResume[6], style: 'summaryCellModern' },
+              { text: '', style: 'summaryCellModern' },
+              { text: '', style: 'summaryCellModern' }
             ]
-          }
+          ]
         },
-      ],
-      styles: {
-        header: {
-          fontSize: 14,
-          bold: true,
-          margin: [0, 0, 0, 10]
-        },
-        subheader: {
-          fontSize: 16,
-          bold: true,
-          margin: [0, 10, 0, 5]
-        },
-        tableExample: {
-          margin: [0, 5, 0, 15]
-        },
-        tableHeader: {
-          bold: true,
-          fontSize: 11,
-          color: 'black'
+        layout: {
+          fillColor: function (rowIndex, node, columnIndex) {
+            if (rowIndex === 0) return '#2c3e50';
+            if (rowIndex === node.table.body.length - 1) return '#ecfaff';
+            return null;
+          },
+          hLineWidth: function () { return 0.7; },
+          vLineWidth: function () { return 0.7; },
+          hLineColor: function () { return '#ccc'; },
+          vLineColor: function () { return '#ccc'; },
+          paddingLeft: function () { return 6; },
+          paddingRight: function () { return 6; },
+          paddingTop: function () { return 4; },
+          paddingBottom: function () { return 4; }
         }
       },
-      layout: {
-				hLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 2 : 1;
-				},
-				vLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 2 : 1;
-				},
-				hLineColor: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
-				},
-				vLineColor: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-				},
-				// hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
-				// vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
-				// paddingLeft: function(i, node) { return 4; },
-				// paddingRight: function(i, node) { return 4; },
-				// paddingTop: function(i, node) { return 2; },
-				// paddingBottom: function(i, node) { return 2; },
-				// fillColor: function (rowIndex, node, columnIndex) { return null; }
-			},
-      defaultStyle: {
-        // alignment: 'justify'
+
+      // 👇 Nueva tabla de resumen de productos vendidos
+      { text: 'Resumen de productos vendidos', style: 'subheader', margin: [0, 20, 0, 6] },
+      {
+        style: 'tableModern',
+        table: {
+          headerRows: 1,
+          widths: ['*', 60],
+          body: productsTable
+        },
+        layout: {
+          fillColor: function (rowIndex, node, columnIndex) {
+            if (rowIndex === 0) return '#2c3e50';
+            return null;
+          },
+          hLineWidth: function () { return 0.7; },
+          vLineWidth: function () { return 0.7; },
+          hLineColor: function () { return '#ccc'; },
+          vLineColor: function () { return '#ccc'; },
+          paddingLeft: function () { return 6; },
+          paddingRight: function () { return 6; },
+          paddingTop: function () { return 4; },
+          paddingBottom: function () { return 4; }
+        }
       }
-    };
+    ],
+    styles: {
+      header: {
+        fontSize: 18,
+        bold: true,
+        color: '#2c3e50',
+        margin: [0, 0, 0, 8]
+      },
+      subheader: {
+        fontSize: 12,
+        color: '#34495e',
+        margin: [0, 0, 0, 6]
+      },
+      tableModern: {
+        fontSize: 9,
+        margin: [0, 6, 0, 12]
+      },
+      tableHeaderModern: {
+        bold: true,
+        fontSize: 10,
+        color: '#ffffff',
+        alignment: 'center'
+      },
+      summaryCellModern: {
+        bold: true,
+        alignment: 'center',
+        fontSize: 9,
+        color: '#2c3e50'
+      }
+    }
+  };
 
-    this.pdfObj = pdfMake.createPdf(docDefinition);
-
-    this.openFile('informe-ventas.pdf');
-
-    alert('Reporte Generado!')
-  }
+  this.pdfObj = pdfMake.createPdf(docDefinition);
+  this.openFile('informe-ventas.pdf');
+  alert('¡Reporte Generado!');
+}
 
   
 
@@ -231,92 +288,99 @@ export class PortfolioReportPage implements OnInit {
           data.push(rowArr);
         }
 
-        var dataResume = ['TOTAL', '', '', resp.total_value, '', '']
+        const dataResume = [
+          { text: 'RESUMEN', colSpan: 3, style: 'summaryCellModern' }, {}, {},
+          { text: resp.total_value, style: 'summaryCellModern' },
+          { text: '', style: 'summaryCellModern' },
+          { text: '', style: 'summaryCellModern' }
+        ];
 
-        this.printPaymentReport(data, dataResume, resp.payments_data[0].wallet);
+        this.printPaymentReport(data, dataResume, resp.payments_data[0].wallet, this.init_date.split('T')[0], this.end_date.split('T')[0]);
       }
     );
   }
 
-  printPaymentReport(data, dataResume, wallet) {
-    let docDefinition = {
+  printPaymentReport(data, dataResume, wallet, init_date, end_date) {
+    const today = new Date().toLocaleDateString();
+  
+    const docDefinition = {
+      pageOrientation: 'landscape',
       content: [
-        {text: 'Informe De Pagos - Cartera: ' + wallet, style: 'header'},
+        { text: 'Informe de Pagos', style: 'header' },
+        { text: `Cartera: ${wallet}`, style: 'subheader' },
+        { text: `Fecha del reporte: ${init_date} / ${end_date}`, margin: [0, 0, 0, 10] },
+  
         {
-          style: 'tableExample',
-          color: '#444',
-          alignment: 'center',
-          fontSize: 10,
+          style: 'tableModern',
           table: {
             headerRows: 1,
-            widths: ['auto', 'auto', 200, 'auto','auto', 'auto'],
+            widths: [40, 60, '*', 70, 70, 100],
             body: [
               [
-                {text:'ID', alignment: 'center', style: 'tableHeader'}, 
-                {text:'ID Servicio', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Cliente', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Valor', alignment: 'center', style: 'tableHeader'},
-                {text:'Fecha', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Usuario', alignment: 'center', style: 'tableHeader'}, 
+                { text: 'ID', style: 'tableHeaderModern' },
+                { text: 'ID Servicio', style: 'tableHeaderModern' },
+                { text: 'Cliente', style: 'tableHeaderModern' },
+                { text: 'Valor', style: 'tableHeaderModern' },
+                { text: 'Fecha', style: 'tableHeaderModern' },
+                { text: 'Usuario', style: 'tableHeaderModern' }
               ],
               ...data,
               dataResume
             ]
+          },
+          layout: {
+            fillColor: function (rowIndex, node, columnIndex) {
+              if (rowIndex === 0) return '#2c3e50';
+              if (rowIndex === node.table.body.length - 1) return '#ecfaff';
+              return null;
+            },
+            hLineWidth: function () { return 0.7; },
+            vLineWidth: function () { return 0.7; },
+            hLineColor: function () { return '#ccc'; },
+            vLineColor: function () { return '#ccc'; },
+            paddingLeft: function () { return 6; },
+            paddingRight: function () { return 6; },
+            paddingTop: function () { return 4; },
+            paddingBottom: function () { return 4; }
           }
-        },
+        }
       ],
       styles: {
         header: {
-          fontSize: 14,
+          fontSize: 18,
           bold: true,
-          margin: [0, 0, 0, 10]
+          color: '#2c3e50',
+          margin: [0, 0, 0, 8]
         },
         subheader: {
-          fontSize: 16,
-          bold: true,
-          margin: [0, 10, 0, 5]
+          fontSize: 12,
+          color: '#34495e',
+          margin: [0, 0, 0, 6]
         },
-        tableExample: {
-          margin: [0, 5, 0, 15]
+        tableModern: {
+          fontSize: 9,
+          margin: [0, 6, 0, 12]
         },
-        tableHeader: {
+        tableHeaderModern: {
           bold: true,
-          fontSize: 11,
-          color: 'black'
+          fontSize: 10,
+          color: '#ffffff',
+          alignment: 'center'
+        },
+        summaryCellModern: {
+          bold: true,
+          alignment: 'center',
+          fontSize: 9,
+          color: '#2c3e50'
         }
-      },
-      layout: {
-				hLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 2 : 1;
-				},
-				vLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 2 : 1;
-				},
-				hLineColor: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
-				},
-				vLineColor: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-				},
-				// hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
-				// vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
-				// paddingLeft: function(i, node) { return 4; },
-				// paddingRight: function(i, node) { return 4; },
-				// paddingTop: function(i, node) { return 2; },
-				// paddingBottom: function(i, node) { return 2; },
-				// fillColor: function (rowIndex, node, columnIndex) { return null; }
-			},
-      defaultStyle: {
-        // alignment: 'justify'
       }
     };
-
+  
     this.pdfObj = pdfMake.createPdf(docDefinition);
-
     this.openFile('informe-pagos.pdf');
-
-    alert('Reporte Generado!')
+    alert('¡Reporte Generado!');
   }
+  
 
   printInventoryReport() {
     if (!this.init_date || !this.end_date || !this.wallet) {
@@ -340,87 +404,81 @@ export class PortfolioReportPage implements OnInit {
           data.push(rowArr);
         }
 
-        this.printInventory(data, resp[0].wallet_name);
+        this.printInventory(data, resp[0].wallet_name, this.init_date.split('T')[0], this.end_date.split('T')[0]);
       }
     );
   }
 
-  printInventory(data, wallet) {
-    let docDefinition = {
+  printInventory(data, wallet, init_date, end_date) {
+    const today = new Date().toLocaleDateString();
+  
+    const docDefinition = {
+      pageOrientation: 'landscape',
       content: [
-        {text: 'Informe De Inventario - Cartera: ' + wallet, style: 'header'},
+        { text: 'Informe de Inventario', style: 'header' },
+        { text: `Cartera: ${wallet}`, style: 'subheader' },
+        { text: `Fecha del reporte:  ${init_date} / ${end_date}`, margin: [0, 0, 0, 10] },
+  
         {
-          style: 'tableExample',
-          color: '#444',
-          alignment: 'center',
-          fontSize: 10,
+          style: 'tableModern',
           table: {
             headerRows: 1,
-            widths: ['auto', 300, 'auto', 'auto'],
+            widths: [40, '*', 70, 70],
             body: [
               [
-                {text:'ID', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Producto', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Vendido', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Saldo', alignment: 'center', style: 'tableHeader'},
+                { text: 'ID', style: 'tableHeaderModern' },
+                { text: 'Producto', style: 'tableHeaderModern' },
+                { text: 'Vendido', style: 'tableHeaderModern' },
+                { text: 'Saldo', style: 'tableHeaderModern' }
               ],
               ...data
             ]
+          },
+          layout: {
+            fillColor: function (rowIndex) {
+              return rowIndex === 0 ? '#2c3e50' : null;
+            },
+            hLineWidth: function () { return 0.7; },
+            vLineWidth: function () { return 0.7; },
+            hLineColor: function () { return '#ccc'; },
+            vLineColor: function () { return '#ccc'; },
+            paddingLeft: function () { return 6; },
+            paddingRight: function () { return 6; },
+            paddingTop: function () { return 4; },
+            paddingBottom: function () { return 4; }
           }
-        },
+        }
       ],
       styles: {
         header: {
-          fontSize: 14,
+          fontSize: 18,
           bold: true,
-          margin: [0, 0, 0, 10]
+          color: '#2c3e50',
+          margin: [0, 0, 0, 8]
         },
         subheader: {
-          fontSize: 16,
-          bold: true,
-          margin: [0, 10, 0, 5]
+          fontSize: 12,
+          color: '#34495e',
+          margin: [0, 0, 0, 6]
         },
-        tableExample: {
-          margin: [0, 5, 0, 15]
+        tableModern: {
+          fontSize: 9,
+          margin: [0, 6, 0, 12]
         },
-        tableHeader: {
+        tableHeaderModern: {
           bold: true,
-          fontSize: 11,
-          color: 'black'
+          fontSize: 10,
+          color: '#ffffff',
+          alignment: 'center'
         }
-      },
-      layout: {
-				hLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 2 : 1;
-				},
-				vLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 2 : 1;
-				},
-				hLineColor: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
-				},
-				vLineColor: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-				},
-				// hLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
-				// vLineStyle: function (i, node) { return {dash: { length: 10, space: 4 }}; },
-				// paddingLeft: function(i, node) { return 4; },
-				// paddingRight: function(i, node) { return 4; },
-				// paddingTop: function(i, node) { return 2; },
-				// paddingBottom: function(i, node) { return 2; },
-				// fillColor: function (rowIndex, node, columnIndex) { return null; }
-			},
-      defaultStyle: {
-        // alignment: 'justify'
       }
     };
-
+  
     this.pdfObj = pdfMake.createPdf(docDefinition);
-
     this.openFile('informe-inventario.pdf');
-
-    alert('Reporte Generado!')
+    alert('¡Reporte Generado!');
   }
+  
 
   printExpiredServices() {
     if (!this.init_date || !this.end_date || !this.wallet) {
@@ -438,91 +496,345 @@ export class PortfolioReportPage implements OnInit {
 
         for (var i = 0; i < resp.expired_services.length; i++) {
           var row = resp.expired_services[i];
-          var rowArr = [row.client, row.cellphone, row.address, row.total_value, row.debt, row.pending_fees, row.next_payment_date]
+          var rowArr = [
+            row.client,
+            row.cellphone,
+            row.address,
+            row.total_value,
+            row.debt,
+            row.pending_fees,
+            row.next_payment_date,
+            row.created_at,
+            row.last_payment_date,
+            row.expired_fees
+          ];
 
           data.push(rowArr);
         }
 
-        var dataResume = ['TOTAL', '', '', resp.total_value, '', '', '']
+        var dataResume = ['TOTAL', '', '', resp.total_value, '', '', '', '', '', ''];
 
-        this.printExpiredServiceReport(data, dataResume);
+        this.printExpiredServiceReport("Informe de Cuotas Expiradas", data, dataResume, this.init_date.split('T')[0], this.end_date.split('T')[0]);
+      }
+    );
+  }
+
+  printWithdrawalServices() {
+    if (!this.init_date || !this.end_date || !this.wallet) {
+      this.uiService.InfoAlert('Formulario incompleto');
+      return;
+    }
+  
+    this.init_date = this.init_date.split('.')[0].split('T')[0] + "T00:00:00"
+    this.end_date = this.end_date.split('.')[0].split('T')[0] + "T00:00:00"
+    const response = this.transactionService.getWithdrawalServiceReport(this.init_date, this.end_date, this.wallet.wallet_id);
+    response.subscribe(
+      resp => {
+        console.log( resp );
+        var data = []
+
+        for (var i = 0; i < resp.expired_services.length; i++) {
+          var row = resp.expired_services[i];
+          var rowArr = [
+            row.client,
+            row.cellphone,
+            row.address,
+            row.total_value,
+            row.debt,
+            row.pending_fees,
+            row.next_payment_date,
+            row.created_at,
+            row.last_payment_date,
+            row.expired_fees
+          ];
+
+          data.push(rowArr);
+        }
+
+        var dataResume = ['TOTAL', '', '', resp.total_value, '', '', '', '', '', ''];
+
+        this.printExpiredServiceReport("Informe Cuentas Para Retiro", data, dataResume, this.init_date.split('T')[0], this.end_date.split('T')[0]);
+      }
+    );
+  }
+
+  printCanceledServices() {
+    if (!this.init_date || !this.end_date || !this.wallet) {
+      this.uiService.InfoAlert('Formulario incompleto');
+      return;
+    }
+  
+    this.init_date = this.init_date.split('.')[0].split('T')[0] + "T00:00:00"
+    this.end_date = this.end_date.split('.')[0].split('T')[0] + "T00:00:00"
+    const response = this.transactionService.getCanceledServiceReport(this.init_date, this.end_date, this.wallet.wallet_id);
+    response.subscribe(
+      resp => {
+        console.log( resp );
+        var data = []
+
+        for (var i = 0; i < resp.expired_services.length; i++) {
+          var row = resp.expired_services[i];
+          var rowArr = [
+            row.client,
+            row.cellphone,
+            row.address,
+            row.total_value,
+            row.debt,
+            row.pending_fees,
+            row.next_payment_date,
+            row.created_at,
+            row.last_payment_date,
+            row.expired_fees
+          ];
+
+          data.push(rowArr);
+        }
+
+        var dataResume = ['TOTAL', '', '', resp.total_value, '', '', '', '', '', ''];
+
+        this.printExpiredServiceReport("Informe Cuentas Canceladas", data, dataResume, this.init_date.split('T')[0], this.end_date.split('T')[0]);
       }
     );
   }
 
 
-  printExpiredServiceReport(data, dataResume) {
-    let docDefinition = {
+  printExpiredServiceReport(name, data, dataResume, init_date, end_date) {
+    const today = new Date().toLocaleDateString();
+
+    const docDefinition = {
+      pageOrientation: 'landscape',
       content: [
-        {text: 'Informe De Coutas Expiradas', style: 'header'},
+        { text: name, style: 'header' },
+        { text: `Fecha del reporte: ${init_date} / ${end_date}`, style: 'subheader' },
+
         {
-          style: 'tableExample',
-          color: '#444',
-          alignment: 'center',
-          fontSize: 10,
+          style: 'tableModern',
           table: {
             headerRows: 1,
-            widths: [100, 'auto', 'auto', 'auto','auto', 'auto', 'auto'],
+            widths: [80, 70, 90, 50, 50, 50, 60, 60, 60, 50],
             body: [
               [
-                {text:'Cliente', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Celular', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Dirección', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Total', alignment: 'center', style: 'tableHeader'},
-                {text:'Deuda', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Cuotas Pend', alignment: 'center', style: 'tableHeader'}, 
-                {text:'Fec Pago', alignment: 'center', style: 'tableHeader'}, 
+                { text: 'Cliente', style: 'tableHeaderModern' },
+                { text: 'Celular', style: 'tableHeaderModern' },
+                { text: 'Dirección', style: 'tableHeaderModern' },
+                { text: 'Total', style: 'tableHeaderModern' },
+                { text: 'Deuda', style: 'tableHeaderModern' },
+                { text: 'Cuotas Faltantes', style: 'tableHeaderModern' },
+                { text: 'Fec. Próx. Pago', style: 'tableHeaderModern' },
+                { text: 'Fec. Creación', style: 'tableHeaderModern' },
+                { text: 'Último Pago', style: 'tableHeaderModern' },
+                { text: 'Cuotas Vencidas', style: 'tableHeaderModern' }
               ],
               ...data,
               dataResume
             ]
+          },
+          layout: {
+            fillColor: function (rowIndex) {
+              return rowIndex === 0 ? '#2c3e50' : null;
+            },
+            hLineWidth: function () { return 0.7; },
+            vLineWidth: function () { return 0.7; },
+            hLineColor: function () { return '#ccc'; },
+            vLineColor: function () { return '#ccc'; },
+            paddingLeft: function () { return 6; },
+            paddingRight: function () { return 6; },
+            paddingTop: function () { return 4; },
+            paddingBottom: function () { return 4; }
           }
-        },
+        }
       ],
       styles: {
         header: {
-          fontSize: 14,
+          fontSize: 18,
           bold: true,
-          margin: [0, 0, 0, 10]
+          color: '#2c3e50',
+          margin: [0, 0, 0, 8]
         },
         subheader: {
-          fontSize: 16,
-          bold: true,
-          margin: [0, 10, 0, 5]
+          fontSize: 12,
+          color: '#34495e',
+          margin: [0, 0, 0, 12]
         },
-        tableExample: {
-          margin: [0, 5, 0, 15]
+        tableModern: {
+          fontSize: 9,
+          margin: [0, 6, 0, 12]
         },
-        tableHeader: {
+        tableHeaderModern: {
           bold: true,
-          fontSize: 11,
-          color: 'black'
+          fontSize: 10,
+          color: '#ffffff',
+          alignment: 'center'
         }
-      },
-      layout: {
-				hLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 2 : 1;
-				},
-				vLineWidth: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 2 : 1;
-				},
-				hLineColor: function (i, node) {
-					return (i === 0 || i === node.table.body.length) ? 'black' : 'gray';
-				},
-				vLineColor: function (i, node) {
-					return (i === 0 || i === node.table.widths.length) ? 'black' : 'gray';
-				},
-			},
-      defaultStyle: {
-        // alignment: 'justify'
       }
     };
 
     this.pdfObj = pdfMake.createPdf(docDefinition);
+    this.openFile('informe-cuentas-expiradas.pdf');
+    alert('¡Reporte Generado!');
+  }
 
-    this.openFile('informe-pagos-pendientes.pdf');
+  async generateWalletReport() {
+    if (!this.wallet || !this.init_date || !this.end_date) {
+      const toast = await this.toastCtrl.create({
+        message: 'Por favor selecciona la cartera y las fechas.',
+        duration: 2000,
+        color: 'warning'
+      });
+      await toast.present();
+      return;
+    }
 
-    alert('Reporte Generado!')
+    const loading = await this.loadingCtrl.create({
+      message: 'Generando reporte...'
+    });
+    await loading.present();
+
+    this.init_date = this.init_date.split('.')[0].split('T')[0] + "T00:00:00";
+    this.end_date = this.end_date.split('.')[0].split('T')[0] + "T00:00:00";
+
+    const payload = {
+      wallet_id: this.wallet.wallet_id,
+      starts_at: this.init_date,
+      ends_at: this.end_date
+    };
+
+    this.transactionService.generateWalletResumeReport(payload).subscribe({
+      next: async (data: WalletReportResponse) => {
+        loading.dismiss();
+
+        const docDefinition = this.buildPdfDefinition(data);
+        this.pdfObj = pdfMake.createPdf(docDefinition);
+        this.openFile(`reporte_${data.walletName}.pdf`);
+      },
+      error: async (err) => {
+        loading.dismiss();
+        const toast = await this.toastCtrl.create({
+          message: 'Error al generar el reporte',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
+        console.error(err);
+      }
+    });
+  }
+
+  buildPdfDefinition(data: any) {
+    const { walletName, startsAt, endsAt, incomes, expenses, totalIncome, totalExpense, finalBalance } = data;
+
+    const formatCurrency = (value: number) => {
+      return '$' + value.toLocaleString('es-CO', { minimumFractionDigits: 2 });
+    };
+
+    const buildTable = (title: string, items: any[]) => {
+      const body: any[] = [
+        ['Fecha', 'Tipo', 'Valor', 'Justificación']
+      ];
+
+
+      for (const item of items) {
+        body.push([
+          item.date.split('T')[0],
+          item.category,
+          formatCurrency(item.value),
+          item.justification || ''
+        ]);
+      }
+
+      const total = items.reduce((acc, cur) => acc + Number(cur.value), 0);
+
+      body.push([
+        { text: 'TOTAL', bold: true, colSpan: 2 }, '', 
+        { text: formatCurrency(total), bold: true },
+        ''
+      ]);
+
+      return [
+        { text: title, style: 'sectionHeader', margin: [0, 10, 0, 5] },
+        {
+          table: { widths: ['auto', '*', 'auto', '*'], body },
+          layout: 'lightHorizontalLines'
+        }
+      ];
+    };
+
+    return {
+      content: [
+        { text: 'Resumen de Ingresos y Gastos', style: 'header' },
+        { text: `Cartera: ${walletName}`, margin: [0, 5] },
+        { text: `Desde: ${startsAt.split('T')[0]}  Hasta: ${endsAt.split('T')[0]}`, margin: [0, 0, 0, 10] },
+
+        ...buildTable('INGRESOS', incomes),
+        ...buildTable('GASTOS', expenses),
+
+        { text: 'Resumen Final', style: 'sectionHeader', margin: [0, 15, 0, 5] },
+        {
+          table: {
+            widths: ['*', 'auto'],
+            body: [
+              ['Total Ingresos', formatCurrency(totalIncome)],
+              ['Total Gastos', formatCurrency(totalExpense)],
+              [
+                { text: 'Saldo Final', bold: true },
+                {
+                  text: formatCurrency(finalBalance),
+                  color: finalBalance >= 0 ? 'green' : 'red'
+                }
+              ]
+            ]
+          },
+          layout: 'lightHorizontalLines'
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 16,
+          bold: true
+        },
+        sectionHeader: {
+          fontSize: 14,
+          bold: true
+        }
+      },
+      defaultStyle: {
+        fontSize: 10
+      }
+    };
+  }
+
+
+  generateSelectedReport() {
+    if (!this.init_date || !this.end_date || !this.wallet) {
+      this.uiService.InfoAlert('Formulario incompleto');
+      return;
+    }
+
+    switch (this.selectedReport) {
+      case 'sales':
+        this.print();
+        break;
+      case 'payments':
+        this.printPaymentsReport();
+        break;
+      case 'inventory':
+        this.printInventoryReport();
+        break;
+      case 'expired':
+        this.printExpiredServices();
+        break;
+      case 'withdrawal':
+        this.printWithdrawalServices();
+        break;
+      case 'canceled':
+        this.printCanceledServices();
+        break;
+      case 'wallet':
+        this.generateWalletReport();
+        break;
+      default:
+        this.uiService.InfoAlert('Seleccione un tipo de reporte válido');
+    }
   }
 
 }

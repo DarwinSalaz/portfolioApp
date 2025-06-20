@@ -9,6 +9,7 @@ import { WalletService } from 'src/app/services/wallet.service';
 import { IonicSelectableComponent } from 'ionic-selectable';
 import { Storage } from '@ionic/storage';
 import { NavServiceService } from 'src/app/services/nav-service.service';
+import { HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-newcustomer',
@@ -38,7 +39,8 @@ export class NewcustomerPage implements OnInit {
     active: true,
     gender: '',
     observation: null,
-    wallet_id: null
+    wallet_id: null,
+    blocked: false,
   };
 
   newService: Service = {
@@ -112,15 +114,15 @@ export class NewcustomerPage implements OnInit {
   }
 
   async register(fRegistro: NgForm) {
-
-    if ( fRegistro.invalid ) {
+    if (fRegistro.invalid) {
       this.uiService.InfoAlert('Formulario incompleto');
       return;
     }
 
     this.loading = true;
-    
+
     let customerResponse;
+
     if (!this.isUpdate) {
       customerResponse = await this.customersService.registerCustomer(this.registerCustomer);
     } else {
@@ -129,36 +131,63 @@ export class NewcustomerPage implements OnInit {
 
     this.loading = false;
 
-    if (customerResponse) {
-      const { customer_id, isNew } = customerResponse || {};
+    if (customerResponse.error && customerResponse.status === 409) {
+      const message = customerResponse.body.message || 'El cliente ya existe en otra cartera.';
+      const moraText = customerResponse.body.in_debt ? 'y tiene mora en algún servicio.' : 'pero no tiene mora.';
 
-      if ( customer_id ) {
+      const continuar = await this.uiService.ConfirmAlert(`${message} ${moraText} ¿Deseas continuar con la creación?`);
+
+      if (continuar) {
+        this.loading = true;
+        const headers = new HttpHeaders().set('force_save', 'true');
+        const retryResponse = await this.customersService.registerCustomer(this.registerCustomer, headers);
+        this.loading = false;
+
+        if (retryResponse.customer_id) {
+          await this.uiService.InfoAlert('Cliente creado exitosamente.');
+
+          const confirm = await this.uiService.ConfirmAlert('¿Deseas crear un servicio para este cliente?');
+          if (confirm) {
+            this.registerCustomer.customer_id = retryResponse.customer_id;
+            this.createService();
+          } else {
+            this.navCtrl.navigateRoot('/menu', { animated: true });
+          }
+        } else {
+          this.uiService.InfoAlert('Error al guardar el cliente en segundo intento');
+        }
+      }
+
+      return;
+    }
+
+    if (customerResponse) {
+      const { customer_id = null, isNew = false } = customerResponse || {};
+
+      if (customer_id) {
         let confirm;
         if (isNew) {
           confirm = await this.uiService.ConfirmAlert('¿Deseas crear un servicio para este cliente?');
-  
+
           if (confirm) {
-            this.registerCustomer.customer_id = customer_id
-            // Reutiliza createService para redirigir a la creación del servicio
+            this.registerCustomer.customer_id = customer_id;
             this.createService();
           } else {
-            // navegar al tabs
             this.uiService.InfoAlert('Registro exitoso');
-            this.navCtrl.navigateRoot( '/menu', { animated: true } );
+            this.navCtrl.navigateRoot('/menu', { animated: true });
           }
         } else {
           this.uiService.InfoAlert('Error: Ya hay un cliente con este documento!');
-          return
+          return;
         }
-        
       } else {
         this.uiService.InfoAlert('Error al guardar el cliente');
       }
     } else {
       this.uiService.InfoAlert('Error al guardar el cliente');
     }
-    
   }
+
 
   async getCustomer() {
 
@@ -169,6 +198,11 @@ export class NewcustomerPage implements OnInit {
   }
 
   async createService() {
+    if (this.registerCustomer.blocked) {
+      this.uiService.InfoAlert('Usuario bloqueado!');
+      return;
+    }
+
     this.newService.customer_id = this.registerCustomer.customer_id;
     this.newService.wallet_id = this.registerCustomer.wallet_id;
     this.navService.newService = this.newService;
