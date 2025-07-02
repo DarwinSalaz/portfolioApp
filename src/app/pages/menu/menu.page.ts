@@ -103,6 +103,12 @@ export class MenuPage implements OnInit {
           name: 'Registrar Ingreso',
           redirectTo: '/new-revenue',
           allowProfile: [1]
+        },
+        {
+          icon: 'list',
+          name: 'Listar Ingresos',
+          redirectTo: '/list-revenues',
+          allowProfile: [1]
         }
       ]
     },

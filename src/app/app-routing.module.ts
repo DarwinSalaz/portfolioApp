@@ -42,7 +42,8 @@ const routes: Routes = [
   { path: 'select-products', loadChildren: './pages/transactions/select-products/select-products.module#SelectProductsPageModule' },
   { path: 'payment-details', loadChildren: './pages/transactions/payment-details/payment-details.module#PaymentDetailsPageModule' },
   { path: 'new-revenue', loadChildren: './pages/new-revenue/new-revenue.module#NewRevenuePageModule' },
-  { path: 'list-expenses', loadChildren: './pages/expenses/list-expenses/list-expenses.module#ListExpensesPageModule' }
+  { path: 'list-expenses', loadChildren: './pages/expenses/list-expenses/list-expenses.module#ListExpensesPageModule' },
+  { path: 'list-revenues', loadChildren: './pages/revenues/list-revenues/list-revenues.module#ListRevenuesPageModule' }
 
 ];
 
