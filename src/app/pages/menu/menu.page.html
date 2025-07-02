@@ -11,16 +11,37 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="menu-content">
-  <ion-grid>
-    <ion-row>
-      <ion-col size="12" size-md="6" *ngFor="let c of componentes">
-        <ion-card button [routerLink]="c.redirectTo" class="menu-card">
-          <ion-card-content class="card-content">
-            <ion-icon [name]="c.icon" class="menu-icon"></ion-icon>
-            <ion-label class="menu-label">{{ c.name }}</ion-label>
-          </ion-card-content>
-        </ion-card>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <div class="menu-groups">
+    <div class="menu-group" *ngFor="let group of menuGroups">
+      <!-- Grupo del menú -->
+      <ion-card button class="menu-group-card" (click)="toggleGroup(group.id)">
+        <ion-card-content class="group-content">
+          <div class="group-header">
+            <ion-icon [name]="group.icon" class="group-icon"></ion-icon>
+            <ion-label class="group-label">{{ group.name }}</ion-label>
+            <ion-icon 
+              [name]="isGroupExpanded(group.id) ? 'chevron-up' : 'chevron-down'" 
+              class="expand-icon">
+            </ion-icon>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Submenús desplegables -->
+      <div class="submenu-container" *ngIf="isGroupExpanded(group.id)">
+        <div class="submenu-items">
+          <ion-card 
+            button 
+            class="submenu-item" 
+            *ngFor="let item of group.items"
+            (click)="navigateTo(item.redirectTo)">
+            <ion-card-content class="submenu-content">
+              <ion-icon [name]="item.icon" class="submenu-icon"></ion-icon>
+              <ion-label class="submenu-label">{{ item.name }}</ion-label>
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </div>
+    </div>
+  </div>
 </ion-content>

@@ -10,98 +10,157 @@ import { Router } from '@angular/router';
 })
 export class MenuPage implements OnInit {
 
-  componentes: Componente[] = [];
+  menuGroups: MenuGroup[] = [];
+  expandedGroups: Set<string> = new Set();
 
-  allComponentes: Componente[] = [
+  allMenuGroups: MenuGroup[] = [
     {
-      icon: 'cash',
+      id: 'usuarios',
       name: 'Usuarios',
-      redirectTo: '/users',
-      allowProfile: [1]
-    },
-    {
-      icon: 'wallet',
-      name: 'Control Diario',
-      redirectTo: '/cashcontrol-daily',
-      allowProfile: [1, 2, 3]
-    },
-    {
-      icon: 'wallet',
-      name: 'Control De Caja',
-      redirectTo: '/cashcontrol',
-      allowProfile: [1, 2, 3]
-    },
-    {
-      icon: 'clock',
-      name: 'Cobros Por Fecha',
-      redirectTo: '/transaction-by-date-form',
-      allowProfile: [1, 3]
-    },
-    /*{
-      icon: 'card',
-      name: 'Nueva Venta',
-      redirectTo: '/transaction',
-      allowProfile: [1, 2, 3]
-    },*/
-    {
-      icon: 'card',
-      name: 'Registrar Venta',
-      redirectTo: '/customers/new-service',
-      allowProfile: [1, 2, 3]
-    },
-    {
-      icon: 'cash',
-      name: 'Registrar Abono',
-      redirectTo: '/customers/payments',
-      allowProfile: [1, 3]
-    },
-    {
-      icon: 'grid',
-      name: 'Registrar Gasto',
-      redirectTo: '/new-expense',
-      allowProfile: [1, 2, 3]
-    },
-    {
-      icon: 'grid',
-      name: 'Registrar Ingreso',
-      redirectTo: '/new-revenue',
-      allowProfile: [1]
-    },
-    {
       icon: 'people',
+      allowProfile: [1],
+      items: [
+        {
+          icon: 'list',
+          name: 'Listar Usuarios',
+          redirectTo: '/users',
+          allowProfile: [1]
+        },
+        {
+          icon: 'person-add',
+          name: 'Crear Usuario',
+          redirectTo: '/new-user',
+          allowProfile: [1]
+        }
+      ]
+    },
+    {
+      id: 'control-caja',
+      name: 'Control de Caja',
+      icon: 'wallet',
+      allowProfile: [1, 2, 3],
+      items: [
+        {
+          icon: 'calendar',
+          name: 'Control Diario',
+          redirectTo: '/cashcontrol-daily',
+          allowProfile: [1, 2, 3]
+        },
+        {
+          icon: 'analytics',
+          name: 'Control de Caja',
+          redirectTo: '/cashcontrol',
+          allowProfile: [1, 2, 3]
+        },
+        {
+          icon: 'time',
+          name: 'Cobros Por Fecha',
+          redirectTo: '/transaction-by-date-form',
+          allowProfile: [1, 3]
+        }
+      ]
+    },
+    {
+      id: 'transacciones',
+      name: 'Ventas Y Abonos',
+      icon: 'card',
+      allowProfile: [1, 2, 3],
+      items: [
+        {
+          icon: 'add-circle',
+          name: 'Registrar Venta',
+          redirectTo: '/customers/new-service',
+          allowProfile: [1, 2, 3]
+        },
+        {
+          icon: 'cash',
+          name: 'Registrar Abono',
+          redirectTo: '/customers/payments',
+          allowProfile: [1, 3]
+        }
+      ]
+    },
+    {
+      id: 'finanzas',
+      name: 'Finanzas',
+      icon: 'trending-up',
+      allowProfile: [1, 2, 3],
+      items: [
+        {
+          icon: 'remove-circle',
+          name: 'Registrar Gasto',
+          redirectTo: '/new-expense',
+          allowProfile: [1, 2, 3]
+        },
+        {
+          icon: 'add-circle',
+          name: 'Registrar Ingreso',
+          redirectTo: '/new-revenue',
+          allowProfile: [1]
+        }
+      ]
+    },
+    {
+      id: 'clientes',
       name: 'Clientes',
-      redirectTo: '/customers/detail',
-      allowProfile: [1, 2, 3]
+      icon: 'people',
+      allowProfile: [1, 2, 3],
+      items: [
+        {
+          icon: 'list',
+          name: 'Listar Clientes',
+          redirectTo: '/customers/detail',
+          allowProfile: [1, 2, 3]
+        },
+        {
+          icon: 'person-add',
+          name: 'Crear Cliente',
+          redirectTo: '/newcustomer',
+          allowProfile: [1, 2, 3]
+        }
+      ]
     },
     {
-      icon: 'person-add',
-      name: 'Crear Cliente',
-      redirectTo: '/newcustomer',
-      allowProfile: [1, 2, 3]
-    },
-    {
-      icon: 'person-add',
-      name: 'Crear Usuario',
-      redirectTo: '/new-user',
-      allowProfile: [1]
-    },
-    {
-      icon: 'list-box',
+      id: 'inventario',
       name: 'Inventario',
-      redirectTo: '/list-wallets',
-      allowProfile: [1, 2, 3]
+      icon: 'cube',
+      allowProfile: [1, 2, 3],
+      items: [
+        {
+          icon: 'list-box',
+          name: 'Gestionar Inventario',
+          redirectTo: '/list-wallets',
+          allowProfile: [1, 2, 3]
+        }
+      ]
     },
     {
-      icon: 'list-box',
-      name: 'Informe De Carteras',
-      redirectTo: '/portfolio-report',
-      allowProfile: [1]
+      id: 'reportes',
+      name: 'Reportes',
+      icon: 'document',
+      allowProfile: [1],
+      items: [
+        {
+          icon: 'analytics',
+          name: 'Informe de Carteras',
+          redirectTo: '/portfolio-report',
+          allowProfile: [1]
+        }
+      ]
     },
     {
-      icon: 'log-out',
-      name: 'Cerrar Sesión',
-      redirectTo: '/log-out',
-      allowProfile: [1, 2, 3]
+      id: 'sesion',
+      name: 'Sesión',
+      icon: 'settings',
+      allowProfile: [1, 2, 3],
+      items: [
+        {
+          icon: 'log-out',
+          name: 'Cerrar Sesión',
+          redirectTo: '/log-out',
+          allowProfile: [1, 2, 3]
+        }
+      ]
     }
   ];
 
@@ -110,8 +169,6 @@ export class MenuPage implements OnInit {
   userProfile: string = null;
 
   constructor(public activatedRoute: ActivatedRoute, private storage: Storage, public router: Router ) {
-
-
     this.activatedRoute.queryParams.subscribe((res) => {
       this.start(parseInt(res.user_profile_id));
       console.log(res);
@@ -122,8 +179,6 @@ export class MenuPage implements OnInit {
   }
 
   async start(userProfileId: number) {
-    //const userProfileId = await this.storage.get('user_profile_id');
-
     const token = await this.storage.get('token');
 
     if (!token) {
@@ -151,19 +206,45 @@ export class MenuPage implements OnInit {
     console.log("aquiiiii pai " + this.userProfileId)
     console.log("aquiiiii pai " + this.userProfile)
 
-    this.componentes = this.allComponentes.filter((component) => {
-      
-      var result = component.allowProfile.includes(this.userProfileId);
-      console.log("estee es el profilee " + this.userProfileId + " permitidoosss " + component.allowProfile + " resultado: " + result);
-      return result;
-    });
+    // Filtrar grupos y elementos según el perfil del usuario
+    this.menuGroups = this.allMenuGroups
+      .filter(group => group.allowProfile.includes(this.userProfileId))
+      .map(group => ({
+        ...group,
+        items: group.items.filter(item => item.allowProfile.includes(this.userProfileId))
+      }))
+      .filter(group => group.items.length > 0); // Solo mostrar grupos que tengan elementos visibles
+  }
+
+  toggleGroup(groupId: string) {
+    if (this.expandedGroups.has(groupId)) {
+      this.expandedGroups.delete(groupId);
+    } else {
+      this.expandedGroups.add(groupId);
+    }
+  }
+
+  isGroupExpanded(groupId: string): boolean {
+    return this.expandedGroups.has(groupId);
+  }
+
+  navigateTo(redirectTo: string) {
+    this.router.navigate([redirectTo]);
   }
 
 }
 
-interface Componente {
+interface MenuItem {
   icon: string;
   name: string;
   redirectTo: string;
   allowProfile: number[];
+}
+
+interface MenuGroup {
+  id: string;
+  name: string;
+  icon: string;
+  allowProfile: number[];
+  items: MenuItem[];
 }
