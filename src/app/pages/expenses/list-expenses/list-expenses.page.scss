@@ -1,0 +1,321 @@
+.expenses-content {
+  --background: #f8f9fa;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  
+  ion-spinner {
+    width: 48px;
+    height: 48px;
+    color: var(--ion-color-medium);
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+.main-content {
+  padding: 16px;
+}
+
+.wallet-selector-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  
+  ion-card-content {
+    padding: 16px;
+  }
+  
+  .no-wallets {
+    margin-top: 8px;
+    padding: 8px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 6px;
+    
+    p {
+      color: #856404;
+      font-size: 0.9rem;
+      margin: 0;
+      text-align: center;
+    }
+  }
+  
+  .wallet-info {
+    margin-top: 8px;
+    
+    p {
+      color: var(--ion-color-medium);
+      font-size: 0.85rem;
+      margin: 0;
+      text-align: center;
+    }
+  }
+}
+
+.filters-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  animation: slideDown 0.3s ease-out;
+  
+  ion-card-header {
+    padding-bottom: 8px;
+    
+    ion-card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #2c3e50;
+    }
+  }
+  
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+  
+  ion-button {
+    flex: 1;
+    --border-radius: 8px;
+  }
+}
+
+.summary-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  
+  ion-card-content {
+    padding: 20px;
+  }
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.summary-item {
+  text-align: center;
+  
+  .summary-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 4px;
+  }
+  
+  .summary-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+  }
+}
+
+.expenses-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+  
+  .empty-icon {
+    font-size: 4rem;
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    color: #2c3e50;
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+  }
+  
+  p {
+    color: var(--ion-color-medium);
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.4;
+  }
+}
+
+.expense-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  background: white;
+  border: 1px solid #e9ecef;
+  cursor: pointer;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  ion-card-content {
+    padding: 16px;
+  }
+}
+
+.expense-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.expense-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  
+  ion-icon {
+    font-size: 1.5rem;
+    color: white;
+  }
+}
+
+.expense-info {
+  flex: 1;
+  
+  .expense-type {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 4px 0;
+  }
+  
+  .expense-date {
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+    margin: 0 0 2px 0;
+  }
+  
+  .expense-user {
+    font-size: 0.85rem;
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+.expense-amount {
+  text-align: right;
+  
+  .amount-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #e74c3c;
+  }
+}
+
+.expense-justification {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #f1f3f4;
+  
+  p {
+    font-size: 0.9rem;
+    color: #495057;
+    margin: 0;
+    line-height: 1.4;
+    
+    strong {
+      color: #2c3e50;
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 500px;
+  }
+}
+
+// Responsive design
+@media (min-width: 768px) {
+  .main-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .summary-grid {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+  
+  .expenses-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 16px;
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .expenses-content {
+    --background: #1a1a1a;
+  }
+  
+  .wallet-selector-card,
+  .filters-card,
+  .expense-card {
+    background: #2c3e50;
+    border-color: #4a5568;
+  }
+  
+  .expense-info .expense-type {
+    color: #ecf0f1;
+  }
+  
+  .expense-justification p {
+    color: #bdc3c7;
+  }
+  
+  .empty-state h3 {
+    color: #ecf0f1;
+  }
+  
+  .empty-state p {
+    color: #bdc3c7;
+  }
+} 

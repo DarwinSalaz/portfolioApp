@@ -1,0 +1,156 @@
+<ion-header translucent>
+  <ion-toolbar color="medium">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Lista de Gastos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="toggleFilters()">
+        <ion-icon name="filter"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="expenses-content">
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>Cargando gastos...</p>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="!loading" class="main-content">
+    <!-- Pull to refresh -->
+    <ion-refresher slot="fixed" (ionRefresh)="refreshExpenses($event)">
+      <ion-refresher-content></ion-refresher-content>
+    </ion-refresher>
+
+    <!-- Selector de cartera -->
+    <ion-card class="wallet-selector-card">
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Cartera</ion-label>
+          <ion-select 
+            [(ngModel)]="selectedWallet" 
+            (ngModelChange)="walletChange($event)"
+            interface="action-sheet"
+            placeholder="Seleccionar cartera"
+            [compareWith]="compareWallets">
+            <ion-select-option 
+              *ngFor="let wallet of wallets" 
+              [value]="wallet">
+              {{ wallet.name }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div *ngIf="wallets.length === 0" class="no-wallets">
+          <p>No hay carteras disponibles</p>
+        </div>
+        <div *ngIf="wallets.length > 0" class="wallet-info">
+          <p>{{ getWalletStatusInfo() }}</p>
+          <p *ngIf="selectedWallet">Cartera seleccionada: <strong>{{ selectedWallet.name }}</strong></p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Filtros -->
+    <ion-card *ngIf="showFilters" class="filters-card">
+      <ion-card-header>
+        <ion-card-title>Filtros</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Fecha Inicial</ion-label>
+          <ion-datetime 
+            [(ngModel)]="startDate"
+            display-format="DD/MM/YYYY"
+            placeholder="Seleccionar fecha">
+          </ion-datetime>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="stacked">Fecha Final</ion-label>
+          <ion-datetime 
+            [(ngModel)]="endDate"
+            display-format="DD/MM/YYYY"
+            placeholder="Seleccionar fecha">
+          </ion-datetime>
+        </ion-item>
+        
+        <ion-item>
+          <ion-label position="stacked">Tipo de Gasto</ion-label>
+          <ion-select [(ngModel)]="expenseType" interface="action-sheet">
+            <ion-select-option value="">Todos los tipos</ion-select-option>
+            <ion-select-option 
+              *ngFor="let type of expenseTypes" 
+              [value]="type">
+              {{ type }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+
+        <div class="filter-buttons">
+          <ion-button fill="outline" (click)="clearFilters()">
+            <ion-icon name="refresh" slot="start"></ion-icon>
+            Limpiar
+          </ion-button>
+          <ion-button (click)="applyFilters()">
+            <ion-icon name="checkmark" slot="start"></ion-icon>
+            Aplicar
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Resumen -->
+    <ion-card class="summary-card">
+      <ion-card-content>
+        <div class="summary-grid">
+          <div class="summary-item">
+            <div class="summary-value">{{ getExpensesCount() }}</div>
+            <div class="summary-label">Total Gastos</div>
+          </div>
+          <div class="summary-item">
+            <div class="summary-value">${{ formatCurrency(getTotalExpenses()) }}</div>
+            <div class="summary-label">Valor Total</div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Lista de gastos -->
+    <div class="expenses-list">
+      <div *ngIf="expenses.length === 0" class="empty-state">
+        <ion-icon name="receipt-outline" class="empty-icon"></ion-icon>
+        <h3>No hay gastos registrados</h3>
+        <p>No se encontraron gastos con los filtros aplicados</p>
+      </div>
+
+      <ion-card 
+        *ngFor="let expense of expenses" 
+        class="expense-card"
+        (click)="deleteExpense(expense)">
+        <ion-card-content>
+          <div class="expense-header">
+            <div class="expense-icon">
+              <ion-icon [name]="getExpenseTypeIcon(expense.expense_type)"></ion-icon>
+            </div>
+            <div class="expense-info">
+              <h3 class="expense-type">{{ expense.expense_type }}</h3>
+              <p class="expense-date">{{ formatDate(expense.expense_date) }}</p>
+              <p *ngIf="expense.username" class="expense-user">Por: {{ expense.username }}</p>
+            </div>
+            <div class="expense-amount">
+              <span class="amount-value">${{ formatCurrency(expense.value) }}</span>
+            </div>
+          </div>
+          
+          <div *ngIf="expense.justification" class="expense-justification">
+            <p><strong>Justificación:</strong> {{ expense.justification }}</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+</ion-content> 

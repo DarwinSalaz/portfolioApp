@@ -22,7 +22,8 @@ const routes: Routes = [
   },
   { path: 'register-payment', loadChildren: './pages/transactions/register-payment/register-payment.module#RegisterPaymentPageModule' },
   { path: 'new-expense', loadChildren: './pages/expense/new-expense/new-expense.module#NewExpensePageModule' },
-  { path: 'new-user', loadChildren: './pages/user/new-user/new-user.module#NewUserPageModule' },  { path: 'users', loadChildren: './pages/user/users/users.module#UsersPageModule' },
+  { path: 'new-user', loadChildren: './pages/user/new-user/new-user.module#NewUserPageModule' },
+  { path: 'users', loadChildren: './pages/user/users/users.module#UsersPageModule' },
   { path: 'account-closure', loadChildren: './pages/account-closure/account-closure.module#AccountClosurePageModule' },
   { path: 'log-out', loadChildren: './pages/user/log-out/log-out.module#LogOutPageModule' },
   { path: 'cashcontrol-daily', loadChildren: './pages/cashcontrol-daily/cashcontrol-daily.module#CashcontrolDailyPageModule' },
@@ -40,7 +41,8 @@ const routes: Routes = [
   { path: 'portfolio-report-wallet', loadChildren: './pages/reports/portfolio-report-wallet/portfolio-report-wallet.module#PortfolioReportWalletPageModule' },
   { path: 'select-products', loadChildren: './pages/transactions/select-products/select-products.module#SelectProductsPageModule' },
   { path: 'payment-details', loadChildren: './pages/transactions/payment-details/payment-details.module#PaymentDetailsPageModule' },
-  { path: 'new-revenue', loadChildren: './pages/new-revenue/new-revenue.module#NewRevenuePageModule' }
+  { path: 'new-revenue', loadChildren: './pages/new-revenue/new-revenue.module#NewRevenuePageModule' },
+  { path: 'list-expenses', loadChildren: './pages/expenses/list-expenses/list-expenses.module#ListExpensesPageModule' }
 
 ];
 

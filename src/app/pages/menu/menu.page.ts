@@ -93,6 +93,12 @@ export class MenuPage implements OnInit {
           allowProfile: [1, 2, 3]
         },
         {
+          icon: 'list',
+          name: 'Listar Gastos',
+          redirectTo: '/list-expenses',
+          allowProfile: [1, 2, 3]
+        },
+        {
           icon: 'add-circle',
           name: 'Registrar Ingreso',
           redirectTo: '/new-revenue',
