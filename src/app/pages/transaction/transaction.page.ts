@@ -35,6 +35,8 @@ export class TransactionPage implements OnInit {
   products: Product[] = [];
   allProducts: Product[] = [];
 
+  payDownInInstallments: boolean = false;
+
   loading: boolean = true;
 
   registerService: Service = {
@@ -55,7 +57,8 @@ export class TransactionPage implements OnInit {
     next_payment_date: null,
     initial_payment: 0,
     direct_purchase: false,
-    pending_fees: 10
+    pending_fees: 10,
+    pay_down_in_installments: false
   };
 
   datosInput = {
@@ -141,6 +144,7 @@ export class TransactionPage implements OnInit {
       return;
     }
 
+    this.registerService.pay_down_in_installments = this.payDownInInstallments
     this.registerService.pending_fees = this.registerService.quantity_of_fees - 1
     this.registerService.next_payment_date = this.registerService.next_payment_date.split('.')[0]
     this.loading = true;
@@ -204,21 +208,47 @@ export class TransactionPage implements OnInit {
   }
 
   recalculate( event ) {
-    this.registerService.total_value = this.registerService.service_value - this.registerService.discount;
-    if (this.registerService.direct_purchase !== true) {
-      this.registerService.down_payment = this.registerService.total_value*0.1
-      this.datosInput.down_payment = this.registerService.down_payment
+
+    const total = this.registerService.service_value;
+    const discount = this.registerService.discount;
+    const valueAfterDiscount = total - discount;
+
+    const quantityOfFees = this.datosInput.quantity_of_fees || 10;
+
+    if (this.payDownInInstallments) {
+      const feeValue = Number((valueAfterDiscount / quantityOfFees).toFixed(0));
+      const halfFee = feeValue / 2;
+
+      this.registerService.down_payment = halfFee;
+      this.datosInput.down_payment = halfFee;
+
+      this.registerService.initial_payment = halfFee;
+      this.datosInput.initial_payment = halfFee;
+
+      this.registerService.debt = valueAfterDiscount - halfFee - halfFee;
+
+      this.registerService.fee_value = feeValue;
+      this.datosInput.fee_value = feeValue;
+
+      this.registerService.total_value = valueAfterDiscount;
+      this.registerService.quantity_of_fees = quantityOfFees;
+    } else {
+      this.registerService.total_value = valueAfterDiscount;
+      if (this.registerService.direct_purchase !== true) {
+        this.registerService.down_payment = this.registerService.total_value*0.1
+        this.datosInput.down_payment = this.registerService.down_payment
+      }
+      this.registerService.debt = this.registerService.total_value - this.registerService.down_payment - this.registerService.initial_payment;
+      this.registerService.quantity_of_fees = quantityOfFees
+      const denominator = this.registerService.quantity_of_fees - 1;
+      if (denominator > 0) {
+        this.registerService.fee_value = Number(
+          (this.registerService.debt / denominator).toFixed(0)
+        );
+      } 
+      this.datosInput.fee_value = this.registerService.fee_value
+      console.log( this.registerService.discount );
     }
-    this.registerService.debt = this.registerService.total_value - this.registerService.down_payment - this.registerService.initial_payment;
-    this.registerService.quantity_of_fees = this.datosInput.quantity_of_fees
-    const denominator = this.registerService.quantity_of_fees - 1;
-    if (denominator > 0) {
-      this.registerService.fee_value = Number(
-        (this.registerService.debt / denominator).toFixed(0)
-      );
-    } 
-    this.datosInput.fee_value = this.registerService.fee_value
-    console.log( this.registerService.discount );
   }
 
   focus(event) {
@@ -301,5 +331,29 @@ export class TransactionPage implements OnInit {
     
     
   }
+
+  changeDownPaymentMode(event) {
+    if (this.payDownInInstallments === false) {
+      this.registerService.initial_payment = 0;
+      this.datosInput.initial_payment = 0;
+    }
+    this.recalculate(null);
+  }
+
+  // Devuelve el número con puntos de miles
+  formatCurrency(value: number | string): string {
+    if (!value && value !== 0) return '';
+    const num = value.toString().replace(/\D/g, '');
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  // Convierte a número limpio (sin puntos) y lo guarda en el modelo
+  onCurrencyInput(event: any, field: string) {
+    const rawValue = event.target.value.replace(/\./g, '');
+    const numericValue = parseInt(rawValue, 10) || 0;
+    this.datosInput[field] = numericValue;
+  }
+
+
 
 }

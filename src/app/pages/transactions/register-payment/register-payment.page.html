@@ -1,157 +1,130 @@
-<ion-header no-border>
+<ion-header>
   <ion-toolbar color="medium">
-      <ion-buttons slot="start">
-        <ion-back-button defaultHref="/menu"></ion-back-button>
-      </ion-buttons>
-  
-    <ion-title class="ion-text-capitalize">REGISTRAR PAGO</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Registrar Pago</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content *ngIf="loading" color="light">
-  <ion-slide>
-    <ion-row>
-      <ion-col>
-        <img src="/assets/carga2-127.gif">
-      </ion-col>
-    </ion-row>
-  </ion-slide>
-</ion-content>
+<ion-content [fullscreen]="true">
+  <div *ngIf="loading" class="loader">
+    <img src="/assets/carga2-127.gif" alt="Cargando...">
+  </div>
 
-<ion-content *ngIf="!loading" padding>
-  <form (ngSubmit)="register( fRegistro )" #fRegistro="ngForm">
-    <ion-list>
-      <ion-item>
-        <ion-label stacked>Valor Productos</ion-label>
-        <br>
-        <ion-input style="text-align: right"
-          name="value"
-          type="text" 
-          readonly=true
-          placeholder="Valor" 
-          [(ngModel)]="service.service_value"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Descuento</ion-label>
-        <br>
-        <ion-input
-          style="text-align: right"
-          name="discount"
-          type="text"
-          readonly=true
-          placeholder="Descuento" 
-          [(ngModel)]="service.discount"
-          min = "0"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Cuota Inicial</ion-label>
-        <br>
-        <ion-input style="text-align: right"
-          name="initial"
-          type="text" 
-          readonly=true
-          placeholder="Cuota Inicial" 
-          [(ngModel)]="service.down_payment"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Total</ion-label>
-        <br>
-        <ion-input style="text-align: right"
-          name="total"
-          type="text" 
-          readonly=true
-          placeholder="Valor total" 
-          [(ngModel)]="service.total_value"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Resta</ion-label>
-        <ion-input style="text-align: right"
-          name="debt"
-          type="text" 
-          readonly=true
-          placeholder="Resta" 
-          [(ngModel)]="service.debt"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Valor por cuota</ion-label>
-        <ion-input style="text-align: right"
-          name="fee_value"
-          type="text" 
-          readonly=true
-          placeholder="Resta" 
-          [(ngModel)]="service.fee_value"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <ion-label stacked>Cuotas Pendientes</ion-label>
-        <ion-input style="text-align: right"
-          name="pending_fees"
-          type="number"
-          readonly=true
-          placeholder="Coutas Pendientes"
-          [(ngModel)]="service.pending_fees"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-        <b><ion-label stacked>Cuotas Total</ion-label></b>
-        <ion-input style="text-align: right"
-          name="quantity_of_fees"
-          type="number"
-          placeholder="Cant Cuotas"
-          (ionBlur)="feeChanges($event)"
-          (ionFocus)="focusFeeChanges($event)"
-          [(ngModel)]="quantity_of_fees"
-          required>
-        </ion-input>
-      </ion-item>
-      <ion-item>
-          <b><ion-label stacked>Pago cuota</ion-label></b>
-          <ion-input style="text-align: right"
-            name="payment_value"
-            type="number"
-            placeholder="Abono" 
-            [(ngModel)]="registerPaymentInput.value"
-            (ionFocus)="focus($event)"
-            (ionBlur)="focusOut($event)"
-            required>
-          </ion-input>
-        </ion-item>
-        <ion-item>
-          <b><ion-label stacked>Próx Pago</ion-label></b>
-          <ion-datetime style="text-align: right"
-            name="next_payment_date"
-            display-timezone="utc"
-            [min]="minDate" 
-            [max]="maxDate"
-            [(ngModel)]="registerPayment.next_payment_date"
-            required>
-          </ion-datetime>
-        </ion-item>
-    </ion-list>
-    <div>
-      <ion-button color="medium" *ngIf="showAbonarButton" type="submit" size="medium" expand="block">Abonar</ion-button>
-      <ion-button color="medium" [disabled]="isDisabled" (click)="updateService()" size="medium" expand="block">Actualizar Cuotas</ion-button>
-      <ion-button color="medium" (click)="showDetail()" size="medium" expand="block">Ver Detalle</ion-button>
-      <ion-button color="medium" (click)="showPayments()" size="medium" expand="block">Historial Abonos</ion-button>
-      <ion-button color="danger" *ngIf="showCancelButton" (click)="cancelService()" size="medium" expand="block">Cancelar Cuenta</ion-button>
-      <ion-button size="medium" color="danger" (click)="confirmMarkForWithdrawal()" expand="block">
-        Cuenta Para Retiro
-      </ion-button>
-      <ion-button size="medium" color="danger" (click)="confirmMarkAsLost()" expand="block">
-        Marcar Cuenta Perdida
-      </ion-button>
-    </div>
+  <form *ngIf="!loading" (ngSubmit)="register(registerForm)" #registerForm="ngForm" class="payment-form">
+    <ion-grid>
+      <ion-row>
+
+        <!-- PANEL IZQUIERDO: resumen plegable -->
+        <ion-col size="12" size-md="5">
+          <div class="summary-header" (click)="toggleSummary()">
+            <ion-label><strong>Consultar Resumen</strong></ion-label>
+            <ion-icon [name]="showSummary ? 'chevron-up-circle' : 'chevron-down-circle'" slot="end"></ion-icon>
+          </div>
+          <div *ngIf="showSummary" class="card summary-card">
+            <div class="field"><label>Valor Productos:</label><span>{{ service.service_value }}</span></div>
+            <div class="field"><label>Descuento:</label><span>{{ service.discount }}</span></div>
+            <div class="field"><label>Cuota Inicial:</label><span>{{ service.down_payment }}</span></div>
+            <div class="field"><label>Total:</label><span>{{ service.total_value }}</span></div>
+            <div class="field"><label>Resta:</label><span>{{ service.debt }}</span></div>
+            <div class="field"><label>Valor Cuota:</label><span>{{ service.fee_value }}</span></div>
+            <div class="field"><label>Cuotas Pendientes:</label><span>{{ service.pending_fees }}</span></div>
+          </div>
+        </ion-col>
+
+        <!-- PANEL DERECHO: Detalles del pago -->
+        <ion-col size="12" size-md="7">
+          <div class="card payment-card">
+            <h2>Detalle de Pago</h2>
+
+            <ion-item lines="full">
+              <ion-label position="stacked">Cuotas Totales</ion-label>
+              <ion-input
+                type="text"
+                [(ngModel)]="quantity_of_fees"
+                name="quantity_of_fees"
+                (ionBlur)="feeChanges($event)"
+                (ionFocus)="focusFeeChanges($event)"
+                required></ion-input>
+            </ion-item>
+
+            <ion-item lines="full">
+              <ion-label position="stacked">Valor por Cuota</ion-label>
+              <ion-input
+                type="text"
+                readonly
+                [value]="formatCurrency(fee_value)"
+                (ionInput)="onCurrencyInputFeeValue($event)"
+                name="fee_value"></ion-input>
+            </ion-item>
+
+            <ion-item lines="full" *ngIf="service.pay_down_in_installments">
+              <ion-label position="stacked">Abono Seña</ion-label>
+              <ion-input
+                type="text"
+                readonly
+                [value]="formatCurrency(registerPayment.deposit_payment)"
+                name="deposit_payment"
+                required></ion-input>
+            </ion-item>
+
+            <ion-item lines="full">
+              <ion-label position="stacked">Abono</ion-label>
+              <ion-input
+                type="text"
+                [value]="formatCurrency(registerPaymentInput.value)"
+                (ionInput)="onCurrencyInput($event, 'value')"
+                name="payment_value"
+                (ionFocus)="focus($event)"
+                (ionBlur)="focusOut($event)"
+                required></ion-input>
+            </ion-item>
+
+            <ion-item lines="full">
+              <ion-label position="stacked">Próx. Pago</ion-label>
+              <ion-datetime
+                display-timezone="utc"
+                [min]="minDate"
+                [max]="maxDate"
+                [(ngModel)]="registerPayment.next_payment_date"
+                name="next_payment_date"
+                required></ion-datetime>
+            </ion-item>
+
+            <ion-item lines="full">
+              <ion-label position="stacked">Observaciones</ion-label>
+              <ion-textarea
+                [(ngModel)]="service.observations"
+                name="observations"
+                placeholder="Notas opcionales"></ion-textarea>
+            </ion-item>
+          </div>
+
+          <!-- BOTONES DE ACCIÓN -->
+          <ion-button expand="block" color="medium" type="submit" *ngIf="showAbonarButton">
+            Abonar
+          </ion-button>
+          <ion-button expand="block" color="medium" [disabled]="isDisabled" (click)="updateService()">
+            Actualizar Cuotas
+          </ion-button>
+          <ion-button expand="block" color="medium" (click)="showDetail()">
+            Ver Detalle
+          </ion-button>
+          <ion-button expand="block" color="medium" (click)="showPayments()">
+            Historial Abonos
+          </ion-button>
+          <ion-button expand="block" color="danger" *ngIf="showCancelButton" (click)="cancelService()">
+            Cancelar Cuenta
+          </ion-button>
+          <ion-button expand="block" color="danger" (click)="confirmMarkForWithdrawal()">
+            Cuenta Para Retiro
+          </ion-button>
+          <ion-button expand="block" color="dark" (click)="confirmMarkAsLost()">
+            Marcar Cuenta Perdida
+          </ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
   </form>
-  </ion-content>
+</ion-content>

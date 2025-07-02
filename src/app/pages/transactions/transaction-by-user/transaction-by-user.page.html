@@ -16,13 +16,26 @@
 </ion-content>
 
 <ion-content *ngIf="!loading">
+
+  <ion-segment [(ngModel)]="selectedFilter" (ionChange)="onFilterChange($event)" value="all" color="medium">
+    <ion-segment-button value="all">
+      <ion-label>Todos</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="in_progress">
+      <ion-label>En Progreso</ion-label>
+    </ion-segment-button>
+    <ion-segment-button value="fully_paid">
+      <ion-label>Pagados</ion-label>
+    </ion-segment-button>
+  </ion-segment>
+
   <ion-grid>
     <ion-row class="ion-justify-content-center">
       <ion-col
         size="12"
         size-md="6"
         size-lg="4"
-        *ngFor="let service of services"
+        *ngFor="let service of filteredServices"
       >
         <ion-card class="card-service" (click)="click(service)" style="position: relative;">
           

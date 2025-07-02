@@ -50,6 +50,7 @@ export interface ServiceReport {
 
 export interface PaymentsReportResp {
     total_value?: string,
+    total_debt?: string,
     payments_data?: PaymentsReport[]
 }
 
@@ -58,6 +59,7 @@ export interface PaymentsReport {
     client?: string;
     service_id?: number;
     value?: string;
+    debt?: string;
     wallet?: string;
     username?: string;
     created_at?: string;
@@ -160,6 +162,7 @@ export interface Service {
     initial_payment?: number;
     direct_purchase?: boolean;
     pending_fees?: number;
+    pay_down_in_installments?: boolean;
 }
 
 export interface ServiceProduct {
@@ -256,6 +259,7 @@ export interface Payment {
     service_id?: number;
     value?: number;
     next_payment_date?: string;
+    deposit_payment?: number;
 }
 
 export interface ServicesByCustomerResponse {
@@ -270,6 +274,7 @@ export interface ServicesByCustomerResponse {
     days_per_fee: number;
     quantity_of_fees: number;
     fee_value: string;
+    fee_value_in_number: number;
     total_value_number: number;
     down_payment_number: number;
     wallet_id: number;
@@ -284,6 +289,8 @@ export interface ServicesByCustomerResponse {
     next_payment_date?: string;
     marked_for_withdrawal?: boolean;
     marked_as_lost?: boolean;
+    pay_down_in_installments?: boolean;
+    down_payment_total?: number;
 }
 
 export interface PaymentResumeDto {

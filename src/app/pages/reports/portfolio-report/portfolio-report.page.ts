@@ -283,7 +283,7 @@ export class PortfolioReportPage implements OnInit {
         for (var i = 0; i < resp.payments_data.length; i++) {
           var row = resp.payments_data[i];
           console.log("Id: " + row.id + ", Valor: " + row.value);
-          var rowArr = [row.id, row.service_id, row.client, row.value, row.created_at, row.username]
+          var rowArr = [row.id, row.service_id, row.client, row.value, row.debt, row.created_at, row.username]
 
           data.push(rowArr);
         }
@@ -291,6 +291,7 @@ export class PortfolioReportPage implements OnInit {
         const dataResume = [
           { text: 'RESUMEN', colSpan: 3, style: 'summaryCellModern' }, {}, {},
           { text: resp.total_value, style: 'summaryCellModern' },
+          { text: resp.total_debt, style: 'summaryCellModern' },
           { text: '', style: 'summaryCellModern' },
           { text: '', style: 'summaryCellModern' }
         ];
@@ -321,6 +322,7 @@ export class PortfolioReportPage implements OnInit {
                 { text: 'ID Servicio', style: 'tableHeaderModern' },
                 { text: 'Cliente', style: 'tableHeaderModern' },
                 { text: 'Valor', style: 'tableHeaderModern' },
+                { text: 'Saldo Actual', style: 'tableHeaderModern' },
                 { text: 'Fecha', style: 'tableHeaderModern' },
                 { text: 'Usuario', style: 'tableHeaderModern' }
               ],

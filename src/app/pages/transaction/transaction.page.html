@@ -68,8 +68,19 @@
           name="direct_purchase"
           [(ngModel)]="registerService.direct_purchase"
           (ionChange)="changeDirectPurchase($event)"
-          >
+          [disabled]="payDownInInstallments">
           Checked Toggle
+        </ion-toggle>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Pagar seña en cuotas</ion-label>
+        <br>
+        <ion-toggle
+          [checked]="false"
+          name="pay_down_in_installments"
+          [(ngModel)]="payDownInInstallments"
+          (ionChange)="changeDownPaymentMode($event)"
+          [disabled]="registerService.direct_purchase">
         </ion-toggle>
       </ion-item>
       <ion-item>
@@ -77,10 +88,10 @@
         <br>
         <ion-input style="text-align: right"
           name="value"
-          type="number" 
+          type="text" 
           readonly=true
           placeholder="Valor" 
-          [(ngModel)]="registerService.service_value"
+          [value]="formatCurrency(registerService.service_value)"
           required>
         </ion-input>
       </ion-item>
@@ -89,9 +100,9 @@
         <br>
         <ion-input style="text-align: right"
           name="senia"
-          type="number"
+          type="text"
           placeholder="Seña" 
-          [(ngModel)]="datosInput.down_payment"
+          [value]="formatCurrency(datosInput.down_payment)"
           (ngModelChange)="recalculate($event)"
           (ionFocus)="focus($event)"
           (ionBlur)="focusOut($event)"
@@ -106,12 +117,12 @@
           style="text-align: right"
           name="discount"
           type="text"
-          type="number" 
           placeholder="Descuento" 
-          [(ngModel)]="datosInput.discount"
           (ngModelChange)="recalculate($event)"
           (ionFocus)="focus($event)"
           (ionBlur)="focusOut($event)"
+          [value]="formatCurrency(datosInput.discount)"
+          (ionInput)="onCurrencyInput($event, 'discount')"
           min = "0"
           required>
         </ion-input>
@@ -121,12 +132,14 @@
         <br>
         <ion-input style="text-align: right"
           name="initial"
-          type="number"
+          type="text"
           placeholder="Cuota Inicial" 
-          [(ngModel)]="datosInput.initial_payment"
           (ngModelChange)="recalculate($event)"
           (ionFocus)="focus($event)"
           (ionBlur)="focusOut($event)"
+          [disabled]="payDownInInstallments"
+          [value]="formatCurrency(datosInput.initial_payment)"
+          (ionInput)="onCurrencyInput($event, 'initial_payment')"
           required>
         </ion-input>
       </ion-item>
@@ -162,9 +175,10 @@
         <br>
         <ion-input style="text-align: right"
           name="fee_value"
-          type="number" 
+          type="text" 
           placeholder="Valor Cuotas" 
-          [(ngModel)]="datosInput.fee_value"
+          [value]="formatCurrency(datosInput.fee_value)"
+          (ionInput)="onCurrencyInput($event, 'fee_value')"
           (ionFocus)="focus($event)"
           (ionBlur)="focusOut($event)"
           required>
@@ -175,10 +189,10 @@
         <br>
         <ion-input style="text-align: right"
           name="total"
-          type="number" 
+          type="text" 
           readonly=true
           placeholder="Valor total" 
-          [(ngModel)]="registerService.total_value"
+          [value]="formatCurrency(registerService.total_value)"
           required>
         </ion-input>
       </ion-item>
@@ -186,10 +200,10 @@
         <ion-label stacked>Resta</ion-label>
         <ion-input style="text-align: right"
           name="debt"
-          type="number" 
+          type="text" 
           readonly=true
           placeholder="Resta" 
-          [(ngModel)]="registerService.debt"
+          [value]="formatCurrency(registerService.debt)"
           required>
         </ion-input>
       </ion-item>

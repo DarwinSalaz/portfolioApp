@@ -17,6 +17,9 @@ export class TransactionByUserPage implements OnInit {
 
   loading: boolean = true;
 
+  selectedFilter: 'all' | 'in_progress' | 'fully_paid' = 'all';
+  filteredServices: ServicesByCustomerResponse[] = [];
+
   constructor(private transactionService: TransactionService,
               public activatedRoute: ActivatedRoute,
               public router: Router,
@@ -37,9 +40,9 @@ export class TransactionByUserPage implements OnInit {
   getServicesByCustomer() {
     this.transactionService.getServicesByCustomer(this.customerId.toString())
       .subscribe(resp => {
-        this.services = []
+        this.services = resp
         console.log( resp );
-        this.services.push( ...resp);
+        //this.services.push( ...resp);
         this.loading = false;
       });
   }
@@ -49,6 +52,21 @@ export class TransactionByUserPage implements OnInit {
     this.router.navigate(['/register-payment'], {
       queryParams: { service_id: service.service_id }
     });
+  }
+
+  applyFilter() {
+    if (this.selectedFilter === 'all') {
+      this.filteredServices = this.services;
+    } else if (this.selectedFilter === 'in_progress') {
+      this.filteredServices = this.services.filter(service => service.state !== 'fully_paid');
+    } else if (this.selectedFilter === 'fully_paid') {
+      this.filteredServices = this.services.filter(service => service.state === 'fully_paid');
+    }
+  }
+
+  onFilterChange(event: CustomEvent) {
+    this.selectedFilter = event.detail.value;
+    this.applyFilter();
   }
 
 }

@@ -28,6 +28,12 @@ export class RegisterPaymentPage implements OnInit {
   fee_value: number = 0
   isDisabled: boolean = true;
 
+  showSummary = false;
+
+  toggleSummary() {
+    this.showSummary = !this.showSummary;
+  }
+
   service: ServicesByCustomerResponse = {
     service_value: '0',
     down_payment: '0',
@@ -41,23 +47,28 @@ export class RegisterPaymentPage implements OnInit {
     days_per_fee: 0,
     quantity_of_fees: 0,
     fee_value: '',
+    fee_value_in_number: 0,
     debt_in_number: 0,
     service_products: [],
     pending_value: null,
     total_value_number: 0,
     down_payment_number: 0,
+    pay_down_in_installments: false,
+    down_payment_total:0
   };
 
   registerPayment: Payment = {
     service_id: 0,
     value: 0,
-    next_payment_date: null
+    next_payment_date: null,
+    deposit_payment: 0
   };
 
   registerPaymentInput: Payment = {
     service_id: 0,
     value: 0,
-    next_payment_date: null
+    next_payment_date: null,
+    deposit_payment: 0
   };
 
   constructor(public activatedRoute: ActivatedRoute,
@@ -91,6 +102,7 @@ export class RegisterPaymentPage implements OnInit {
     this.registerPayment.service_id = this.service.service_id;
     this.quantity_of_fees = this.service.quantity_of_fees
     console.log(this.registerPayment);
+    this.fee_value = this.service.fee_value_in_number
 
     this.loading = false;
 
@@ -107,12 +119,12 @@ export class RegisterPaymentPage implements OnInit {
       return;
     }
 
-    this.registerPayment.value = this.registerPaymentInput.value
-
-    if (this.registerPayment.value > this.service.debt_in_number) {
+    if (this.registerPaymentInput.value > this.service.debt_in_number) {
       this.uiService.InfoAlert('Valor de cuota no puede ser mayor a la deuda');
       return;
     }
+
+    this.registerPayment.value = this.registerPaymentInput.value - this.registerPayment.deposit_payment
 
     this.registerPayment.next_payment_date = this.registerPayment.next_payment_date.split('.')[0]
     this.loading = true;
@@ -125,9 +137,9 @@ export class RegisterPaymentPage implements OnInit {
       this.navService.myParam = this.service;
       if (date) {
         await this.storage.set('date_to_find', null);
-        this.navCtrl.navigateBack('/transaction-by-date?date=' + date, { animated: true });
+        this.navCtrl.navigateForward('/transaction-by-date?date=' + date, { animated: true });
       } else {
-        this.navCtrl.navigateBack('/transaction-by-user?customer_id=' + this.service.customer_id, { animated: true });
+        this.navCtrl.navigateForward('/transaction-by-user?customer_id=' + this.service.customer_id, { animated: true });
       }
     } else {
       this.uiService.InfoAlert('Error al registrar el pago');
@@ -163,7 +175,7 @@ export class RegisterPaymentPage implements OnInit {
       return
     } else {
       this.service.quantity_of_fees = this.quantity_of_fees
-      this.fee_value = Math.ceil((this.service.total_value_number - this.service.down_payment_number) / this.quantity_of_fees);
+      this.fee_value = Math.ceil((this.service.total_value_number) / this.quantity_of_fees);
       this.service.fee_value = this.fee_value.toString();
       this.isDisabled = false
     }
@@ -285,7 +297,38 @@ export class RegisterPaymentPage implements OnInit {
       this.registerPaymentInput.value = this.registerPayment.value;
     } else {
       this.registerPayment.value = this.registerPaymentInput.value;
+      if (this.service.pay_down_in_installments) {
+        var downPaymentDebt = this.service.down_payment_total - this.service.down_payment_number
+        var calculatedDepositPayment = Number((this.registerPayment.value / 2).toFixed(0))
+        if (calculatedDepositPayment > downPaymentDebt) {
+          this.registerPayment.deposit_payment = downPaymentDebt
+        } else {
+          this.registerPayment.deposit_payment = calculatedDepositPayment
+        }
+      }
+      
     }
+  }
+
+  // Devuelve el número con puntos de miles
+  formatCurrency(value: number | string): string {
+    if (!value && value !== 0) return '';
+    const num = value.toString().replace(/\D/g, '');
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  // Convierte a número limpio (sin puntos) y lo guarda en el modelo
+  onCurrencyInputFeeValue(event: any) {
+    const rawValue = event.target.value.replace(/\./g, '');
+    const numericValue = parseInt(rawValue, 10) || 0;
+    this.fee_value = numericValue;
+  }
+
+  // Convierte a número limpio (sin puntos) y lo guarda en el modelo
+  onCurrencyInput(event: any, field: string) {
+    const rawValue = event.target.value.replace(/\./g, '');
+    const numericValue = parseInt(rawValue, 10) || 0;
+    this.registerPaymentInput[field] = numericValue;
   }
 
 }
