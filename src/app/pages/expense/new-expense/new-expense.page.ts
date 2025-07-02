@@ -105,4 +105,18 @@ export class NewExpensePage implements OnInit {
     }
   }
 
+  // Devuelve el número con puntos de miles
+  formatCurrency(value: number | string): string {
+    if (!value && value !== 0) return '';
+    const num = value.toString().replace(/\D/g, '');
+    return num.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+
+  // Convierte a número limpio (sin puntos) y lo guarda en el modelo
+  onCurrencyInput(event: any) {
+    const rawValue = event.target.value.replace(/\./g, '');
+    const numericValue = parseInt(rawValue, 10) || 0;
+    this.expenseValue = numericValue;
+  }
+
 }
