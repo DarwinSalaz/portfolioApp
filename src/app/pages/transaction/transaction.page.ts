@@ -217,7 +217,7 @@ export class TransactionPage implements OnInit {
 
     if (this.payDownInInstallments) {
       const feeValue = Number((valueAfterDiscount / quantityOfFees).toFixed(0));
-      const halfFee = feeValue / 2;
+      const halfFee = Number((feeValue / 2).toFixed(0));
 
       this.registerService.down_payment = halfFee;
       this.datosInput.down_payment = halfFee;
