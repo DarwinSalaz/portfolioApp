@@ -1,0 +1,52 @@
+<ion-header>
+  <ion-toolbar color="medium">
+    <ion-title>Acciones del Servicio</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismiss()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <div class="service-info">
+    <h2>Servicio #{{ service.service_id }}</h2>
+    <p><strong>Cliente ID:</strong> {{ service.customer_id }}</p>
+    <p><strong>Servicio ID:</strong> {{ service.service_id }}</p>
+    <p><strong>Deuda:</strong> {{ service.debt }}</p>
+    <p><strong>Próximo Pago:</strong> {{ service.next_payment_date }}</p>
+  </div>
+
+  <div class="actions-container">
+    <ion-button expand="block" color="medium" (click)="registerPayment()">
+      <ion-icon name="card" slot="start"></ion-icon>
+      Registrar Pago
+    </ion-button>
+
+    <ion-button expand="block" color="medium" (click)="showDetail()">
+      <ion-icon name="information-circle" slot="start"></ion-icon>
+      Ver Detalle
+    </ion-button>
+
+    <ion-button expand="block" color="medium" (click)="showPayments()">
+      <ion-icon name="list" slot="start"></ion-icon>
+      Historial Abonos
+    </ion-button>
+
+    <ion-button expand="block" color="danger" (click)="cancelService()">
+      <ion-icon name="close-circle" slot="start"></ion-icon>
+      Cancelar Cuenta
+    </ion-button>
+
+    <ion-button expand="block" color="danger" (click)="confirmMarkForWithdrawal()">
+      <ion-icon name="log-out" slot="start"></ion-icon>
+      Cuenta Para Retiro
+    </ion-button>
+
+    <ion-button expand="block" color="dark" (click)="confirmMarkAsLost()">
+      <ion-icon name="alert-circle" slot="start"></ion-icon>
+      Marcar Cuenta Perdida
+    </ion-button>
+  </div>
+</ion-content> 

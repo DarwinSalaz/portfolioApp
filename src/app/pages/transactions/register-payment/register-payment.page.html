@@ -108,21 +108,6 @@
           <ion-button expand="block" color="medium" [disabled]="isDisabled" (click)="updateService()">
             Actualizar Cuotas
           </ion-button>
-          <ion-button expand="block" color="medium" (click)="showDetail()">
-            Ver Detalle
-          </ion-button>
-          <ion-button expand="block" color="medium" (click)="showPayments()">
-            Historial Abonos
-          </ion-button>
-          <ion-button expand="block" color="danger" *ngIf="showCancelButton" (click)="cancelService()">
-            Cancelar Cuenta
-          </ion-button>
-          <ion-button expand="block" color="danger" (click)="confirmMarkForWithdrawal()">
-            Cuenta Para Retiro
-          </ion-button>
-          <ion-button expand="block" color="dark" (click)="confirmMarkAsLost()">
-            Marcar Cuenta Perdida
-          </ion-button>
         </ion-col>
       </ion-row>
     </ion-grid>
