@@ -33,11 +33,13 @@
     "cordova-android": "10.1.2",
     "cordova-ios": "^5.1.1",
     "core-js": "^2.6.12",
+    "file-saver": "^2.0.5",
     "ionic-selectable": "^4.9.0",
     "ionicons": "^4.6.3",
     "moment": "^2.29.4",
     "pdfmake": "^0.2.7",
     "tslib": "^1.14.1",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.9.1"
   },
   "devDependencies": {
@@ -51,6 +53,7 @@
     "@angular/language-service": "~8.1.2",
     "@ionic/angular-toolkit": "~2.0.0",
     "@ionic/lab": "3.2.10",
+    "@types/file-saver": "^2.0.7",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "^2.0.10",
     "@types/node": "~8.9.4",

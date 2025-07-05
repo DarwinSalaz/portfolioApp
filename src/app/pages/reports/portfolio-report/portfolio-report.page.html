@@ -59,7 +59,11 @@
       <div padding>
         <ion-button color="medium" type="submit" size="medium" expand="block">CONSULTAR</ion-button>
         <ion-button color="medium" (click)="generateSelectedReport()" size="medium" expand="block">
-          GENERAR REPORTE
+          GENERAR REPORTE PDF
+        </ion-button>
+        <ion-button color="success" (click)="exportToExcel()" size="medium" expand="block">
+          <ion-icon name="document-text" slot="start"></ion-icon>
+          EXPORTAR A EXCEL
         </ion-button>
       </div>
     </ion-list>

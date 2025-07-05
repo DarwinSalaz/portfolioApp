@@ -6,6 +6,7 @@ import { NgForm } from '@angular/forms';
 import { UiServiceService } from '../../../services/ui-service.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TransactionService } from 'src/app/services/transaction.service';
+import { ExcelExportService } from 'src/app/services/excel-export.service';
 import pdfMake from 'pdfmake/build/pdfmake'
 import pdfFonts from 'pdfmake/build/vfs_fonts'
 
@@ -40,7 +41,8 @@ export class PortfolioReportPage implements OnInit {
     public platform: Platform,
     private productService: ProductService,
     private loadingCtrl: LoadingController,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private excelExportService: ExcelExportService
   ) { }
 
   ngOnInit() {
@@ -837,6 +839,172 @@ export class PortfolioReportPage implements OnInit {
       default:
         this.uiService.InfoAlert('Seleccione un tipo de reporte válido');
     }
+  }
+
+  async exportToExcel() {
+    if (!this.init_date || !this.end_date || !this.wallet) {
+      this.uiService.InfoAlert('Formulario incompleto');
+      return;
+    }
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Generando reporte Excel...'
+    });
+    await loading.present();
+
+    try {
+      this.init_date = this.init_date.split('.')[0].split('T')[0] + "T00:00:00";
+      this.end_date = this.end_date.split('.')[0].split('T')[0] + "T00:00:00";
+
+      switch (this.selectedReport) {
+        case 'sales':
+          await this.exportSalesReport();
+          break;
+        case 'payments':
+          await this.exportPaymentsReport();
+          break;
+        case 'inventory':
+          await this.exportInventoryReport();
+          break;
+        case 'expired':
+          await this.exportExpiredServicesReport();
+          break;
+        case 'wallet':
+          await this.exportWalletReport();
+          break;
+        default:
+          this.uiService.InfoAlert('Seleccione un tipo de reporte');
+      }
+    } catch (error) {
+      console.error('Error al exportar:', error);
+      this.uiService.InfoAlert('Error al generar el reporte Excel');
+    } finally {
+      loading.dismiss();
+    }
+  }
+
+  async exportSalesReport() {
+    const response = this.transactionService.getReportPdf(this.init_date, this.end_date, this.wallet.wallet_id);
+    response.subscribe(
+      resp => {
+        const walletName = (resp.services_data[0] && resp.services_data[0].wallet) || this.wallet.name;
+        const startDate = this.init_date.split('T')[0];
+        const endDate = this.end_date.split('T')[0];
+        
+        this.excelExportService.exportSalesReport(
+          resp.services_data,
+          resp.products_sold,
+          {
+            total_product_values: resp.total_product_values,
+            total_discount: resp.total_discount,
+            total_service_value: resp.total_service_value,
+            total_debt: resp.total_debt
+          },
+          walletName,
+          startDate,
+          endDate
+        );
+      },
+      error => {
+        console.error('Error al obtener datos de ventas:', error);
+        this.uiService.InfoAlert('Error al obtener datos de ventas');
+      }
+    );
+  }
+
+  async exportPaymentsReport() {
+    const response = this.transactionService.getPaymentsReport(this.init_date, this.end_date, this.wallet.wallet_id);
+    response.subscribe(
+      resp => {
+        const walletName = (resp.payments_data[0] && resp.payments_data[0].wallet) || this.wallet.name;
+        const startDate = this.init_date.split('T')[0];
+        const endDate = this.end_date.split('T')[0];
+        
+        this.excelExportService.exportPaymentsReport(
+          resp.payments_data,
+          {
+            total_value: resp.total_value,
+            total_debt: resp.total_debt
+          },
+          walletName,
+          startDate,
+          endDate
+        );
+      },
+      error => {
+        console.error('Error al obtener datos de pagos:', error);
+        this.uiService.InfoAlert('Error al obtener datos de pagos');
+      }
+    );
+  }
+
+  async exportInventoryReport() {
+    const response = this.productService.getInventoryReport(this.init_date, this.end_date, this.wallet.wallet_id);
+    response.subscribe(
+      resp => {
+        const walletName = this.wallet.name;
+        const startDate = this.init_date.split('T')[0];
+        const endDate = this.end_date.split('T')[0];
+        
+        this.excelExportService.exportInventoryReport(
+          resp,
+          walletName,
+          startDate,
+          endDate
+        );
+      },
+      error => {
+        console.error('Error al obtener datos de inventario:', error);
+        this.uiService.InfoAlert('Error al obtener datos de inventario');
+      }
+    );
+  }
+
+  async exportExpiredServicesReport() {
+    const response = this.transactionService.getExpiredServiceReport(this.init_date, this.end_date, this.wallet.wallet_id);
+    response.subscribe(
+      resp => {
+        const startDate = this.init_date.split('T')[0];
+        const endDate = this.end_date.split('T')[0];
+        
+        this.excelExportService.exportExpiredServicesReport(
+          resp.expired_services || [],
+          startDate,
+          endDate
+        );
+      },
+      error => {
+        console.error('Error al obtener servicios expirados:', error);
+        this.uiService.InfoAlert('Error al obtener servicios expirados');
+      }
+    );
+  }
+
+  async exportWalletReport() {
+    const payload = {
+      wallet_id: this.wallet.wallet_id,
+      starts_at: this.init_date,
+      ends_at: this.end_date
+    };
+
+    this.transactionService.generateWalletResumeReport(payload).subscribe(
+      (data: any) => {
+        const walletName = data.walletName || this.wallet.name;
+        const startDate = this.init_date.split('T')[0];
+        const endDate = this.end_date.split('T')[0];
+        
+        this.excelExportService.exportWalletReport(
+          data,
+          walletName,
+          startDate,
+          endDate
+        );
+      },
+      error => {
+        console.error('Error al obtener reporte de cartera:', error);
+        this.uiService.InfoAlert('Error al obtener reporte de cartera');
+      }
+    );
   }
 
 }
