@@ -219,19 +219,29 @@ export class TransactionPage implements OnInit {
       const feeValue = Number((valueAfterDiscount / quantityOfFees).toFixed(0));
       const halfFee = Number((feeValue / 2).toFixed(0));
 
-      this.registerService.down_payment = halfFee;
-      this.datosInput.down_payment = halfFee;
+      var limitDownPayment = this.registerService.total_value*0.1;
 
-      this.registerService.initial_payment = halfFee;
-      this.datosInput.initial_payment = halfFee;
+      if (halfFee > limitDownPayment) {
+        this.registerService.down_payment = limitDownPayment;
+        this.datosInput.down_payment = limitDownPayment;
 
-      this.registerService.debt = valueAfterDiscount - halfFee - halfFee;
+        this.registerService.initial_payment = feeValue - limitDownPayment;
+        this.datosInput.initial_payment = feeValue - limitDownPayment;
+      } else {
+        this.registerService.down_payment = halfFee;
+        this.datosInput.down_payment = halfFee;
+
+        this.registerService.initial_payment = halfFee;
+        this.datosInput.initial_payment = halfFee;
+      }
 
       this.registerService.fee_value = feeValue;
       this.datosInput.fee_value = feeValue;
 
       this.registerService.total_value = valueAfterDiscount;
       this.registerService.quantity_of_fees = quantityOfFees;
+    
+      this.registerService.debt = this.registerService.total_value - this.registerService.down_payment - this.registerService.initial_payment;
     } else {
       this.registerService.total_value = valueAfterDiscount;
       if (this.registerService.direct_purchase !== true) {

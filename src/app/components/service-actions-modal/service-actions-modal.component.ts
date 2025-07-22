@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { ModalController, NavController, ToastController } from '@ionic/angular';
+import { ModalController, NavController, ToastController, LoadingController } from '@ionic/angular';
 import { ServicesByCustomerResponse } from '../../interfaces/interfaces';
 import { TransactionService } from '../../services/transaction.service';
 import { UiServiceService } from '../../services/ui-service.service';
 import { NavServiceService } from '../../services/nav-service.service';
+import { from } from 'rxjs';
 
 @Component({
   selector: 'app-service-actions-modal',
@@ -20,7 +21,8 @@ export class ServiceActionsModalComponent {
     private transactionService: TransactionService,
     private uiService: UiServiceService,
     private navService: NavServiceService,
-    private toastCtrl: ToastController
+    private toastCtrl: ToastController,
+    private loadingCtrl: LoadingController
   ) { 
     console.log('ServiceActionsModalComponent constructor llamado');
   }
@@ -148,5 +150,89 @@ export class ServiceActionsModalComponent {
 
   dismiss() {
     this.modalCtrl.dismiss({ refresh: false });
+  }
+
+  confirmDeleteService() {
+    const alert = document.createElement('ion-alert');
+    alert.header = 'Confirmar Eliminación';
+    alert.message = '¿Está seguro que desea <strong>eliminar completamente</strong> este servicio? Esta acción no se puede deshacer y eliminará todos los registros asociados.';
+    alert.buttons = [
+      {
+        text: 'Cancelar',
+        role: 'cancel'
+      },
+      {
+        text: 'Eliminar',
+        cssClass: 'danger',
+        handler: () => {
+          this.deleteService();
+        }
+      }
+    ];
+    document.body.appendChild(alert);
+    alert.present();
+  }
+
+  async deleteService() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Eliminando servicio...'
+    });
+    await loading.present();
+    try {
+      this.transactionService.deleteService(this.service.service_id).subscribe({
+        next: (response: any) => {
+          loading.dismiss();
+          if (response.code === 'ok') {
+            this.toastCtrl.create({
+              message: 'Servicio eliminado exitosamente',
+              duration: 3000,
+              color: 'success'
+            }).then(toast => toast.present());
+            this.modalCtrl.dismiss({ refresh: true }); // Indicar que se debe refrescar
+          } else {
+            console.log('Error eliminando servicio 2: ' + JSON.stringify(response));
+            this.toastCtrl.create({
+              message: response.message || 'Error al eliminar el servicio',
+              duration: 3000,
+              color: 'warning'
+            }).then(toast => toast.present());
+          }
+        },
+        error: (error) => {
+          loading.dismiss();
+          console.log('Error eliminando servicio:', error);
+          let errorMsg = 'Error desconocido';
+          if (error && error.error && error.error.message) {
+            errorMsg = error.error.message;
+          } else if (error && error.message) {
+            errorMsg = error.message;
+          } else {
+            errorMsg = JSON.stringify(error);
+          }
+          const toast = this.toastCtrl.create({
+            message: errorMsg,
+            duration: 4000,
+            color: 'danger'
+          });
+          toast.then(t => t.present());
+        }
+      });
+    } catch (error) {
+      loading.dismiss();
+      let errorMsg = 'Error desconocido';
+      if (error && error.error && error.error.message) {
+        errorMsg = error.error.message;
+      } else if (error && error.message) {
+        errorMsg = error.message;
+      } else {
+        errorMsg = JSON.stringify(error);
+      }
+      const toast = this.toastCtrl.create({
+        message: errorMsg,
+        duration: 4000,
+        color: 'danger'
+      });
+      toast.then(t => t.present());
+    }
   }
 } 

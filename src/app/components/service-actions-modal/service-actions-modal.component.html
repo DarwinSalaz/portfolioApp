@@ -44,9 +44,14 @@
       Cuenta Para Retiro
     </ion-button>
 
-    <ion-button expand="block" color="dark" (click)="confirmMarkAsLost()">
+    <ion-button expand="block" color="danger" (click)="confirmMarkAsLost()">
       <ion-icon name="alert-circle" slot="start"></ion-icon>
       Marcar Cuenta Perdida
+    </ion-button>
+
+    <ion-button expand="block" color="danger" (click)="confirmDeleteService()">
+      <ion-icon name="trash" slot="start"></ion-icon>
+      Eliminar Cuenta
     </ion-button>
   </div>
 </ion-content> 

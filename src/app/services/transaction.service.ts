@@ -5,6 +5,8 @@ import { Service, ServicesByCustomerResponse, WalletRequest, CustomerServiceSche
 import { Storage } from '@ionic/storage';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
+import { from } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 const URL = environment.url;
 
@@ -273,14 +275,29 @@ export class TransactionService {
   }
 
   markAsLost(data: { serviceId: number; customerId: number }) {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type':  'application/json'
+      })
+    };
 
-    return this.http.post(`${ URL }/api/portfolio/mark-as-lost`, data).pipe(
-      catchError((error) => {
-        console.error('Error al marcar como perdida:', error);
-        return throwError(() => error);
+    return this.http.post(`${ URL }/api/portfolio/mark-as-lost`, data, httpOptions);
+  }
+
+  deleteService(serviceId: number) {
+    return from(this.storage.get('token')).pipe(
+      switchMap(token => {
+        const httpOptions = {
+          headers: new HttpHeaders({
+            'Content-Type':  'application/json',
+            Authorization: token
+          })
+        };
+        const request = {
+          serviceId: serviceId
+        };
+        return this.http.post(`${ URL }/api/portfolio/service/delete`, request, httpOptions);
       })
     );
   }
-  
-  
 }
