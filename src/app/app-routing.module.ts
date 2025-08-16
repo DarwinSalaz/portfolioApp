@@ -32,6 +32,7 @@ const routes: Routes = [
   { path: 'list-wallets', loadChildren: './pages/products/list-wallets/list-wallets.module#ListWalletsPageModule' },
   { path: 'list-products', loadChildren: './pages/products/list-products/list-products.module#ListProductsPageModule' },
   { path: 'product-detail', loadChildren: './pages/products/product-detail/product-detail.module#ProductDetailPageModule' },
+  { path: 'inventory-management', loadChildren: './pages/inventory-management/inventory-management.module#InventoryManagementPageModule' },
   { path: 'payments-service', loadChildren: './pages/transactions/payments-service/payments-service.module#PaymentsServicePageModule' },
   { path: 'show-expenses', loadChildren: './pages/cashcontrols/show-expenses/show-expenses.module#ShowExpensesPageModule' },
   { path: 'cancel-service', loadChildren: './pages/transactions/cancel-service/cancel-service.module#CancelServicePageModule' },

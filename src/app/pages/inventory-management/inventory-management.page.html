@@ -1,0 +1,164 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/menu"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="ion-text-capitalize">GESTIÓN DE INVENTARIO</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  
+  <!-- Formulario de Movimiento -->
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Registrar Movimiento</ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content>
+      <form [formGroup]="movementForm" (ngSubmit)="registerMovement()">
+        
+        <!-- Selección de Cartera -->
+        <ion-item>
+          <ion-label position="stacked">Cartera *</ion-label>
+          <ion-select 
+            formControlName="wallet_id" 
+            placeholder="Seleccione una cartera"
+            (ionChange)="onWalletChange()">
+            <ion-select-option 
+              *ngFor="let wallet of wallets" 
+              [value]="wallet.wallet_id">
+              {{ wallet.name }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <!-- Selección de Producto -->
+        <ion-item>
+          <ion-label position="stacked">Producto *</ion-label>
+          <ion-select 
+            formControlName="product_id" 
+            placeholder="Seleccione un producto"
+            (ionChange)="onProductChange()"
+            [disabled]="!selectedWallet">
+            <ion-select-option 
+              *ngFor="let product of products" 
+              [value]="product.product_id">
+              {{ product.name }} - Stock: {{ product.left_quantity }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <!-- Tipo de Movimiento -->
+        <ion-item>
+          <ion-label position="stacked">Tipo de Movimiento *</ion-label>
+          <ion-select 
+            formControlName="movement_type" 
+            placeholder="Seleccione el tipo">
+            <ion-select-option value="ENTRADA">Entrada</ion-select-option>
+            <ion-select-option value="SALIDA">Salida</ion-select-option>
+          </ion-select>
+        </ion-item>
+        
+        <!-- Cantidad -->
+        <ion-item>
+          <ion-label position="stacked">Cantidad *</ion-label>
+          <ion-input 
+            type="number" 
+            formControlName="quantity"
+            placeholder="Ingrese la cantidad"
+            min="1">
+          </ion-input>
+        </ion-item>
+        
+        <!-- Descripción -->
+        <ion-item>
+          <ion-label position="stacked">Descripción</ion-label>
+          <ion-textarea 
+            formControlName="description"
+            placeholder="Descripción del movimiento (opcional)"
+            rows="3">
+          </ion-textarea>
+        </ion-item>
+        
+        <!-- Información del Producto Seleccionado -->
+        <ion-item *ngIf="selectedProduct" color="light">
+          <ion-label>
+            <h3>Información del Producto</h3>
+            <p><strong>Stock Actual:</strong> {{ selectedProduct.left_quantity }}</p>
+            <p><strong>Valor:</strong> {{ selectedProduct.value_str }}</p>
+          </ion-label>
+        </ion-item>
+        
+        <!-- Botón de Registro -->
+        <div class="ion-padding">
+          <ion-button 
+            type="submit" 
+            expand="block" 
+            color="medium"
+            [disabled]="movementForm.invalid || loading">
+            <ion-spinner *ngIf="loading" name="crescent"></ion-spinner>
+            <span *ngIf="!loading">Registrar Movimiento</span>
+          </ion-button>
+        </div>
+        
+      </form>
+    </ion-card-content>
+  </ion-card>
+  
+  <!-- Botón para Mostrar/Ocultar Movimientos -->
+  <div class="ion-padding" *ngIf="selectedWallet">
+    <ion-button 
+      expand="block" 
+      fill="outline" 
+      color="medium"
+      (click)="toggleMovements()">
+      <ion-icon [name]="showMovements ? 'eye-off' : 'eye'"></ion-icon>
+      {{ showMovements ? 'Ocultar' : 'Mostrar' }} Movimientos
+    </ion-button>
+  </div>
+  
+  <!-- Lista de Movimientos -->
+  <ion-card *ngIf="showMovements && selectedWallet">
+    <ion-card-header>
+      <ion-card-title>Historial de Movimientos - {{ selectedWallet.name }}</ion-card-title>
+    </ion-card-header>
+    
+    <ion-card-content>
+      <ion-list>
+        <ion-item *ngFor="let movement of movements" color="light">
+          <ion-icon 
+            [name]="getMovementTypeIcon(movement.movement_type)"
+            [color]="getMovementTypeColor(movement.movement_type)"
+            slot="start">
+          </ion-icon>
+          
+          <ion-label>
+            <h3>{{ movement.product_name }}</h3>
+            <p>
+              <strong>{{ movement.movement_type }}:</strong> {{ movement.quantity }} unidades
+            </p>
+            <p>
+              <strong>Stock Anterior:</strong> {{ movement.previous_quantity }} | 
+              <strong>Stock Nuevo:</strong> {{ movement.new_quantity }}
+            </p>
+            <p>
+              <strong>Usuario:</strong> {{ movement.username }} | 
+              <strong>Fecha:</strong> {{ formatDate(movement.movement_date) }}
+            </p>
+            <p *ngIf="movement.description">
+              <strong>Descripción:</strong> {{ movement.description }}
+            </p>
+          </ion-label>
+        </ion-item>
+        
+        <ion-item *ngIf="movements.length === 0" color="light">
+          <ion-label>
+            <p>No hay movimientos registrados para esta cartera.</p>
+          </ion-label>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+  
+</ion-content> 

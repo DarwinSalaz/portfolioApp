@@ -1,0 +1,76 @@
+ion-card {
+  margin: 16px;
+}
+
+ion-card-header {
+  background-color: var(--ion-color-medium-tint);
+  color: white;
+}
+
+ion-card-title {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+ion-item {
+  margin-bottom: 8px;
+}
+
+ion-label {
+  font-weight: 500;
+}
+
+ion-select, ion-input, ion-textarea {
+  margin-top: 8px;
+}
+
+ion-button {
+  margin-top: 16px;
+}
+
+.movement-item {
+  margin-bottom: 12px;
+  border-radius: 8px;
+}
+
+.movement-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.movement-type {
+  font-weight: bold;
+  margin-left: 8px;
+}
+
+.movement-details {
+  font-size: 0.9em;
+  color: var(--ion-color-medium);
+}
+
+.stock-info {
+  background-color: var(--ion-color-light);
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.stock-info p {
+  margin: 4px 0;
+  font-size: 0.9em;
+}
+
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100px;
+}
+
+.no-movements {
+  text-align: center;
+  color: var(--ion-color-medium);
+  font-style: italic;
+  padding: 20px;
+} 

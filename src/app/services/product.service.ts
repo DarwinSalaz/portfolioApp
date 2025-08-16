@@ -72,4 +72,24 @@ export class ProductService {
 
     return this.http.post<InventoryDetail[]>(`${ URL }/api/portfolio/inventory/report`, request, httpOptions);
   }
+  
+  deleteProduct(productId: number): Promise<boolean> {
+    return new Promise((resolve) => {
+      this.http.delete(`${URL}/api/portfolio/product/${productId}`)
+        .subscribe(
+          (resp: any) => {
+            console.log(resp);
+            if (resp.message) {
+              resolve(true);
+            } else {
+              resolve(false);
+            }
+          },
+          (error) => {
+            console.error('Error deleting product:', error);
+            resolve(false);
+          }
+        );
+    });
+  }
 }

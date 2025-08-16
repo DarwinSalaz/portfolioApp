@@ -140,8 +140,14 @@ export class MenuPage implements OnInit {
       items: [
         {
           icon: 'list-box',
-          name: 'Gestionar Inventario',
+          name: 'Gestión de Productos',
           redirectTo: '/list-wallets',
+          allowProfile: [1, 2, 3]
+        },
+        {
+          icon: 'swap',
+          name: 'Gestión de Inventario',
+          redirectTo: '/inventory-management',
           allowProfile: [1, 2, 3]
         }
       ]

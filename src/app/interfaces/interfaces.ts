@@ -185,6 +185,30 @@ export interface InventoryDetail {
     wallet_name?: string;
 }
 
+export interface InventoryMovement {
+    id?: number;
+    product_id?: number;
+    product_name?: string;
+    movement_type?: 'ENTRADA' | 'SALIDA';
+    quantity?: number;
+    previous_quantity?: number;
+    new_quantity?: number;
+    user_id?: number;
+    username?: string;
+    movement_date?: string;
+    description?: string;
+    wallet_id?: number;
+    wallet_name?: string;
+}
+
+export interface InventoryMovementRequest {
+    productId: number;
+    movementType: 'ENTRADA' | 'SALIDA';
+    quantity: number;
+    description?: string;
+    walletId: number;
+}
+
 export interface ExpiredServiceResp {
     total_value?: string,
     expired_services?: ExpiredServiceDetail[]
