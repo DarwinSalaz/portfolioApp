@@ -53,9 +53,12 @@
         <ion-input 
           style="text-align: right"
           name="value"
-          type="number" 
-          placeholder="value" 
-          [(ngModel)]="product.value"
+          type="text" 
+          placeholder="Valor en pesos" 
+          [value]="formatCurrency(productValue)"
+          (ionInput)="onValueInput($event)"
+          (ionFocus)="onValueFocus($event)"
+          (ionBlur)="onValueBlur($event)"
           required>
         </ion-input>
       </ion-item>
@@ -66,25 +69,24 @@
         <ion-input
           style="text-align: right"
           name="cost"
-          type="number" 
-          placeholder="Costo" 
-          [(ngModel)]="product.cost">
+          type="text" 
+          placeholder="Costo en pesos" 
+          [value]="formatCurrency(productCost)"
+          (ionInput)="onCostInput($event)"
+          (ionFocus)="onCostFocus($event)"
+          (ionBlur)="onCostBlur($event)">
         </ion-input>
       </ion-item>
-      <ion-item>
-        <ion-label stacked><b>Cantidad</b></ion-label>
-        <ion-label stacked></ion-label>
-        <br>
-        <ion-input 
-          style="text-align: right"
-          name="left_quantity"
-          type="number" 
-          placeholder="Cant Restante" 
-          [(ngModel)]="product.left_quantity"
-          required>
-        </ion-input>
-      </ion-item>
+
     </ion-list>
+    
+    <!-- Información sobre cantidad inicial -->
+    <ion-item color="light" *ngIf="!isUpdate">
+      <ion-label>
+        <p><strong>Nota:</strong> Los productos nuevos se crean con cantidad inicial 0. 
+        Para agregar stock, use la funcionalidad "Gestión de Inventario".</p>
+      </ion-label>
+    </ion-item>
 
     <div padding>
       <ion-button color="medium" type="submit" size="large" expand="block">Guardar</ion-button>
