@@ -202,11 +202,11 @@ export interface InventoryMovement {
 }
 
 export interface InventoryMovementRequest {
-    productId: number;
-    movementType: 'ENTRADA' | 'SALIDA';
+    product_id: number;
+    movement_type: 'ENTRADA' | 'SALIDA';
     quantity: number;
     description?: string;
-    walletId: number;
+    wallet_id: number;
 }
 
 export interface ExpiredServiceResp {
