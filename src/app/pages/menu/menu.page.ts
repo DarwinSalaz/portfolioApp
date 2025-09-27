@@ -77,6 +77,12 @@ export class MenuPage implements OnInit {
           name: 'Registrar Abono',
           redirectTo: '/customers/payments',
           allowProfile: [1, 3]
+        },
+        {
+          icon: 'cloud-upload',
+          name: 'Cargue Masivo',
+          redirectTo: '/bulk-upload',
+          allowProfile: [1, 2, 3]
         }
       ]
     },

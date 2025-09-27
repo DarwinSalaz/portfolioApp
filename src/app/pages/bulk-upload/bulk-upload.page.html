@@ -1,0 +1,236 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Cargue Masivo de Ventas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="goBack()">
+        <ion-icon name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Paso 1: Selección de archivo -->
+  <div *ngIf="currentStep === 1" class="upload-section">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Paso 1: Seleccionar Archivo</ion-card-title>
+        <ion-card-subtitle>Sube tu archivo Excel con los datos de ventas</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="file-upload-area" 
+             (click)="fileInput.click()" 
+             (dragover)="onDragOver($event)"
+             (drop)="onFileDrop($event)"
+             [class.drag-over]="isDragOver">
+          <ion-icon name="cloud-upload" size="large"></ion-icon>
+          <p>Arrastra tu archivo aquí o haz clic para seleccionar</p>
+          <p class="file-info">Formatos soportados: .xlsx, .xls</p>
+        </div>
+        
+        <input #fileInput 
+               type="file" 
+               accept=".xlsx,.xls" 
+               (change)="onFileSelected($event)"
+               style="display: none;">
+        
+        <div *ngIf="selectedFile" class="selected-file">
+          <ion-item>
+            <ion-icon name="document" slot="start"></ion-icon>
+            <ion-label>
+              <h3>{{ selectedFile.name }}</h3>
+              <p>{{ formatFileSize(selectedFile.size) }}</p>
+            </ion-label>
+            <ion-button fill="clear" (click)="removeFile()">
+              <ion-icon name="close"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </div>
+        
+        <div class="wallet-selection">
+          <ion-item>
+            <ion-label position="stacked">Seleccionar Wallet</ion-label>
+            <ion-select [(ngModel)]="selectedWalletId" placeholder="Selecciona un wallet">
+              <ion-select-option *ngFor="let wallet of wallets" [value]="wallet.wallet_id">
+                {{ wallet.name }}
+              </ion-select-option>
+            </ion-select>
+          </ion-item>
+        </div>
+        
+        <ion-button expand="block" 
+                    (click)="validateFile()" 
+                    [disabled]="!selectedFile || !selectedWalletId || isLoading"
+                    class="ion-margin-top">
+          <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+          <ion-icon *ngIf="!isLoading" name="checkmark-circle" slot="start"></ion-icon>
+          Validar Archivo
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Paso 2: Resumen y validación -->
+  <div *ngIf="currentStep === 2" class="validation-section">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Paso 2: Resumen y Validación</ion-card-title>
+        <ion-card-subtitle>Revisa los datos antes de procesar el cargue</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Resumen general -->
+        <div class="summary-grid">
+          <div class="summary-item">
+            <h3>{{ validationResult && validationResult.totalRecords || 0 }}</h3>
+            <p>Total Registros</p>
+          </div>
+          <div class="summary-item success">
+            <h3>{{ validationResult && validationResult.validRecords || 0 }}</h3>
+            <p>Válidos</p>
+          </div>
+          <div class="summary-item error">
+            <h3>{{ validationResult && validationResult.invalidRecords || 0 }}</h3>
+            <p>Con Errores</p>
+          </div>
+        </div>
+
+        <!-- Detalles del resumen -->
+        <div *ngIf="validationResult && validationResult.summary" class="summary-details">
+          <ion-item>
+            <ion-icon name="people" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Clientes a crear</h3>
+              <p>{{ validationResult.summary.totalCustomers }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="business" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Servicios a crear</h3>
+              <p>{{ validationResult.summary.totalServices }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="cube" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Productos a procesar</h3>
+              <p>{{ validationResult.summary.totalProducts }}</p>
+            </ion-label>
+          </ion-item>
+          <ion-item>
+            <ion-icon name="cash" slot="start"></ion-icon>
+            <ion-label>
+              <h3>Valor total estimado</h3>
+              <p>{{ formatCurrency(validationResult.summary.estimatedValue) }}</p>
+            </ion-label>
+          </ion-item>
+        </div>
+
+        <!-- Errores de validación -->
+        <div *ngIf="validationResult && validationResult.errors && validationResult.errors.length > 0" class="errors-section">
+          <ion-card color="danger">
+            <ion-card-header>
+              <ion-card-title>Errores de Validación</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list>
+                <ion-item *ngFor="let error of validationResult.errors.slice(0, 10)">
+                  <ion-label>
+                    <h3>Fila {{ error.rowNumber }}: {{ error.field }}</h3>
+                    <p>{{ error.message }}</p>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+              <p *ngIf="validationResult.errors.length > 10" class="ion-text-center">
+                Y {{ validationResult.errors.length - 10 }} errores más...
+              </p>
+            </ion-card-content>
+          </ion-card>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <ion-button expand="block" 
+                      fill="outline" 
+                      (click)="goBackToStep1()"
+                      class="ion-margin-bottom">
+            <ion-icon name="arrow-back" slot="start"></ion-icon>
+            Volver
+          </ion-button>
+          
+          <ion-button expand="block" 
+                      (click)="processBulkUpload()" 
+                      [disabled]="!validationResult || !validationResult.valid"
+                      color="success">
+            <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
+            <ion-icon *ngIf="!isLoading" name="cloud-upload" slot="start"></ion-icon>
+            Procesar Cargue ({{ validationResult && validationResult.validRecords || 0 }} registros)
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Paso 3: Resultado del procesamiento -->
+  <div *ngIf="currentStep === 3" class="result-section">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Paso 3: Resultado del Procesamiento</ion-card-title>
+        <ion-card-subtitle>El cargue masivo ha sido completado</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <!-- Resumen de resultados -->
+        <div class="result-summary">
+          <div class="result-item success">
+            <h3>{{ uploadResult && uploadResult.successCount || 0 }}</h3>
+            <p>Exitosos</p>
+          </div>
+          <div class="result-item error">
+            <h3>{{ uploadResult && uploadResult.errorCount || 0 }}</h3>
+            <p>Con Errores</p>
+          </div>
+          <div class="result-item">
+            <h3>{{ uploadResult && uploadResult.totalProcessed || 0 }}</h3>
+            <p>Total Procesados</p>
+          </div>
+        </div>
+
+        <!-- Detalles de errores -->
+        <div *ngIf="hasUploadErrors" class="error-details">
+          <ion-card color="danger">
+            <ion-card-header>
+              <ion-card-title>Registros con Errores</ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list>
+                <ion-item *ngFor="let result of uploadErrorResults">
+                  <ion-label>
+                    <h3>Fila {{ result.rowNumber }}</h3>
+                    <p>{{ result.message }}</p>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+        </div>
+
+        <!-- Botones de acción -->
+        <div class="action-buttons">
+          <ion-button expand="block" 
+                      (click)="startNewUpload()"
+                      color="primary">
+            <ion-icon name="add" slot="start"></ion-icon>
+            Nuevo Cargue
+          </ion-button>
+          
+          <ion-button expand="block" 
+                      fill="outline" 
+                      (click)="goBack()">
+            <ion-icon name="home" slot="start"></ion-icon>
+            Volver al Menú
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

@@ -44,7 +44,8 @@ const routes: Routes = [
   { path: 'payment-details', loadChildren: './pages/transactions/payment-details/payment-details.module#PaymentDetailsPageModule' },
   { path: 'new-revenue', loadChildren: './pages/new-revenue/new-revenue.module#NewRevenuePageModule' },
   { path: 'list-expenses', loadChildren: './pages/expenses/list-expenses/list-expenses.module#ListExpensesPageModule' },
-  { path: 'list-revenues', loadChildren: './pages/revenues/list-revenues/list-revenues.module#ListRevenuesPageModule' }
+  { path: 'list-revenues', loadChildren: './pages/revenues/list-revenues/list-revenues.module#ListRevenuesPageModule' },
+  { path: 'bulk-upload', loadChildren: './pages/bulk-upload/bulk-upload.module#BulkUploadPageModule' }
 
 ];
 
