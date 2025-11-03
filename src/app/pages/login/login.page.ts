@@ -6,6 +6,7 @@ import { UiServiceService } from '../../services/ui-service.service';
 import { User } from '../../interfaces/interfaces';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -19,6 +20,8 @@ export class LoginPage implements OnInit {
   token: string = null;
 
   public loading: boolean = false;
+  
+  public appVersion: string = environment.version;
 
   avatars = [
     {
