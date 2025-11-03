@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Storage } from '@ionic/storage';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-menu',
@@ -12,6 +13,8 @@ export class MenuPage implements OnInit {
 
   menuGroups: MenuGroup[] = [];
   expandedGroups: Set<string> = new Set();
+  
+  appVersion: string = environment.version;
 
   allMenuGroups: MenuGroup[] = [
     {
