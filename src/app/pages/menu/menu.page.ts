@@ -108,6 +108,12 @@ export class MenuPage implements OnInit {
           allowProfile: [1, 2, 3]
         },
         {
+          icon: 'cloud-upload',
+          name: 'Cargue Masivo Gastos',
+          redirectTo: '/bulk-expense-upload',
+          allowProfile: [1]
+        },
+        {
           icon: 'add-circle',
           name: 'Registrar Ingreso',
           redirectTo: '/new-revenue',
@@ -117,6 +123,12 @@ export class MenuPage implements OnInit {
           icon: 'list',
           name: 'Listar Ingresos',
           redirectTo: '/list-revenues',
+          allowProfile: [1]
+        },
+        {
+          icon: 'cloud-upload',
+          name: 'Cargue Masivo Ingresos',
+          redirectTo: '/bulk-revenue-upload',
           allowProfile: [1]
         }
       ]
