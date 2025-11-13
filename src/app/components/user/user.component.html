@@ -1,5 +1,5 @@
 <div class="user">
-  <ion-item lines="none" (click)="click()">
+  <ion-item lines="none">
     <ion-avatar slot="start">
       <img src="/assets/avatars/{{ item.icon }}" alt="avatar">
     </ion-avatar>
@@ -7,5 +7,8 @@
       <h3>{{ item.main_text }}</h3>
       <h5>{{ item.second_text }}</h5>
     </ion-label>
+    <ion-button slot="end" fill="clear" color="medium" (click)="openOptionsMenu($event)">
+      <ion-icon name="ellipsis-vertical" slot="icon-only"></ion-icon>
+    </ion-button>
   </ion-item>
 </div>
