@@ -47,7 +47,8 @@ const routes: Routes = [
   { path: 'list-revenues', loadChildren: './pages/revenues/list-revenues/list-revenues.module#ListRevenuesPageModule' },
   { path: 'bulk-upload', loadChildren: './pages/bulk-upload/bulk-upload.module#BulkUploadPageModule' },
   { path: 'bulk-expense-upload', loadChildren: './pages/bulk-expense-upload/bulk-expense-upload.module#BulkExpenseUploadPageModule' },
-  { path: 'bulk-revenue-upload', loadChildren: './pages/bulk-revenue-upload/bulk-revenue-upload.module#BulkRevenueUploadPageModule' }
+  { path: 'bulk-revenue-upload', loadChildren: './pages/bulk-revenue-upload/bulk-revenue-upload.module#BulkRevenueUploadPageModule' },
+  { path: 'user-movements-report', loadChildren: './pages/user/user-movements-report/user-movements-report.module#UserMovementsReportPageModule' }
 
 ];
 
