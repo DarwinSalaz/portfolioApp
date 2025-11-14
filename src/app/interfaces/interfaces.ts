@@ -127,6 +127,7 @@ export interface ItemUserCustom {
     icon?: string;
     username?: string;
     customer_id?: number;
+    application_user_id?: number;
 }
 
 export interface CancelServiceReq {
@@ -366,4 +367,46 @@ export interface WalletReportResponse {
     totalExpense: number;
     finalBalance: number;
   };
+}
+
+export interface UserMovementDetail {
+  cash_movement_id: number;
+  cash_movement_type: string;
+  cash_movement_type_label: string;
+  movement_type: string;
+  movement_type_label: string;
+  created_at: string;
+  value: string;
+  value_number: number;
+  commission: string;
+  commission_number: number;
+  down_payments: string;
+  down_payments_number: number;
+  description: string;
+  justification: string;
+  wallet_name: string;
+  service_id: number;
+  payment_id: number;
+  expense_id: number;
+  revenue_id: number;
+}
+
+export interface UserMovementsReportResponse {
+  user_full_name: string;
+  username: string;
+  starts_at: string;
+  ends_at: string;
+  period_label: string;
+  total_inputs: string;
+  total_inputs_number: number;
+  total_outputs: string;
+  total_outputs_number: number;
+  total_commissions: string;
+  total_commissions_number: number;
+  total_down_payments: string;
+  total_down_payments_number: number;
+  net_balance: string;
+  net_balance_number: number;
+  movements_count: number;
+  movements: UserMovementDetail[];
 }
