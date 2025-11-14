@@ -1,0 +1,54 @@
+<ion-header no-border>
+  <ion-toolbar color="medium">
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/users"></ion-back-button>
+      </ion-buttons>
+  
+    <ion-title class="ion-text-capitalize">REPORTE DE MOVIMIENTOS</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-card *ngIf="userFullName">
+    <ion-card-header>
+      <ion-card-title>{{ userFullName }}</ion-card-title>
+      <ion-card-subtitle>{{ username }}</ion-card-subtitle>
+    </ion-card-header>
+  </ion-card>
+
+  <form (ngSubmit)="generateReport(fRegistro)" #fRegistro="ngForm">
+    <ion-list>
+      <ion-item>
+        <ion-label stacked>Fecha Inicial</ion-label>
+        <ion-datetime style="text-align: right"
+          name="init_date"
+          display-timezone="utc"
+          min="2021-01-01"
+          locale="es-AR"
+          [(ngModel)]="initDate"
+          required>
+        </ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Fecha Final</ion-label>
+        <ion-datetime style="text-align: right"
+          name="end_date"
+          display-timezone="utc"
+          min="2021-01-01"
+          locale="es-AR"
+          [(ngModel)]="endDate"
+          required>
+        </ion-datetime>
+      </ion-item>
+    
+      <div padding>
+        <ion-button color="success" type="submit" size="medium" expand="block" [disabled]="loading">
+          <ion-icon name="document-text" slot="start"></ion-icon>
+          <span *ngIf="!loading">GENERAR REPORTE EXCEL</span>
+          <span *ngIf="loading">GENERANDO...</span>
+        </ion-button>
+      </div>
+    </ion-list>
+  </form>
+</ion-content>
+

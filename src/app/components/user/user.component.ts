@@ -20,11 +20,14 @@ export class UserComponent implements OnInit {
   }
 
   click() {
-    //this.navCtrl.navigateForward('/menu', )
-    //this.navCtrl.navigateRoot( '/menu', { animated: true } );
-    console.log('como fueee' + this.item.customer_id);
+    console.log('Navegando con application_user_id: ' + this.item.application_user_id);
     this.router.navigate([this.redirectTo], {
-      queryParams: { username : this.item.username, customer_id : this.item.customer_id }
+      queryParams: { 
+        username: this.item.username, 
+        customer_id: this.item.customer_id,
+        application_user_id: this.item.application_user_id,
+        user_full_name: this.item.main_text
+      }
     });
   }
 

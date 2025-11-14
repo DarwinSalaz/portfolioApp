@@ -62,7 +62,8 @@ export class UsersPage implements OnInit {
               second_text: it.email, 
               icon: it.icon,
               username: it.username,
-              customer_id: null
+              customer_id: null,
+              application_user_id: it.application_user_id
             }
 
             return itemPr;

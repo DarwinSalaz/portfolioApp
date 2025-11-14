@@ -328,4 +328,95 @@ export class ExcelExportService {
 
     this.openExcelFile(workbook, `reporte-cartera-${walletName}-${startDate}.xlsx`);
   }
+
+  exportUserMovementsReport(reportData: any, userFullName: string, startDate: string, endDate: string) {
+    const workbook = XLSXLib.utils.book_new();
+
+    // Hoja de movimientos detallados
+    const movementsSheet = reportData.movements.map(movement => [
+      movement.cash_movement_id,
+      movement.created_at.split('T')[0], // Solo la fecha
+      movement.created_at.split('T')[1]?.split('.')[0] || '', // Solo la hora
+      movement.cash_movement_type_label,
+      movement.movement_type_label,
+      this.parseNumber(movement.value_number),
+      this.parseNumber(movement.commission_number),
+      this.parseNumber(movement.down_payments_number),
+      movement.description || '',
+      movement.justification || '',
+      movement.wallet_name || '',
+      movement.service_id || '',
+      movement.payment_id || '',
+      movement.expense_id || '',
+      movement.revenue_id || ''
+    ]);
+
+    const movementsHeaders = [
+      'ID Movimiento',
+      'Fecha',
+      'Hora',
+      'Tipo de Movimiento',
+      'Entrada/Salida',
+      'Valor',
+      'Comisión',
+      'Señas',
+      'Descripción',
+      'Justificación',
+      'Cartera',
+      'ID Servicio',
+      'ID Pago',
+      'ID Gasto',
+      'ID Ingreso'
+    ];
+
+    const movementsWorksheet = XLSXLib.utils.aoa_to_sheet([movementsHeaders, ...movementsSheet]);
+
+    // Aplicar formato de ancho de columnas
+    movementsWorksheet['!cols'] = [
+      { wch: 12 }, // ID Movimiento
+      { wch: 12 }, // Fecha
+      { wch: 10 }, // Hora
+      { wch: 20 }, // Tipo de Movimiento
+      { wch: 12 }, // Entrada/Salida
+      { wch: 15 }, // Valor
+      { wch: 12 }, // Comisión
+      { wch: 12 }, // Señas
+      { wch: 30 }, // Descripción
+      { wch: 30 }, // Justificación
+      { wch: 20 }, // Cartera
+      { wch: 12 }, // ID Servicio
+      { wch: 12 }, // ID Pago
+      { wch: 12 }, // ID Gasto
+      { wch: 12 }  // ID Ingreso
+    ];
+
+    // Hoja de resumen
+    const summarySheet = [
+      ['REPORTE DE MOVIMIENTOS DE USUARIO'],
+      [''],
+      ['Usuario:', userFullName],
+      ['Username:', reportData.username],
+      ['Período:', reportData.period_label],
+      [''],
+      ['RESUMEN GENERAL'],
+      [''],
+      ['Total Entradas:', this.parseNumber(reportData.total_inputs_number)],
+      ['Total Salidas:', this.parseNumber(reportData.total_outputs_number)],
+      ['Total Comisiones:', this.parseNumber(reportData.total_commissions_number)],
+      ['Total Señas:', this.parseNumber(reportData.total_down_payments_number)],
+      [''],
+      ['Balance Neto:', this.parseNumber(reportData.net_balance_number)],
+      [''],
+      ['Total de Movimientos:', reportData.movements_count]
+    ];
+
+    const summaryWorksheet = XLSXLib.utils.aoa_to_sheet(summarySheet);
+
+    // Agregar hojas al workbook
+    XLSXLib.utils.book_append_sheet(workbook, summaryWorksheet, 'Resumen');
+    XLSXLib.utils.book_append_sheet(workbook, movementsWorksheet, 'Movimientos');
+
+    const filename = `reporte-movimientos-${userFullName.replace(/ /g, '-')}-${startDate}.xlsx`;
+    this.openExcelFile(workbook, filename);
+  }
 } 

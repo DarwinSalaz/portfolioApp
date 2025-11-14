@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Storage } from '@ionic/storage';
 import { environment } from '../../environments/environment';
-import { User } from '../interfaces/interfaces';
+import { User, UserMovementsReportResponse } from '../interfaces/interfaces';
 
 const URL = environment.url;
 
@@ -158,6 +158,26 @@ export class UserService {
         }
         )
       });
+  }
+
+  getUserMovementsReport(applicationUserId: number, startsAt: string, endsAt: string): Promise<UserMovementsReportResponse> {
+    const request = {
+      application_user_id: applicationUserId,
+      starts_at: startsAt,
+      ends_at: endsAt
+    };
+
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json'
+      })
+    };
+
+    return this.http.post<UserMovementsReportResponse>(
+      `${URL}/api/portfolio/cash_movement/user_report`, 
+      request, 
+      httpOptions
+    ).toPromise();
   }
 
 }

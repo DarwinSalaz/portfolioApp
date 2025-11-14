@@ -17,6 +17,8 @@ export class CashcontrolPage implements OnInit {
 
   loading: boolean = true;
   username: string;
+  applicationUserId: number;
+  userFullName: string;
   isControl: boolean = false;
 
   cashControl: CashControl = {
@@ -48,6 +50,8 @@ export class CashcontrolPage implements OnInit {
       if (res.username) {
         console.log('aqui paaa');
         this.username = res.username;
+        this.applicationUserId = parseInt(res.application_user_id);
+        this.userFullName = res.user_full_name;
         this.isControl = true;
       } else {
         this.isControl = false;
@@ -145,6 +149,21 @@ export class CashcontrolPage implements OnInit {
     });
 
     await alert.present();
+  }
+
+  async showUserReport() {
+    if (!this.applicationUserId) {
+      this.uiService.InfoAlert('Error: No se pudo obtener el ID del usuario');
+      return;
+    }
+
+    this.router.navigate(['/user-movements-report'], {
+      queryParams: { 
+        username: this.username, 
+        application_user_id: this.applicationUserId,
+        user_full_name: this.userFullName || this.cashControl.full_name
+      }
+    });
   }
 
 }
