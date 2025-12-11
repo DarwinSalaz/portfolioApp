@@ -731,6 +731,19 @@ export class PortfolioReportPage implements OnInit {
       return '$' + value.toLocaleString('es-CO', { minimumFractionDigits: 2 });
     };
 
+    // Ordenar ingresos y gastos por fecha ascendente (más antiguos primero)
+    const sortedIncomes = (incomes || []).slice().sort((a: any, b: any) => {
+      const dateA = new Date(a.date || 0).getTime();
+      const dateB = new Date(b.date || 0).getTime();
+      return dateA - dateB;
+    });
+
+    const sortedExpenses = (expenses || []).slice().sort((a: any, b: any) => {
+      const dateA = new Date(a.date || 0).getTime();
+      const dateB = new Date(b.date || 0).getTime();
+      return dateA - dateB;
+    });
+
     const buildTable = (title: string, items: any[]) => {
       const body: any[] = [
         ['Fecha', 'Tipo', 'Valor', 'Justificación']
@@ -769,8 +782,8 @@ export class PortfolioReportPage implements OnInit {
         { text: `Cartera: ${walletName}`, margin: [0, 5] },
         { text: `Desde: ${startsAt.split('T')[0]}  Hasta: ${endsAt.split('T')[0]}`, margin: [0, 0, 0, 10] },
 
-        ...buildTable('INGRESOS', incomes),
-        ...buildTable('GASTOS', expenses),
+        ...buildTable('INGRESOS', sortedIncomes),
+        ...buildTable('GASTOS', sortedExpenses),
 
         { text: 'Resumen Final', style: 'sectionHeader', margin: [0, 15, 0, 5] },
         {

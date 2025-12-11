@@ -34,6 +34,38 @@ export class BulkRevenueUploadPage implements OnInit {
     return this.uploadResult.results.filter(r => !r.success);
   }
 
+  get canProcessUpload(): boolean {
+    if (!this.validationResult) {
+      return false;
+    }
+    // Verificar que isValid sea explícitamente true
+    // Intentar obtener isValid desde diferentes posibles nombres
+    let isValidValue = this.validationResult.isValid;
+    
+    if (isValidValue === undefined) {
+      isValidValue = (this.validationResult as any).is_valid;
+    }
+    
+    // Si aún es undefined, calcularlo basándonos en si hay errores
+    if (isValidValue === undefined) {
+      const hasErrors = this.validationResult.errors && this.validationResult.errors.length > 0;
+      isValidValue = !hasErrors;
+      console.log('Calculated isValid from errors in getter:', isValidValue);
+    }
+    
+    const isValid = isValidValue === true || (typeof isValidValue === 'string' && isValidValue === 'true');
+    console.log('canProcessUpload check:', {
+      isValid: this.validationResult.isValid,
+      is_valid: (this.validationResult as any).is_valid,
+      isValidValue: isValidValue,
+      isValidType: typeof isValidValue,
+      canProcess: isValid,
+      errorsLength: this.validationResult.errors ? this.validationResult.errors.length : 0,
+      validationResultKeys: Object.keys(this.validationResult)
+    });
+    return isValid;
+  }
+
   constructor(
     private router: Router,
     private toastController: ToastController,
@@ -131,7 +163,27 @@ export class BulkRevenueUploadPage implements OnInit {
       
       // Validar usando el servicio
       const response = await this.bulkRevenueUploadService.validateFile(this.selectedFile, this.selectedWalletId).toPromise();
-      console.log('Bulk revenue upload validation response:', response);
+      console.log('Bulk revenue upload validation response (full):', JSON.stringify(response, null, 2));
+      console.log('Response keys:', Object.keys(response));
+      console.log('isValid:', response.isValid);
+      console.log('isValid (direct access):', (response as any).isValid);
+      console.log('is_valid (snake_case):', (response as any).is_valid);
+      console.log('validRecords:', response.validRecords);
+      console.log('invalidRecords:', response.invalidRecords);
+      console.log('errors:', response.errors);
+      console.log('errors.length:', response.errors ? response.errors.length : 0);
+      
+      // Si isValid viene como undefined, intentar mapearlo desde snake_case o calcularlo
+      if (response.isValid === undefined) {
+        if ((response as any).is_valid !== undefined) {
+          (response as any).isValid = (response as any).is_valid;
+        } else {
+          // Calcular isValid basándonos en si hay errores
+          const hasErrors = response.errors && response.errors.length > 0;
+          (response as any).isValid = !hasErrors;
+          console.log('Calculated isValid from errors:', !hasErrors);
+        }
+      }
       
       this.validationResult = response;
       this.currentStep = 2;

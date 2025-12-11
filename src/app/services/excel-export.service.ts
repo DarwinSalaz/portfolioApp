@@ -266,53 +266,90 @@ export class ExcelExportService {
     const workbook = XLSXLib.utils.book_new();
 
     // Hoja de resumen general
+    const totalIncome = walletData.totalIncome || walletData.totalRevenues || 0;
+    const totalExpense = walletData.totalExpense || walletData.totalExpenses || 0;
     const generalSummary = [
       ['RESUMEN GENERAL DE CARTERA'],
       [''],
       ['Cartera:', walletName],
       ['Período:', `${startDate} - ${endDate}`],
       [''],
-      ['Total Ingresos:', this.parseNumber(walletData.totalRevenues || 0)],
-      ['Total Egresos:', this.parseNumber(walletData.totalExpenses || 0)],
-      ['Balance:', this.parseNumber((walletData.totalRevenues || 0) - (walletData.totalExpenses || 0))]
+      ['Total Ingresos:', this.parseNumber(totalIncome)],
+      ['Total Egresos:', this.parseNumber(totalExpense)],
+      ['Balance:', this.parseNumber(totalIncome - totalExpense)]
     ];
 
     const generalWorksheet = XLSXLib.utils.aoa_to_sheet(generalSummary);
 
-    // Hoja de ingresos
-    if (walletData.revenues && walletData.revenues.length > 0) {
-      const revenuesSheet = walletData.revenues.map(revenue => [
-        revenue.revenue_id,
-        revenue.revenue_type,
-        this.parseNumber(revenue.value),
-        revenue.revenue_date,
-        revenue.justification
+    // Función auxiliar para formatear fecha
+    const formatDate = (dateValue: any): string => {
+      if (!dateValue) return '';
+      
+      // Si es string, intentar parsearlo
+      if (typeof dateValue === 'string') {
+        // Si contiene 'T', tomar solo la parte de la fecha
+        if (dateValue.includes('T')) {
+          return dateValue.split('T')[0];
+        }
+        // Si ya es solo fecha, retornarla
+        return dateValue;
+      }
+      
+      // Si es un objeto Date, formatearlo
+      if (dateValue instanceof Date) {
+        const year = dateValue.getFullYear();
+        const month = String(dateValue.getMonth() + 1).padStart(2, '0');
+        const day = String(dateValue.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      }
+      
+      return String(dateValue);
+    };
+
+    // Hoja de ingresos (el backend devuelve 'incomes' no 'revenues')
+    const incomes = walletData.incomes || walletData.revenues || [];
+    // Ordenar por fecha ascendente (más antiguos primero)
+    const sortedIncomes = incomes.slice().sort((a: any, b: any) => {
+      const dateA = new Date(a.date || a.revenue_date || 0).getTime();
+      const dateB = new Date(b.date || b.revenue_date || 0).getTime();
+      return dateA - dateB;
+    });
+    if (sortedIncomes.length > 0) {
+      const incomesSheet = sortedIncomes.map((income: any) => [
+        income.category || income.revenue_type || '',
+        this.parseNumber(income.value),
+        formatDate(income.date || income.revenue_date),
+        income.justification || ''
       ]);
 
-      const revenuesHeaders = [
-        'ID Ingreso',
+      const incomesHeaders = [
         'Tipo',
         'Valor',
         'Fecha',
         'Justificación'
       ];
 
-      const revenuesWorksheet = XLSXLib.utils.aoa_to_sheet([revenuesHeaders, ...revenuesSheet]);
-      XLSXLib.utils.book_append_sheet(workbook, revenuesWorksheet, 'Ingresos');
+      const incomesWorksheet = XLSXLib.utils.aoa_to_sheet([incomesHeaders, ...incomesSheet]);
+      XLSXLib.utils.book_append_sheet(workbook, incomesWorksheet, 'Ingresos');
     }
 
     // Hoja de egresos
-    if (walletData.expenses && walletData.expenses.length > 0) {
-      const expensesSheet = walletData.expenses.map(expense => [
-        expense.expense_id,
-        expense.expense_type,
+    const expenses = walletData.expenses || [];
+    // Ordenar por fecha ascendente (más antiguos primero)
+    const sortedExpenses = expenses.slice().sort((a: any, b: any) => {
+      const dateA = new Date(a.date || a.expense_date || 0).getTime();
+      const dateB = new Date(b.date || b.expense_date || 0).getTime();
+      return dateA - dateB;
+    });
+    if (sortedExpenses.length > 0) {
+      const expensesSheet = sortedExpenses.map((expense: any) => [
+        expense.category || expense.expense_type || '',
         this.parseNumber(expense.value),
-        expense.expense_date,
-        expense.justification
+        formatDate(expense.date || expense.expense_date),
+        expense.justification || ''
       ]);
 
       const expensesHeaders = [
-        'ID Egreso',
         'Tipo',
         'Valor',
         'Fecha',
@@ -333,23 +370,29 @@ export class ExcelExportService {
     const workbook = XLSXLib.utils.book_new();
 
     // Hoja de movimientos detallados
-    const movementsSheet = reportData.movements.map(movement => [
-      movement.cash_movement_id,
-      movement.created_at.split('T')[0], // Solo la fecha
-      movement.created_at.split('T')[1]?.split('.')[0] || '', // Solo la hora
-      movement.cash_movement_type_label,
-      movement.movement_type_label,
-      this.parseNumber(movement.value_number),
-      this.parseNumber(movement.commission_number),
-      this.parseNumber(movement.down_payments_number),
-      movement.description || '',
-      movement.justification || '',
-      movement.wallet_name || '',
-      movement.service_id || '',
-      movement.payment_id || '',
-      movement.expense_id || '',
-      movement.revenue_id || ''
-    ]);
+    const movementsSheet = reportData.movements.map(movement => {
+      const dateTimeParts = movement.created_at.split('T');
+      const timePart = dateTimeParts[1];
+      const timeOnly = timePart ? (timePart.split('.')[0] || '') : '';
+      
+      return [
+        movement.cash_movement_id,
+        dateTimeParts[0], // Solo la fecha
+        timeOnly, // Solo la hora
+        movement.cash_movement_type_label,
+        movement.movement_type_label,
+        this.parseNumber(movement.value_number),
+        this.parseNumber(movement.commission_number),
+        this.parseNumber(movement.down_payments_number),
+        movement.description || '',
+        movement.justification || '',
+        movement.wallet_name || '',
+        movement.service_id || '',
+        movement.payment_id || '',
+        movement.expense_id || '',
+        movement.revenue_id || ''
+      ];
+    });
 
     const movementsHeaders = [
       'ID Movimiento',

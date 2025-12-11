@@ -32,7 +32,7 @@
         
         <input #fileInput 
                type="file" 
-               accept=".xlsx,.xls" 
+               accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
                (change)="onFileSelected($event)"
                style="display: none;">
         
@@ -148,7 +148,7 @@
           
           <ion-button expand="block" 
                       (click)="processBulkUpload()" 
-                      [disabled]="!validationResult || !validationResult.isValid"
+                      [disabled]="!canProcessUpload"
                       color="success">
             <ion-spinner *ngIf="isLoading" name="crescent"></ion-spinner>
             <ion-icon *ngIf="!isLoading" name="cloud-upload" slot="start"></ion-icon>
