@@ -67,23 +67,29 @@ export class ExcelExportService {
 
     // Hoja de servicios
     const servicesSheet = servicesData.map(service => [
-      service.service_id,
+      service.id || service.service_id,
       service.client,
-      service.product_name,
-      this.parseNumber(service.value),
-      this.parseNumber(service.discount),
-      this.parseNumber(service.debt),
+      service.products || service.product_name || '',
+      this.parseNumber(service.product_values || service.value || 0),
+      this.parseNumber(service.discount || 0),
+      this.parseNumber(service.service_value || service.value || 0),
+      this.parseNumber(service.debt || 0),
+      service.quantity_of_fees || 0,
+      service.payments_made || (service.quantity_of_fees ? (service.quantity_of_fees - (service.pending_fees || 0)) : 0),
       service.created_at,
       service.username
     ]);
 
     const servicesHeaders = [
-      'ID Servicio',
+      'ID',
       'Cliente',
-      'Producto',
-      'Valor',
+      'Productos',
+      'Valor Productos',
       'Descuento',
-      'Saldo Actual',
+      'Valor Total',
+      'Saldo',
+      'Cuotas Totales',
+      'Total Abonos',
       'Fecha',
       'Usuario'
     ];
@@ -92,11 +98,11 @@ export class ExcelExportService {
 
     // Hoja de productos vendidos
     const productsSheet = productsSold.map(product => [
-      product.product_id,
+      product.product_id || '',
       product.product_name,
-      product.quantity_sold,
-      this.parseNumber(product.value),
-      product.wallet
+      product.quantity_sold || product.total_quantity || 0,
+      this.parseNumber(product.value || 0),
+      product.wallet || ''
     ]);
 
     const productsHeaders = [
@@ -140,6 +146,8 @@ export class ExcelExportService {
       payment.id,
       payment.service_id,
       payment.client,
+      payment.products || '',
+      payment.service_created_at || '',
       this.parseNumber(payment.value),
       this.parseNumber(payment.debt),
       payment.created_at,
@@ -147,9 +155,11 @@ export class ExcelExportService {
     ]);
 
     const paymentsHeaders = [
-      'ID Pago',
+      'ID',
       'ID Servicio',
       'Cliente',
+      'Productos',
+      'Fecha Venta',
       'Valor',
       'Saldo Actual',
       'Fecha',
@@ -316,16 +326,16 @@ export class ExcelExportService {
     });
     if (sortedIncomes.length > 0) {
       const incomesSheet = sortedIncomes.map((income: any) => [
+        formatDate(income.date || income.revenue_date),
         income.category || income.revenue_type || '',
         this.parseNumber(income.value),
-        formatDate(income.date || income.revenue_date),
         income.justification || ''
       ]);
 
       const incomesHeaders = [
+        'Fecha',
         'Tipo',
         'Valor',
-        'Fecha',
         'Justificación'
       ];
 
@@ -343,16 +353,16 @@ export class ExcelExportService {
     });
     if (sortedExpenses.length > 0) {
       const expensesSheet = sortedExpenses.map((expense: any) => [
+        formatDate(expense.date || expense.expense_date),
         expense.category || expense.expense_type || '',
         this.parseNumber(expense.value),
-        formatDate(expense.date || expense.expense_date),
         expense.justification || ''
       ]);
 
       const expensesHeaders = [
+        'Fecha',
         'Tipo',
         'Valor',
-        'Fecha',
         'Justificación'
       ];
 

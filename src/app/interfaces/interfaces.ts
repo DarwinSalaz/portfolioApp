@@ -31,8 +31,12 @@ export interface ServicesReportResp {
 }
 
 export interface ProductSoldReport {
+  product_id?: number;
   product_name: string;
   total_quantity: number;
+  quantity_sold?: number; // Alias para compatibilidad
+  value?: string;
+  wallet?: string;
 }
 
 export interface ServiceReport {
@@ -46,6 +50,12 @@ export interface ServiceReport {
     client?: string;
     created_at?: string;
     service_value?: string;
+    quantity_of_fees?: number;
+    payments_made?: number;
+    pending_fees?: number;
+    service_id?: number;
+    product_name?: string;
+    value?: string;
 }
 
 export interface PaymentsReportResp {
@@ -60,6 +70,8 @@ export interface PaymentsReport {
     service_id?: number;
     value?: string;
     debt?: string;
+    products?: string;
+    service_created_at?: string;
     wallet?: string;
     username?: string;
     created_at?: string;

@@ -9,7 +9,7 @@ export const environment = {
   //url: 'http://inventory-dev.us-east-2.elasticbeanstalk.com'
   //url: 'https://p01--portfolio--9qjb75jfq5zn.code.run'
   url: 'https://creative-code-darwinsalaz.koyeb.app',
-  version: '2.1.8'  // Cambia esta versión cada vez que generes una nueva versión
+  version: '2.1.9'  // Cambia esta versión cada vez que generes una nueva versión
 };
 
 /*

@@ -99,13 +99,15 @@ export class PortfolioReportPage implements OnInit {
             row.discount,
             row.service_value,
             row.debt,
+            row.quantity_of_fees || 0,
+            row.payments_made || (row.quantity_of_fees ? (row.quantity_of_fees - (row.pending_fees || 0)) : 0),
             row.created_at,
             row.username
           ];
           data.push(rowArr);
         }
 
-        var dataResume = ['TOTAL', '', '', resp.total_product_values, resp.total_discount, resp.total_service_value, resp.total_debt, '', ''];
+        var dataResume = ['TOTAL', '', '', resp.total_product_values, resp.total_discount, resp.total_service_value, resp.total_debt, '', '', '', ''];
 
         // 👇 Preparamos la tabla de productos vendidos
         var productsTable = [
@@ -144,7 +146,7 @@ export class PortfolioReportPage implements OnInit {
         style: 'tableModern',
         table: {
           headerRows: 1,
-          widths: [25, '*', '*', 55, 45, 60, 45, 50, '*'],
+          widths: [25, '*', '*', 55, 45, 60, 45, 40, 40, 50, '*'],
           body: [
             [
               { text: 'ID', style: 'tableHeaderModern' },
@@ -154,6 +156,8 @@ export class PortfolioReportPage implements OnInit {
               { text: 'Descuento', style: 'tableHeaderModern' },
               { text: 'Valor Total', style: 'tableHeaderModern' },
               { text: 'Saldo', style: 'tableHeaderModern' },
+              { text: 'Cuotas Totales', style: 'tableHeaderModern' },
+              { text: 'Total Abonos', style: 'tableHeaderModern' },
               { text: 'Fecha', style: 'tableHeaderModern' },
               { text: 'Usuario', style: 'tableHeaderModern' }
             ],
@@ -164,6 +168,8 @@ export class PortfolioReportPage implements OnInit {
               { text: dataResume[4], style: 'summaryCellModern' },
               { text: dataResume[5], style: 'summaryCellModern' },
               { text: dataResume[6], style: 'summaryCellModern' },
+              { text: '', style: 'summaryCellModern' },
+              { text: '', style: 'summaryCellModern' },
               { text: '', style: 'summaryCellModern' },
               { text: '', style: 'summaryCellModern' }
             ]
@@ -285,13 +291,23 @@ export class PortfolioReportPage implements OnInit {
         for (var i = 0; i < resp.payments_data.length; i++) {
           var row = resp.payments_data[i];
           console.log("Id: " + row.id + ", Valor: " + row.value);
-          var rowArr = [row.id, row.service_id, row.client, row.value, row.debt, row.created_at, row.username]
+          var rowArr = [
+            row.id,
+            row.service_id,
+            row.client,
+            row.products || '',
+            row.service_created_at || '',
+            row.value,
+            row.debt,
+            row.created_at,
+            row.username
+          ]
 
           data.push(rowArr);
         }
 
         const dataResume = [
-          { text: 'RESUMEN', colSpan: 3, style: 'summaryCellModern' }, {}, {},
+          { text: 'RESUMEN', colSpan: 5, style: 'summaryCellModern' }, {}, {}, {}, {},
           { text: resp.total_value, style: 'summaryCellModern' },
           { text: resp.total_debt, style: 'summaryCellModern' },
           { text: '', style: 'summaryCellModern' },
@@ -317,12 +333,14 @@ export class PortfolioReportPage implements OnInit {
           style: 'tableModern',
           table: {
             headerRows: 1,
-            widths: [40, 60, '*', 70, 70, 100],
+            widths: [40, 60, '*', '*', 70, 70, 70, 100, '*'],
             body: [
               [
                 { text: 'ID', style: 'tableHeaderModern' },
                 { text: 'ID Servicio', style: 'tableHeaderModern' },
                 { text: 'Cliente', style: 'tableHeaderModern' },
+                { text: 'Productos', style: 'tableHeaderModern' },
+                { text: 'Fecha Venta', style: 'tableHeaderModern' },
                 { text: 'Valor', style: 'tableHeaderModern' },
                 { text: 'Saldo Actual', style: 'tableHeaderModern' },
                 { text: 'Fecha', style: 'tableHeaderModern' },
